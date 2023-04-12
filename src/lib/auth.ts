@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse, NextApiHandler } from "next"
 import { getServerAuthSession } from "../server/common/get-server-auth-session"
 import { getAuth } from "@clerk/nextjs/server"
 
+// remove extra auth check?
 export const validateRoute = (handler: any) => {
     return async (req: NextApiRequest, res: NextApiResponse) => {
     const { userId } = getAuth(req);
