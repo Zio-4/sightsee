@@ -12,7 +12,6 @@ export default async function (
     switch (req.method) {
         case 'POST':
           // Note: Use Zod or similar library to validate req body
-          console.log('Route hit')
 
           const { userId } = getAuth(req)
       
@@ -36,9 +35,6 @@ export default async function (
             unsplashPic = 'https://m.media-amazon.com/images/W/IMAGERENDERING_521856-T1/images/I/81QpJ5K1BrL._AC_UF894,1000_QL80_.jpg'
           }
           
-          
-          console.log({unsplashPic})
-
           try {
             let data
 
