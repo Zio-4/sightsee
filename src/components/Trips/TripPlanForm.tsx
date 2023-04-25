@@ -17,7 +17,7 @@ const TripPlanForm = ({handleSubmit, handleInput, setCalendarDates, calendarDate
             <form onSubmit={handleSubmit} id="tripPlanningForm">
             <div className='mt-5'>
                 <label htmlFor='itineraryName'>What would you like to call your trip?</label>
-                <input onChange={handleInput} name='itineraryName' type='text' className='w-full p-1 rounded-md outline-none text-black mt-1'/>
+                <input onChange={handleInput} name='itineraryName' aria-label='itinerary-name' type='text' className='w-full p-1 rounded-md outline-none text-black mt-1'/>
             </div>
 
             <div className='mt-5'>
@@ -64,7 +64,7 @@ const TripPlanForm = ({handleSubmit, handleInput, setCalendarDates, calendarDate
             </form>
             
             <div className='flex justify-center mt-5'>
-                <button type="submit" form="tripPlanningForm" disabled={submitIsDisabled} className='bg-cyan-400 py-2 px-8 rounded-lg text-slate-50 hover:bg-cyan-500'>Create trip</button>
+                <button type="submit" aria-label='itinerary-form-submit-button' form="tripPlanningForm" disabled={submitIsDisabled} className='bg-cyan-400 py-2 px-8 rounded-lg text-slate-50 hover:bg-cyan-500'>Create trip</button>
             </div>
     </div> 
   )
