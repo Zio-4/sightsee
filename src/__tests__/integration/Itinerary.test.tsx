@@ -1,4 +1,4 @@
-import {render, screen} from '@testing-library/react'
+import {render, screen, waitFor} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import TripDay from '../../components/TripDay'
 
@@ -14,10 +14,7 @@ describe('Activity operations', () => {
         const addActivityButton = screen.getByRole('button', {name: 'add-activity-button'})
         await userEvent.click(addActivityButton)
 
-        // Expect new activity with text as title to exist
-        setTimeout(() => {
-            expect(screen.getByText('River')).toBeDefined()
-        }, 1500)
+        waitFor(() => expect(screen.getByText('River')).toBeDefined(), { timeout: 2000} )
     })
 
     test('Activity cannot be created without a name', async () => {
@@ -27,9 +24,7 @@ describe('Activity operations', () => {
         const addActivityButton = screen.getByRole('button', {name: 'add-activity-button'})
         await userEvent.click(addActivityButton)
 
-        setTimeout(() => {
-            expect(screen.getByText('Add time')).toBeUndefined()
-        }, 1500)
+        waitFor(() => expect(screen.getByText('Add time')).toBeUndefined(), { timeout: 2000} )
     })
 
     test('Able to delete an activity', async () => {
@@ -44,14 +39,9 @@ describe('Activity operations', () => {
         const addActivityButton = screen.getByRole('button', {name: 'add-activity-button'})
         await userEvent.click(addActivityButton)
 
-        // Get delete icon and click it
-        setTimeout(async () => {
-            await userEvent.click(screen.getByRole('button', {name: 'delete-button'}))
-        }, 1500)
+        waitFor(async () => await userEvent.click(screen.getByRole('button', {name: 'delete-button'})), { timeout: 2000} )
         
         // Expect new activity to be deleted
-        setTimeout(() => {
-            expect(screen.getByText('Add time')).toBeUndefined()
-        }, 1500)
+        waitFor(() => expect(screen.getByText('Add time')).toBeUndefined(), { timeout: 2000} )
     })
 })
