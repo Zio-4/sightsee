@@ -1,6 +1,6 @@
 import { type NextPage } from "next";
 import { trpc } from "../utils/trpc";
-import LayoutWrapper from "../components/LayoutWrapper";
+import LayoutWrapper from "../components/Layout-Navigation/LayoutWrapper";
 import Image from "next/image";
 import ExampleItinerary from '../assets/exampleItinerary.png'
 import BeachVacay from '../assets/beach_vacation.avif'

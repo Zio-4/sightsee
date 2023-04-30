@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import ViewItinerary from '../../components/ViewItinerary'
+import ViewItinerary from '../../components/View/ViewItinerary'
 import Map from '../../components/Map'
 import { prisma } from '../../server/db/client'
 import { type GetServerSideProps } from 'next'
