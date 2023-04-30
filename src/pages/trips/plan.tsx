@@ -3,8 +3,8 @@ import axios from 'axios';
 import 'react-calendar/dist/Calendar.css';
 import { eachDayOfInterval } from 'date-fns'
 import { useRouter } from 'next/router';
-import LayoutWrapper from '../../components/LayoutWrapper';
-import TripPlanForm from '../../components/TripPlanForm';
+import LayoutWrapper from '../../components/Layout-Navigation/LayoutWrapper';
+import TripPlanForm from '../../components/Trips/TripPlanForm';
 
 
 const Plan = () => {

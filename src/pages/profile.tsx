@@ -5,10 +5,10 @@ import Image from 'next/image'
 import { getServerAuthSession } from '../server/common/get-server-auth-session'
 import axios from 'axios'
 import { GetServerSideProps } from 'next'
-import LayoutWrapper from '../components/LayoutWrapper'
+import LayoutWrapper from '../components/Layout-Navigation/LayoutWrapper'
 import { getAuth, buildClerkProps, } from "@clerk/nextjs/server";
 import { useUser } from "@clerk/nextjs";
-import Loader from '../components/Loader'
+import Loader from '../components/Layout-Navigation/Loader'
 import { prisma } from '../server/db/client'
 interface IProfileData {
   profileData: {

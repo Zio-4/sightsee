@@ -5,9 +5,9 @@ import { unstable_getServerSession } from 'next-auth'
 import { authOptions } from '../api/auth/[...nextauth]'
 import { prisma } from '../../server/db/client'
 import { GetServerSideProps } from 'next'
-import LayoutWrapper from '../../components/LayoutWrapper'
+import LayoutWrapper from '../../components/Layout-Navigation/LayoutWrapper'
 import { Tab } from '@headlessui/react'
-import TabPanelContainer from '../../components/TabPanelContainer'
+import TabPanelContainer from '../../components/Trips/TabPanelContainer'
 import { getAuth, buildClerkProps } from "@clerk/nextjs/server";
 
 interface IItineraryData {

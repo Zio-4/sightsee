@@ -1,6 +1,6 @@
 import React from 'react'
 import GraphCard from '../components/GraphCard'
-import LayoutWrapper from '../components/LayoutWrapper'
+import LayoutWrapper from '../components/Layout-Navigation/LayoutWrapper'
 
 const graphs = [
   // Compare to national average?
