@@ -33,7 +33,7 @@ interface IItineraryData {
     likes: number
     name: string
     public: boolean
-    profileId: number
+    profileId: string
     startDate: Date
     tripDays: ITripDay[]
   }
