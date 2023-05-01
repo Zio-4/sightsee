@@ -1,6 +1,6 @@
 import {render, screen, waitFor} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import TripDay from '../../components/TripDay'
+import TripDay from '../../components/Itinerary/TripDay'
 
 describe('Activity operations', () => {
     test('Able to create an activity', async () => {
