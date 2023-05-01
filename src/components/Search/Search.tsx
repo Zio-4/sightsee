@@ -29,8 +29,6 @@ const Search = ({ initialItineraries } : IInitialItineraries) => {
     const [noResults, setNoResults] = useState(false)
     const debouncedSearchQuery = useDebounce(query, 500)
 
-    console.log(initialItineraries)
-
     useEffect(() => {
 
         const getSearchData = async () => {
