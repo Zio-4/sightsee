@@ -51,8 +51,8 @@ const ActivityForm = ({setActivitiesState, tripDayId}: IActivityFormProps) => {
     <div className='text-black mt-3'>
 
         <div className='flex justify-between'>
-            <input type={'text'} value={activityName} onChange={(e) => setActivityName(e.target.value)} placeholder='Ex. Eiffel Tower' className='rounded-md p-1 w-1/2 focus:ring-0 focus:ring-offset-0 text-black border-0'/>
-            <button onClick={createAcitivity} className='bg-teal-300 py-1 px-2 rounded-lg text-black hover:bg-teal-500'>Add activity</button>
+            <input type={'text'} value={activityName} aria-label='activity-name-input' onChange={(e) => setActivityName(e.target.value)} placeholder='Ex. Eiffel Tower' className='rounded-md p-1 w-1/2 focus:ring-0 focus:ring-offset-0 text-black border-0'/>
+            <button onClick={createAcitivity} name='activityButton' aria-label='add-activity-button' className='bg-teal-300 py-1 px-2 rounded-lg text-black hover:bg-teal-500'>Add activity</button>
         </div>
 
         {/* <p className='mt-2'>Notes:</p>

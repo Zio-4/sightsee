@@ -29,8 +29,6 @@ const Search = ({ initialItineraries } : IInitialItineraries) => {
     const [noResults, setNoResults] = useState(false)
     const debouncedSearchQuery = useDebounce(query, 500)
 
-    console.log(initialItineraries)
-
     useEffect(() => {
 
         const getSearchData = async () => {
@@ -60,9 +58,19 @@ const Search = ({ initialItineraries } : IInitialItineraries) => {
 
       <form className='w-full flex justify-center'>
         <div className='relative  w-full md:w-3/4 lg:w-1/2'>
-          <input value={query} onChange={(e) => setQuery(e.target.value)} type={'text'} placeholder={'Find your dream getaway!'} className='text-black inline-block px-3 py-2 rounded-full w-full mt-10 outline-none border-0 focus:ring-0 focus:ring-offset-0'/>
+          <input value={query} 
+                 onChange={(e) => setQuery(e.target.value)} 
+                 type={'text'} 
+                 placeholder={'Find your dream getaway!'} 
+                 className='text-black inline-block px-3 py-2 rounded-full w-full mt-10 outline-none border-0 focus:ring-0 focus:ring-offset-0'
+            />
           {/* Use state to disable button briefly after submit(1 second?) */}
-          <button disabled={false} type='submit' className='absolute right-2.5 bottom-2.5 cursor-pointer text-black'><BiSearch size={20}/></button>
+          <button 
+            disabled={false} 
+            type='submit' 
+            className='absolute right-2.5 bottom-2.5 cursor-pointer text-black'>
+              <BiSearch size={20}/>
+          </button>
         </div>
       </form>
 

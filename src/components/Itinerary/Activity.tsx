@@ -184,7 +184,9 @@ const Activity = ({readOnly, setReadOnly, deleteActivity, city, contactInfo, cou
                             
                         </div>
 
-                        <BsTrashFill className='bg-red-400 p-1 cursor-pointer rounded-md text-white hover:bg-red-500' size={25} onClick={() => deleteActivity(id)}/>
+                        <button title='delete-button' onClick={() => deleteActivity(id)}>
+                            <BsTrashFill className='bg-red-400 p-1 cursor-pointer rounded-md text-white hover:bg-red-500' size={25}/>
+                        </button>
                     </div>
                 </div>
             </div>
