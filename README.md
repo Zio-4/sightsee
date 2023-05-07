@@ -12,6 +12,6 @@ Sightsee is the ultimate travel planner for your next adventure! You can create 
 - [Next.js](https://nextjs.org)
 - [Prisma](https://prisma.io)
 - [Tailwind CSS](https://tailwindcss.com)
-- [Headless UI])(https://headlessui.com/)
+- [Headless UI]](https://headlessui.com/)
 - [tRPC](https://trpc.io)
 - [Clerk](https://clerk.com/)
