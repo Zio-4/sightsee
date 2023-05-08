@@ -1,9 +1,12 @@
 import { test as setup } from '@playwright/test';
+import dotenv from 'dotenv';
+
+dotenv.config()
 
 const authFile = 'src/__tests__/e2e/user.json';
 
 setup('authenticate', async ({ page }) => {
-  await page.goto('https://voyager-phi.vercel.app/');
+  await page.goto('https://sightsee.vercel.app/');
   await page.getByRole('button').nth(3).click();
   await page.getByRole('button', { name: 'Sign in with Discord' }).click();
   await page.getByLabel('Email or Phone Number*').click();
@@ -12,6 +15,6 @@ setup('authenticate', async ({ page }) => {
   await page.getByLabel('Password*').fill(process.env.DISCORD_PASSWORD!);
   await page.getByRole('button', { name: 'Log In' }).click();
 
-  await page.waitForURL('https://voyager-phi.vercel.app/');
+  await page.waitForURL('https://sightsee.vercel.app/');
   await page.context().storageState({ path: authFile });
 });

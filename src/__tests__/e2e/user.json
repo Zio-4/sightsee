@@ -1,1 +1,191 @@
-{}
+{
+  "cookies": [
+    {
+      "name": "__cf_bm",
+      "value": "yiQYTTBz2s77QCfSC5aFbBG7y79Yw0f1zK.oW9WddOY-1683508651-0-Aci03rAb/Gmymy824BW1Xi6BKaSjKWKwzCpehG56EyVR4UmoUKiRdUHc4LN400HUc0wzx+Q7hIzCQB6FFxYoLWA=",
+      "domain": ".willing-doberman-19.clerk.accounts.dev",
+      "path": "/",
+      "expires": 1683510451.85404,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "__client_uat",
+      "value": "0",
+      "domain": "sightsee.vercel.app",
+      "path": "/",
+      "expires": 1715131052,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Strict"
+    },
+    {
+      "name": "__cf_bm",
+      "value": "fw5Wg5xwoM8bKRo3sDbI6vxu1CVnutPoVNBuZlu1rsA-1683508652-0-ASkhsAIZZVF1Cfnk9DHc1SlPGrRUpdyRioFUoDN86+OdFtw7NdVn766dEeoWowbGrRU3nmCHp0wPuOj48Ch5T0Q=",
+      "domain": ".willing-doberman-19.accounts.dev",
+      "path": "/",
+      "expires": 1683510452.844681,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "__dcfduid",
+      "value": "1c888c04ed3e11edafb6722a3ff9d6d1",
+      "domain": "discord.com",
+      "path": "/",
+      "expires": 1718068654.120065,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "__sdcfduid",
+      "value": "1c888c04ed3e11edafb6722a3ff9d6d1931bd7033028fd35f86025927ca39122190894724e97d96dfe15d9e375ca63e7",
+      "domain": "discord.com",
+      "path": "/",
+      "expires": 1718068654.120096,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "__cfruid",
+      "value": "2254033bab73efabf5fd0f469c0db9787f9e7166-1683508654",
+      "domain": ".discord.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "__cf_bm",
+      "value": "1iPy9zVk74NieyrVbqUsMcoj_hu9qlmpGmeBcUfyFn4-1683508655-0-AYitRcWLnGgoatRbyHalmzQCIw1KqSRPPCEoC3B1QnWT8WRQuQSWRWvnMnqPtSgf/pyvZn56f0+QDLZKyYX5uzfvLnR355pv4okyB3ycTyDwME245PpgARrBCUQpOt+fXA==",
+      "domain": ".discord.com",
+      "path": "/",
+      "expires": 1683510455.812187,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://sightsee.vercel.app",
+      "localStorage": [
+        {
+          "name": "clerk-db-jwt",
+          "value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXYiOiJkdmJfMlBVUE81c1NlVU5TeEdRWVhXS2QwTGFLY1JIIn0.UHA7Z5O0XfaXZs0xNPDewtI8Pjgfvgs0GdUFW85c3yDbQYMRebyO8g5zsAdTV41z4Phro3mvt7q0B7TDsSHuc1MgnKwRAaxJJvbSetdEhTJy6m0l9Z51U483jQqVKvPdfIBX8fIFI9dFFmHgdxYUJM32MXJgt5jqO8QaYanfHl2Fn4YZzB07zGOZwqrklWu2C5pg_qwslFZM-4Baj-QDITROrtLgdK4Bxk2MoypbvTEsCxuT_Py-NHX3S6ZqjwgHlRQZ3Lsmacy63ZKVN54D-a5LgWTOJII0EO3vLe2-4sq51sY8H9-GliBojnQvy8sYHICMS4Qu6rgDSQYBT-2O4g"
+        }
+      ]
+    },
+    {
+      "origin": "https://willing-doberman-19.accounts.dev",
+      "localStorage": [
+        {
+          "name": "clerk-db-jwt",
+          "value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXYiOiJkdmJfMlBVUE81c1NlVU5TeEdRWVhXS2QwTGFLY1JIIn0.UHA7Z5O0XfaXZs0xNPDewtI8Pjgfvgs0GdUFW85c3yDbQYMRebyO8g5zsAdTV41z4Phro3mvt7q0B7TDsSHuc1MgnKwRAaxJJvbSetdEhTJy6m0l9Z51U483jQqVKvPdfIBX8fIFI9dFFmHgdxYUJM32MXJgt5jqO8QaYanfHl2Fn4YZzB07zGOZwqrklWu2C5pg_qwslFZM-4Baj-QDITROrtLgdK4Bxk2MoypbvTEsCxuT_Py-NHX3S6ZqjwgHlRQZ3Lsmacy63ZKVN54D-a5LgWTOJII0EO3vLe2-4sq51sY8H9-GliBojnQvy8sYHICMS4Qu6rgDSQYBT-2O4g"
+        }
+      ]
+    },
+    {
+      "origin": "https://discord.com",
+      "localStorage": [
+        {
+          "name": "StreamerModeStore",
+          "value": "{\"_state\":{\"596866661982928906\":{\"enabled\":false,\"autoToggle\":true,\"hideInstantInvites\":true,\"hidePersonalInformation\":true,\"disableSounds\":true,\"disableNotifications\":true}},\"_version\":1}"
+        },
+        {
+          "name": "email_cache",
+          "value": "\"philipz4848@gmail.com\""
+        },
+        {
+          "name": "MultiAccountStore",
+          "value": "{\"_state\":{\"users\":[],\"canUseMultiAccountMobile\":false},\"_version\":1}"
+        },
+        {
+          "name": "UserSettingsOverridesStore",
+          "value": "{\"_state\":{},\"_version\":1}"
+        },
+        {
+          "name": "UserTrialStore",
+          "value": "{\"_state\":{\"userTrialOffers\":{}},\"_version\":0}"
+        },
+        {
+          "name": "SoundpackStore",
+          "value": "{\"_state\":{\"soundpack\":\"classic\"},\"_version\":0}"
+        },
+        {
+          "name": "DraftStore",
+          "value": "{\"_state\":{},\"_version\":2}"
+        },
+        {
+          "name": "referralProperties",
+          "value": "{\"referrer\":\"\",\"referring_domain\":\"\"}"
+        },
+        {
+          "name": "MediaEngineStore",
+          "value": "{\"default\":{\"mode\":\"VOICE_ACTIVITY\",\"modeOptions\":{\"threshold\":-60,\"autoThreshold\":false,\"vadUseKrisp\":true,\"vadLeading\":5,\"vadTrailing\":25,\"delay\":20,\"shortcut\":[]},\"vadUseKrispSettingVersion\":0,\"ncUseKrispSettingVersion\":0,\"av1EnabledSettingVersion\":0,\"hardwareClipEncodeSettingVersion\":0,\"mute\":false,\"deaf\":false,\"echoCancellation\":true,\"noiseSuppression\":false,\"automaticGainControl\":true,\"noiseCancellation\":false,\"experimentalEncoders\":false,\"hardwareH264\":true,\"silenceWarning\":true,\"attenuation\":0,\"attenuateWhileSpeakingSelf\":false,\"attenuateWhileSpeakingOthers\":true,\"localMutes\":{},\"disabledLocalVideos\":{},\"localVolumes\":{},\"localPans\":{},\"inputVolume\":100,\"outputVolume\":100,\"inputDeviceId\":\"default\",\"outputDeviceId\":\"default\",\"videoDeviceId\":\"default\",\"qos\":false,\"qosMigrated\":false,\"videoHook\":false,\"experimentalSoundshare2\":null,\"openH264\":true,\"av1Enabled\":true,\"h265Enabled\":true,\"hardwareClipEncode\":true,\"vadThrehsoldMigrated\":false,\"aecDumpEnabled\":false}}"
+        },
+        {
+          "name": "deviceProperties",
+          "value": "{\"os\":\"Mac OS X\",\"browser\":\"Chrome\",\"device\":\"\",\"system_locale\":\"en-US\"}"
+        },
+        {
+          "name": "PhoneStore",
+          "value": "{\"_state\":{},\"_version\":0}"
+        },
+        {
+          "name": "LATEST_HEARTBEAST_UUID",
+          "value": "\"c1982a4e-5472-4fde-8698-5e8081810ec3\""
+        },
+        {
+          "name": "UnsyncedUserSettingsStore",
+          "value": "{\"_state\":{\"darkSidebar\":false},\"_version\":1}"
+        },
+        {
+          "name": "LATEST_HEARTBEAST_INITIALIZED_TIMESTAMP",
+          "value": "1683508655237"
+        },
+        {
+          "name": "tokens",
+          "value": "{}"
+        },
+        {
+          "name": "user_id_cache",
+          "value": "\"596866661982928906\""
+        },
+        {
+          "name": "LATEST_HEARTBEAST_TIMESTAMP",
+          "value": "1683508657551"
+        },
+        {
+          "name": "DeveloperOptionsStore",
+          "value": "{\"trace\":false,\"canary\":false,\"logGatewayEvents\":false,\"logOverlayEvents\":false,\"logAnalyticsEvents\":false,\"sourceMapsEnabled\":false,\"axeEnabled\":false,\"analyticsDebuggerEnabled\":false,\"bugReporterEnabled\":true,\"idleStatusIndicatorEnabled\":false,\"appDirectoryIncludesInactiveCollections\":false}"
+        },
+        {
+          "name": "OverlayStoreV2",
+          "value": "{\"_state\":{\"596866661982928906\":{\"selectedGuildId\":null,\"selectedChannelId\":null,\"displayUserMode\":\"ALWAYS\",\"displayNameMode\":\"ALWAYS\",\"avatarSizeMode\":\"large\",\"notificationPositionMode\":\"topLeft\",\"textChatNotifications\":\"ENABLED\",\"disableExternalLinkAlert\":false,\"disablePinTutorial\":false,\"textWidgetOpacity\":0.25}},\"_version\":2}"
+        },
+        {
+          "name": "BrowserHandoffStore",
+          "value": "false"
+        },
+        {
+          "name": "SelectedChannelStore",
+          "value": "{\"selectedChannelId\":null,\"selectedVoiceChannelId\":null,\"lastChannelFollowingDestination\":{},\"selectedChannelIds\":{},\"mostRecentSelectedTextChannelIds\":{},\"knownThreadIds\":[]}"
+        },
+        {
+          "name": "scientist:triggered",
+          "value": "{\"v\":1,\"e\":{\"user|2021-04_impression_logging\":{\"time\":1683508657388,\"hash\":3695065393}}}"
+        },
+        {
+          "name": "token",
+          "value": "\"NTk2ODY2NjYxOTgyOTI4OTA2.G_ccrO.bQBS6CRYG-TdzU5-CfHc4pyiyXxhKhi1biTkYo\""
+        }
+      ]
+    }
+  ]
+}

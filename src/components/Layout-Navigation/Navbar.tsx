@@ -40,7 +40,7 @@ const Navbar = () => {
   return (
     <LayoutWrapper>
         <nav className='flex justify-between py-4'>
-            <button onClick={() => handleNav('/', false)} className='font-bold text-2xl'>Voyager</button>
+            <button onClick={() => handleNav('/', false)} className='font-bold text-2xl'>Sightsee</button>
             {mobileMenuState ? (
                 <div className='md:hidden'>
                   <CgClose onClick={() => setMobileMenuState(!mobileMenuState)} size={30} className='fixed right-10 text-red-500 z-[1002]'/>

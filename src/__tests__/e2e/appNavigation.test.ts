@@ -2,7 +2,7 @@ import { test, expect, type Page } from '@playwright/test';
 
 
 test('Can go to every page without breaking', async ({ page }) => {
-    await page.goto('https://voyager-phi.vercel.app/');
+    await page.goto('https://sightsee.vercel.app/');
     expect(page.getByText('Welcome to a stress-free vacation')).toBeDefined()
 
     await page.getByRole('button', { name: 'Trips' }).click();
