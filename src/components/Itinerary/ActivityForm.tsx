@@ -1,9 +1,12 @@
 import React, { useState, Dispatch, SetStateAction } from 'react'
 import axios from 'axios';
-
+import { SearchBox } from '@mapbox/search-js-react';
+import dynamic from 'next/dynamic'
+import type { Map } from 'mapbox-gl'
 interface IActivityFormProps {
     setActivitiesState: Dispatch<SetStateAction<IActivity[]>>,
-    tripDayId: number
+    tripDayId: number,
+    mapInstance: Map
 }
 
 interface IActivity {
@@ -21,8 +24,10 @@ interface IActivity {
     tripDayId: number
   }
 
-const ActivityForm = ({setActivitiesState, tripDayId}: IActivityFormProps) => {
-    const [activityName, setActivityName] = useState('')
+  // const LMap = dynamic(() => import('../components/LeafletMap'), {ssr: false})
+
+const ActivityForm = ({setActivitiesState, tripDayId, mapInstance}: IActivityFormProps) => {
+    const [activityName, setActivityName] = useState('')  
 
     const createAcitivity = async () => {
         if (activityName.length === 0) return
@@ -54,6 +59,8 @@ const ActivityForm = ({setActivitiesState, tripDayId}: IActivityFormProps) => {
             <input type={'text'} value={activityName} aria-label='activity-name-input' onChange={(e) => setActivityName(e.target.value)} placeholder='Ex. Eiffel Tower' className='rounded-md p-1 w-1/2 focus:ring-0 focus:ring-offset-0 text-black border-0'/>
             <button onClick={createAcitivity} name='activityButton' aria-label='add-activity-button' className='bg-teal-300 py-1 px-2 rounded-lg text-black hover:bg-teal-500'>Add activity</button>
         </div>
+
+        <SearchBox accessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!} map={mapInstance}/>
 
         {/* <p className='mt-2'>Notes:</p>
         <textarea className='text-black outline-none rounded-md w-1/2'/> */}

@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import { useSession } from 'next-auth/react'
 import axios from 'axios';
-import ActivityForm from './ActivityForm';
+// import ActivityForm from './ActivityForm';
 import format from 'date-fns/format';
 import Activity from './Activity'
+import dynamic from 'next/dynamic'
 
 interface IActivity {
     city: string
@@ -22,10 +23,14 @@ interface IActivity {
 interface ITripDayProps {
     date: Date
     activities: IActivity[] | [],
-    tripDayId: number
+    tripDayId: number,
+    mapInstance: any
 }
 
-const TripDay = ({date, activities, tripDayId}: ITripDayProps) => {
+// SearchBox component requires the document
+const ActivityForm = dynamic(() => import('../Itinerary/ActivityForm'), {ssr: false})
+
+const TripDay = ({date, activities, tripDayId, mapInstance}: ITripDayProps) => {
     const [ readOnly, setReadOnly ] = useState(true);
     const [activitiesState, setActivitiesState] = useState(activities) 
 
@@ -69,7 +74,7 @@ const TripDay = ({date, activities, tripDayId}: ITripDayProps) => {
         )}
         </div>
     
-        <ActivityForm  setActivitiesState={setActivitiesState} tripDayId={tripDayId}/>
+        <ActivityForm  setActivitiesState={setActivitiesState} tripDayId={tripDayId} mapInstance={mapInstance}/>
     </div>
   )
 }
