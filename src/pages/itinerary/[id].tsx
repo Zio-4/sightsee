@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import ViewItinerary from '../../components/View/ViewItinerary'
-import Map from '../../components/Map'
 import { prisma } from '../../server/db/client'
 import { type GetServerSideProps } from 'next'
 import { FaMapMarkedAlt } from 'react-icons/fa'
@@ -51,7 +50,7 @@ const ItineraryPage = (itineraryData: IItineraryData) => {
           <ViewItinerary itin={itineraryData} />
         </div>
         <div className={`${!viewState && 'hidden'} lg:block 2xl:col-start-2 2xl:col-end-4`}>
-          <Map />
+          {/* Map goes here */}
         </div>
   
         <button onClick={() => setViewState((prev) => !prev)} className='lg:hidden z-[1000] fixed bottom-4 right-4 p-3 text-sm transition-colors duration-300 rounded-full shadow-xl text-violet-100 bg-violet-500 hover:bg-violet-600 shadow-violet-500'>{viewState ? <SlNote size={27}/> : <FaMapMarkedAlt size={27} />}</button>

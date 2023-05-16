@@ -3,27 +3,10 @@ import Image from 'next/image'
 import Island from '../assets/island_placeholder.jpeg'
 import { AiFillHeart } from 'react-icons/ai'
 import Link from 'next/link'
+import { IItineraryCardProps } from '../../types/search'
 
-interface IItineraryCard {
-  title: string,
-  location: string,
-  creator: string,
-  likes: number
-}
-
-interface IItineraryCardProps {
-  coverPhoto: string
-  destinations: string
-  endDate: string
-  id: number
-  likes: number
-  name: string
-  creator: string
-  startDate: string
-}
 
 const SearchCard = ({coverPhoto, destinations, endDate, id, likes, name, creator, startDate}: IItineraryCardProps ) => {
-
 
   return (
     <Link href={{pathname:'/itinerary/[id]', query: { id: id.toString() }}} as={`/itinerary/${id.toString()}`} className='bg-white p-4 bg-opacity-80 rounded-lg drop-shadow-lg cursor-pointer text-black'>

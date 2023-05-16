@@ -4,27 +4,12 @@ import React, { useEffect, useState } from 'react'
 import SearchCard from './SearchCard'
 import { BiSearch } from 'react-icons/bi'
 import axios from 'axios'
+import { IInitialItineraries, Itinerary } from '../../types/search'
 
-interface IItinerary {
-    coverPhoto: string
-    destinations: string
-    endDate: string
-    id: number
-    likes: number
-    name: string
-    creator: string
-    profileId: number
-    public: boolean
-    startDate: string
-}
-
-interface IInitialItineraries {
-    initialItineraries: IItinerary[]
-  }
 
 const Search = ({ initialItineraries } : IInitialItineraries) => {
     const [query, setQuery] = useState('')
-    const [searchResults, setSearchResults] = useState<IItinerary[]>([])
+    const [searchResults, setSearchResults] = useState<Itinerary[]>([])
     const [loading, setLoading] = useState(false)
     const [noResults, setNoResults] = useState(false)
     const debouncedSearchQuery = useDebounce(query, 500)

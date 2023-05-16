@@ -1,38 +1,18 @@
 import React, { useState, Dispatch, SetStateAction } from 'react'
 import axios from 'axios';
 import { SearchBox } from '@mapbox/search-js-react';
-import dynamic from 'next/dynamic'
-import type { Map } from 'mapbox-gl'
-interface IActivityFormProps {
-    setActivitiesState: Dispatch<SetStateAction<IActivity[]>>,
-    tripDayId: number,
-    mapInstance: Map
-}
+import { useAtomValue } from 'jotai';
+import { mapAtom } from '../../store';
+import { IActivityForm } from '../../types/itinerary';
 
-interface IActivity {
-    city: string
-    contactInfo: string
-    country: string
-    endTime: string
-    id: number
-    name: string
-    note: string
-    photo: string | null
-    postalCode: string
-    startTime: string
-    street: string
-    tripDayId: number
-  }
 
-  // const LMap = dynamic(() => import('../components/LeafletMap'), {ssr: false})
-
-const ActivityForm = ({setActivitiesState, tripDayId, mapInstance}: IActivityFormProps) => {
-    const [activityName, setActivityName] = useState('')  
+const ActivityForm = ({setActivitiesState, tripDayId, }: IActivityForm) => {
+    const [activityName, setActivityName] = useState('')
+    const mapInstance = useAtomValue(mapAtom)  
 
     const createAcitivity = async () => {
         if (activityName.length === 0) return
     
-
         const call = await axios.post('/api/activities', {
             activityName: activityName,
             activityContactInfo: '',
@@ -60,6 +40,7 @@ const ActivityForm = ({setActivitiesState, tripDayId, mapInstance}: IActivityFor
             <button onClick={createAcitivity} name='activityButton' aria-label='add-activity-button' className='bg-teal-300 py-1 px-2 rounded-lg text-black hover:bg-teal-500'>Add activity</button>
         </div>
 
+        {/* @ts-ignore */}
         <SearchBox accessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!} map={mapInstance}/>
 
         {/* <p className='mt-2'>Notes:</p>

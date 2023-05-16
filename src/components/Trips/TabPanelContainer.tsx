@@ -1,27 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import MonthContainer from './MonthContainer'
+import { ITabPanel } from '../../types/trips'
 
-interface IItineraryData {
-  coverPhoto: string | null
-  destinations: string
-  endDate: string
-  id: number
-  likes: number
-  profileId: number
-  public: boolean
-  startDate: string
-  name: string
-}
 
-interface IItinerariesMap {
-  [key: string]: IItineraryData[]
-}
-
-interface ITabPanel {
-  itinerariesByDate: IItinerariesMap
-  selectedFilter: string
-  selectedIndex: number
-}
 
 const TabPanelContainer = ({itinerariesByDate, selectedFilter, selectedIndex}: ITabPanel) => {
     const [monthContainersAreEmpty, setMonthContainersAreEmpty] = useState(false)

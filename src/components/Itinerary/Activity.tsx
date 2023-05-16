@@ -1,30 +1,26 @@
-import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import axios from 'axios';
 import { BsTrashFill } from 'react-icons/bs'
-import { AiFillEdit } from 'react-icons/ai'
-import { TbNotes } from 'react-icons/tb'
-import { format, parse } from 'date-fns'
-
-interface IActivityProps {
-    setReadOnly: Dispatch<SetStateAction<boolean>>
-    deleteActivity: (activityId: number) => Promise<void>
-    readOnly: boolean
-    city: string
-    contactInfo: string
-    country: string
-    endTime: string
-    id: number
-    name: string
-    note: string
-    photo: string | null
-    postalCode: string
-    startTime: string
-    street: string
-    tripDayId: number
-}
+import { format } from 'date-fns'
+import { IActivityProps } from '../../types/itinerary';
 
 
-const Activity = ({readOnly, setReadOnly, deleteActivity, city, contactInfo, country, endTime, id, name, note, photo, postalCode, startTime, street, tripDayId}: IActivityProps) => {
+const Activity = (
+    { readOnly, 
+      setReadOnly, 
+      deleteActivity, 
+      city, 
+      contactInfo, 
+      country, 
+      endTime, 
+      id, 
+      name, 
+      note, 
+      photo, 
+      postalCode,
+      startTime,
+      street, 
+      tripDayId}: IActivityProps) => {
     const [activityState, setActivityState] = useState({
         city: city,
         contactInfo: contactInfo,

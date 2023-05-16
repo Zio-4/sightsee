@@ -2,45 +2,9 @@ import React, { useState } from 'react'
 import TripDay from './TripDay'
 import format from 'date-fns/format';
 import Image from 'next/image'
+import { IItineraryData } from '../../types/itinerary';
 
-interface IActivity {
-  city: string
-  contactInfo: string
-  country: string
-  endTime: string
-  id: number
-  name: string
-  note: string
-  photo: string | null
-  postalCode: string
-  startTime: string
-  street: string
-  tripDayId: number
-}
-interface ITripDay {
-  activities: IActivity[] | []
-  date: Date
-  id: number
-  itineraryId: number
-}
-
-interface IItineraryData {
-  itin: {
-    coverPhoto?: string
-    destinations: string
-    endDate: Date
-    id: number
-    likes: number
-    name: string
-    public: boolean
-    profileId: string
-    startDate: Date
-    tripDays: ITripDay[]
-  }
-  mapInstance: any
-}
-
-const Itinerary = ({itin, mapInstance}: IItineraryData) => {
+const Itinerary = ({itin}: IItineraryData) => {
 
   return (
     <div className='bg-blue-100 shadow-xl shadow-black min-h-screen'>
@@ -57,7 +21,7 @@ const Itinerary = ({itin, mapInstance}: IItineraryData) => {
             <div className='bg-inherit w-full mt-5 flex'>
                 <div className='grid grid-cols-1 divide-y divide-white text-black w-full'>
                   {itin.tripDays.map((day) => {
-                    return <TripDay key={day.id} date={new Date(day.date)} activities={day.activities} tripDayId={day.id} mapInstance={mapInstance}/>
+                    return <TripDay key={day.id} date={new Date(day.date)} activities={day.activities} tripDayId={day.id} />
                   })}
                 </div>
             </div>
