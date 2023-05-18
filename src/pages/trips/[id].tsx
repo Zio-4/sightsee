@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef} from 'react'
 import Itinerary from '../../components/Itinerary/Itinerary'
-// import Map from '../../components/MapGL'
 import { prisma } from '../../server/db/client'
 import { type GetServerSideProps } from 'next'
 import { FaMapMarkedAlt } from 'react-icons/fa'
@@ -9,43 +8,11 @@ import axios from 'axios'
 import { useAuth } from '@clerk/nextjs'
 import { getAuth, buildClerkProps } from "@clerk/nextjs/server";
 import MapGL from '../../components/MapGL'
-interface IActivity {
-  city: string
-  contactInfo: string
-  country: string
-  endTime: string
-  id: number
-  name: string
-  note: string
-  photo: string | null
-  postalCode: string
-  startTime: string
-  street: string
-  tripDayId: number
-}
-interface ITripDay {
-  activities: IActivity[] | []
-  date: Date
-  id: number
-  itineraryId: number
-}
+import { IItineraryData } from '../../types/itinerary'
 
-interface IItineraryData {
-  itineraryData: {
-    coverPhoto?: string
-    destinations: string
-    endDate: Date
-    id: number
-    likes: number
-    name: string
-    public: boolean
-    profileId: string
-    startDate: Date
-    tripDays: ITripDay[]
-  }
-}
 
-const TripPage = ({ itineraryData} : IItineraryData) => {
+
+const TripPage = ({ itin } : IItineraryData) => {
   const [viewState, setViewState] = useState(false)
   const { isSignedIn } = useAuth()
 
@@ -53,11 +20,11 @@ const TripPage = ({ itineraryData} : IItineraryData) => {
   useEffect(() => {
     const connectItineraryToProfile = async () => {
       await axios.put('/api/itinerary/connect', {
-        itineraryId: itineraryData.id
+        itineraryId: itin.id
       })
     }
 
-    if (!itineraryData.profileId && isSignedIn) {
+    if (!itin.profileId && isSignedIn) {
       connectItineraryToProfile()
     }
 
@@ -67,7 +34,7 @@ const TripPage = ({ itineraryData} : IItineraryData) => {
     <>
     <div className='grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3'>
       <div className={`${viewState && 'hidden'} lg:block 2xl:col-start-1 2xl:col-end-1 shadow-lg shadow-gray-600 z-[998]`}>
-        <Itinerary itin={itineraryData} />
+        <Itinerary itin={itin} />
       </div>
       <div className={`${!viewState && 'hidden'} lg:block 2xl:col-start-2 2xl:col-end-4`}>
         <MapGL />

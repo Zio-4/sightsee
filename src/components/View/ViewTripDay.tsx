@@ -1,28 +1,9 @@
 import React from 'react'
 import format from 'date-fns/format';
 import ViewActivity from './ViewActivity';
+import { ITripDay } from '../../types/itinerary';
 
-interface IActivity {
-    city: string
-    contactInfo: string
-    country: string
-    endTime: string
-    id: number
-    name: string
-    note: string
-    photo: string | null
-    postalCode: string
-    startTime: string
-    street: string
-    tripDayId: number
-  }
-interface ITripDayProps {
-    date: Date
-    activities: IActivity[] | [],
-    tripDayId: number
-}
-
-const ViewTripDay = ({date, activities, tripDayId}: ITripDayProps) => {
+const ViewTripDay = ({date, activities, tripDayId}: ITripDay) => {
 
   return (
     <div className='w-full p-3 text-black'>
@@ -44,6 +25,7 @@ const ViewTripDay = ({date, activities, tripDayId}: ITripDayProps) => {
                             postalCode={act.postalCode}
                             startTime={act.startTime}
                             street={act.street}
+                            note={act.note}
                             tripDayId={act.tripDayId}
                         />
                     }

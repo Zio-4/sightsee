@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from 'react'
+import React from 'react'
 import { AiOutlineInfoCircle } from 'react-icons/ai'
 import Calendar from 'react-calendar'
 import { ITripsPlanForm } from '../../types/trips'

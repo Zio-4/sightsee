@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import TripDay from './TripDay'
 import format from 'date-fns/format';
 import Image from 'next/image'

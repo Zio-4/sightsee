@@ -3,31 +3,14 @@ import LayoutWrapper from '../components/Layout-Navigation/LayoutWrapper'
 import { type GetServerSideProps } from 'next'
 import Search from '../components/Search/Search'
 import { prisma } from '../server/db/client'
+import { IItineraryList } from '../types/trips'
 
 
-interface IItinerary {
-  coverPhoto: string
-  destinations: string
-  endDate: string
-  id: number
-  likes: number
-  name: string
-  creator: string
-  profileId: number
-  public: boolean
-  startDate: string
-}
-
-interface IServerData {
-  initialItineraries: IItinerary[]
-}
-
-
-const discover = ({ initialItineraries }: IServerData) => {
+const discover = ({ itineraries }: IItineraryList) => {
 
   return (
     <LayoutWrapper>
-      <Search initialItineraries={initialItineraries}/>
+      <Search itineraries={itineraries}/>
     </LayoutWrapper>
   )
 }

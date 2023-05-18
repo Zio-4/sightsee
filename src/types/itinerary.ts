@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from "react"
 // Itinerary
 
-type IActivity = {
+export type Activity = {
     city: string
     contactInfo: string
     country: string
@@ -16,39 +16,42 @@ type IActivity = {
     tripDayId: number
 }
 type TripDay = {
-    activities: IActivity[] | []
+    activities: Activity[] | []
     date: Date
     id: number
     itineraryId: number
 }
 
+export type Itinerary = {
+    coverPhoto: string | null
+    destinations: string
+    endDate: Date
+    id: number
+    likes: number
+    name: string
+    public: boolean
+    profileId: number
+    startDate: Date
+    tripDays: TripDay[]
+    creator: string
+  }
+
 export interface IItineraryData {
-    itin: {
-        coverPhoto?: string
-        destinations: string
-        endDate: Date
-        id: number
-        likes: number
-        name: string
-        public: boolean
-        profileId: string
-        startDate: Date
-        tripDays: TripDay[]
-    }
+    itin: Itinerary
 }
 
 // TripDay
 
 export interface ITripDay {
     date: Date
-    activities: IActivity[] | [],
+    activities: Activity[] | [],
     tripDayId: number,
 }
 
 // Activity form
 
 export interface IActivityForm {
-    setActivitiesState: Dispatch<SetStateAction<IActivity[]>>,
+    setActivitiesState: Dispatch<SetStateAction<Activity[]>>,
     tripDayId: number,
 }
 
@@ -70,3 +73,6 @@ export interface IActivityProps {
     street: string
     tripDayId: number
 }
+
+// itinerary/[id] PAGE
+

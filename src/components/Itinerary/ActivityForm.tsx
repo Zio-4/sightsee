@@ -1,4 +1,4 @@
-import React, { useState, Dispatch, SetStateAction } from 'react'
+import React, { useState } from 'react'
 import axios from 'axios';
 import { SearchBox } from '@mapbox/search-js-react';
 import { useAtomValue } from 'jotai';

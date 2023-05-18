@@ -1,26 +1,16 @@
 import { Dispatch, SetStateAction } from "react"
+import { Itinerary } from "./itinerary"
 
  // Month container 
 export type Months = {
     [key: string]: string
 }
 
-export type ItineraryData = {
-    coverPhoto: string | null
-    destinations: string
-    endDate: string
-    id: number
-    likes: number
-    profileId: number
-    public: boolean
-    startDate: string
-    name: string
-  }
 
 export interface IMonthContainer {
     startMonth: string
     startYear: string
-    itineraries: ItineraryData[]
+    itineraries: Itinerary[]
     selectedIndex: number
     monthContainersCheck: () => void
 }
@@ -33,8 +23,8 @@ export interface ITabPanel {
   }
 
 
-type ItinerariesMap = {
-    [key: string]: ItineraryData[]
+export type ItinerariesMap = {
+    [key: string]: Itinerary[]
   }
 
 
@@ -57,4 +47,14 @@ export interface ITripsPlanForm {
     setCalendarDates: Dispatch<SetStateAction<Date[]>>
     calendarDates: Date[]
     submitIsDisabled: boolean
+}
+
+// trips/index
+
+export interface IItineraryList {
+  itineraries: Itinerary[]
+}
+
+export interface INoData {
+  noItins: boolean
 }

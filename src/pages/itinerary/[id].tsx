@@ -4,44 +4,11 @@ import { prisma } from '../../server/db/client'
 import { type GetServerSideProps } from 'next'
 import { FaMapMarkedAlt } from 'react-icons/fa'
 import { SlNote } from 'react-icons/sl'
-import { getServerAuthSession } from '../../server/common/get-server-auth-session'
-
-interface IActivity {
-    city: string
-    contactInfo: string
-    country: string
-    endTime: string
-    id: number
-    name: string
-    note: string
-    photo: string | null
-    postalCode: string
-    startTime: string
-    street: string
-    tripDayId: number
-  }
-  interface ITripDay {
-    activities: IActivity[] | []
-    date: Date
-    id: number
-    itineraryId: number
-  }
+import { Itinerary } from '../../types/itinerary'
   
-  interface IItineraryData {
-    coverPhoto?: string
-    destinations: string
-    endDate: Date
-    id: number
-    likes: number
-    name: string
-    public: boolean
-    profileId: number
-    startDate: Date
-    tripDays: ITripDay[]
-    creator: string
-  }
 
-const ItineraryPage = (itineraryData: IItineraryData) => {
+
+const ItineraryPage = (itineraryData: Itinerary) => {
     const [viewState, setViewState] = useState(false)
 
     return (

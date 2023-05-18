@@ -4,10 +4,11 @@ import React, { useEffect, useState } from 'react'
 import SearchCard from './SearchCard'
 import { BiSearch } from 'react-icons/bi'
 import axios from 'axios'
-import { IInitialItineraries, Itinerary } from '../../types/search'
+import { IItineraryList } from '../../types/trips'
+import { Itinerary } from '../../types/itinerary'
 
 
-const Search = ({ initialItineraries } : IInitialItineraries) => {
+const Search = ({ itineraries } : IItineraryList) => {
     const [query, setQuery] = useState('')
     const [searchResults, setSearchResults] = useState<Itinerary[]>([])
     const [loading, setLoading] = useState(false)
@@ -78,25 +79,21 @@ const Search = ({ initialItineraries } : IInitialItineraries) => {
                       destinations={s.destinations}
                       creator={s.creator}
                       likes={s.likes}
-                      startDate={s.startDate}
-                      endDate={s.endDate}
                       coverPhoto={s.coverPhoto}
                       id={s.id}
                     />
         })) : null}
 
         {!loading && !debouncedSearchQuery.length ? (
-          initialItineraries.map(itin  => {
+          itineraries.map(itinerary  => {
             return <SearchCard 
-                      key={itin.id} 
-                      name={itin.name} 
-                      destinations={itin.destinations} 
-                      creator={itin.creator} 
-                      likes={itin.likes} 
-                      startDate={itin.startDate}
-                      endDate={itin.endDate}
-                      coverPhoto={itin.coverPhoto}
-                      id={itin.id}
+                      key={itinerary.id} 
+                      name={itinerary.name} 
+                      destinations={itinerary.destinations} 
+                      creator={itinerary.creator} 
+                      likes={itinerary.likes} 
+                      coverPhoto={itinerary.coverPhoto}
+                      id={itinerary.id}
                     />
               })
         ): null}

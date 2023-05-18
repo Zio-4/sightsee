@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import TripCard from './TripCard'
-import { ItineraryData, IMonthContainer, Months } from '../../types/trips'
+import { IMonthContainer, Months } from '../../types/trips'
+import { Itinerary } from '../../types/itinerary'
 
 const months: Months = {
     '0': 'January',
@@ -26,7 +27,7 @@ const MonthContainer = ({startMonth, startYear, itineraries, selectedIndex, mont
         const currentDate = new Date()
         const compareDate = new Date(`${currentDate.getMonth() + 1} ${currentDate.getDate()} ${currentDate.getFullYear()}`)
 
-        let filtered: ItineraryData[]
+        let filtered: Itinerary[]
 
         if (selectedIndex === 0) {
             filtered = itineraries.filter((itin: any) => {
