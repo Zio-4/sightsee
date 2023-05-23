@@ -76,3 +76,4 @@ export interface IActivityProps {
 
 // itinerary/[id] PAGE
 
+export type MarkerCoordinates = [number | undefined, number | undefined]

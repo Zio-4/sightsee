@@ -12,7 +12,7 @@ import { IItineraryData } from '../../types/itinerary'
 
 
 
-const TripPage = ({ itin } : IItineraryData) => {
+const TripPage = ({ itin }: IItineraryData) => {
   const [viewState, setViewState] = useState(false)
   const { isSignedIn } = useAuth()
 
@@ -29,6 +29,7 @@ const TripPage = ({ itin } : IItineraryData) => {
     }
 
   }, [isSignedIn])
+
 
   return (
     <>
@@ -92,9 +93,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       }
     }   
 
-
   return { 
-    props: { ...buildClerkProps(ctx.req), itineraryData: JSON.parse(JSON.stringify(itineraryData)) }
+    props: { ...buildClerkProps(ctx.req), itin: JSON.parse(JSON.stringify(itineraryData)) }
   }
   
 }

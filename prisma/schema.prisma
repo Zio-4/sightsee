@@ -84,4 +84,6 @@ model Activity {
   tripDayId   Int?
   photo       String?
   tripDay     TripDay?  @relation(fields: [tripDayId], references: [id], onDelete: Cascade)
+  longitude   Int
+  latitude    Int
 }

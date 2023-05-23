@@ -10,8 +10,12 @@ declare global {
 export const prisma =
   global.prisma ||
   new PrismaClient({
-    log:
-      env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+    log: env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+    datasources: {
+      db: {
+        url: `${env.NODE_ENV === 'production' ? env.DATABASE_URL_PROD : env.DATABASE_URL_DEV}?slaccept=strict&connect_timeout=300`
+      }
+    }
   });
 
 if (env.NODE_ENV !== "production") {
