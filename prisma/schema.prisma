@@ -77,13 +77,10 @@ model Activity {
   endTime     DateTime?
   contactInfo String?
   note        String?
-  street      String?
-  postalCode  String?
-  city        String?
-  country     String?
+  address     String?
   tripDayId   Int?
   photo       String?
   tripDay     TripDay?  @relation(fields: [tripDayId], references: [id], onDelete: Cascade)
-  longitude   Int
-  latitude    Int
+  longitude   Int?
+  latitude    Int?
 }

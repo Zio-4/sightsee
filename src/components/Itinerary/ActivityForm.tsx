@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import axios from 'axios';
-import { SearchBox } from '@mapbox/search-js-react';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { SearchBox,  } from '@mapbox/search-js-react';
+import { useAtomValue, useAtom } from 'jotai';
 import { mapAtom, searchMarkerCoordinatesAtom } from '../../store';
 import { IActivityForm } from '../../types/itinerary';
 
@@ -13,30 +13,39 @@ const searchBoxStyling = {
 
 
 const ActivityForm = ({setActivitiesState, tripDayId, }: IActivityForm) => {
-    const [activityName, setActivityName] = useState('')
+    const [activityDetails, setActivityDetails] = useState({
+        name: '',
+        address: ''
+    })
     const [searchBoxValue, setSearchBoxValue] = useState('');
     const mapInstance = useAtomValue(mapAtom)  
-    const setSearchMarkerCoordinates = useSetAtom(searchMarkerCoordinatesAtom)
+    const [searchMarkerCoordinates, setSearchMarkerCoordinates] = useAtom(searchMarkerCoordinatesAtom)
 
     const createAcitivity = async () => {
-        if (activityName.length === 0) return
+        if (activityDetails.name.length === 0) return
     
         const call = await axios.post('/api/activities', {
-            activityName: activityName,
+            activityName: activityDetails.name,
             activityContactInfo: '',
             activityNote: '',
-            activityStreet: '',
-            activityPostalCode: '',
-            activityCity: '',
-            activityCountry: '',
-            tripDayId: tripDayId
+            acitvityAddress: activityDetails.address,
+            tripDayId: tripDayId,
+            longitude: searchMarkerCoordinates[0],
+            latitude: searchMarkerCoordinates[1]
         })
 
         console.log(call.data)
 
-        setActivityName('')
-
         setActivitiesState((prev) => [...prev, call.data])
+    }
+
+    const handleRetrieve = (res: any) => {
+        setSearchMarkerCoordinates((coords) => [res.features[0]?.properties.coordinates.longitude, res.features[0]?.properties.coordinates.latitude])
+        console.log({res})
+        setActivityDetails({
+            name: res.features[0].properties?.name_preferred || res.features[0].properties.name,
+            address: res.features[0].properties?.full_address || ''
+        })
     }
 
 
@@ -51,7 +60,7 @@ const ActivityForm = ({setActivitiesState, tripDayId, }: IActivityForm) => {
                     map={mapInstance} 
                     value={searchBoxValue} 
                     onChange={(text) => setSearchBoxValue(text)}
-                    onRetrieve={(res) => setSearchMarkerCoordinates((coords) => [res.features[0]?.properties.coordinates.longitude, res.features[0]?.properties.coordinates.latitude])}
+                    onRetrieve={handleRetrieve}
                     theme={searchBoxStyling}
                 />
             </div>
