@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction } from "react"
+import { ActivityCoordinates } from "./map"
 // Itinerary
 
 export type Activity = {
@@ -77,3 +78,11 @@ export interface IActivityProps {
 // itinerary/[id] PAGE
 
 export type MarkerCoordinates = [number | undefined, number | undefined]
+
+
+// trips/[id]
+
+export interface IItineraryPage {
+    itin: Itinerary
+    activityCoordinates: ActivityCoordinates
+}

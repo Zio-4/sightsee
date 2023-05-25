@@ -78,15 +78,11 @@ const Activity = (
         }
 
         await axios.put('/api/activities', {
-            activityName: activityState.name,
-            activityStartTime: tempStartDate,
-            activityEndTime: tempEndDate,
-            activityContactInfo: activityState.contactInfo,
-            activityNote: activityState.note,
-            activityStreet: activityState.street,
-            activityPostalCode: activityState.postcalCode,
-            activityCity: activityState.city,
-            activityCountry: activityState.country,
+            name: activityState.name,
+            startTime: tempStartDate,
+            endTime: tempEndDate,
+            contactInfo: activityState.contactInfo,
+            note: activityState.note,
             activityId: id
         })
     }

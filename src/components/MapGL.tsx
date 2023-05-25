@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Map as MapComponent, NavigationControl, Marker } from 'react-map-gl';
 import { useSetAtom, useAtomValue } from 'jotai';
-import { mapAtom, searchMarkerCoordinatesAtom } from '../store';
+import { mapAtom, searchMarkerCoordinatesAtom, activityCoordinatesAtom } from '../atomStore';
 import * as React from 'react';
 
 const MapGL = () => {
@@ -13,6 +13,7 @@ const MapGL = () => {
   const mapRef = React.useRef(null)
   const setMap = useSetAtom(mapAtom)
   const searchMarkerCoordinates = useAtomValue(searchMarkerCoordinatesAtom)
+  const activityCoordinates = useAtomValue(activityCoordinatesAtom)
 
   useEffect(() => {
     // @ts-ignore
@@ -31,6 +32,8 @@ const MapGL = () => {
         <NavigationControl showCompass showZoom/>
 
         {searchMarkerCoordinates[0] && <Marker longitude={searchMarkerCoordinates[0]} latitude={searchMarkerCoordinates[1]}/>}
+
+        {activityCoordinates.map(coords => coords[0] && <Marker key={coords[0]} longitude={coords[0]} latitude={coords[1]}/>)}
     </MapComponent>
   )
 }

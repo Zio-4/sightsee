@@ -8,14 +8,14 @@ import axios from 'axios'
 import { useAuth } from '@clerk/nextjs'
 import { getAuth, buildClerkProps } from "@clerk/nextjs/server";
 import MapGL from '../../components/MapGL'
-import { IItineraryData } from '../../types/itinerary'
+import { IItineraryPage } from '../../types/itinerary'
+import { useSetAtom } from 'jotai'
+import { activityCoordinatesAtom } from '../../atomStore'
 
-
-
-const TripPage = ({ itin }: IItineraryData) => {
+const TripPage = ({ itin, activityCoordinates }: IItineraryPage) => {
   const [viewState, setViewState] = useState(false)
   const { isSignedIn } = useAuth()
-
+  const setActivityCoordinates = useSetAtom(activityCoordinatesAtom)
 
   useEffect(() => {
     const connectItineraryToProfile = async () => {
@@ -29,6 +29,10 @@ const TripPage = ({ itin }: IItineraryData) => {
     }
 
   }, [isSignedIn])
+
+  useEffect(() => {
+    setActivityCoordinates(activityCoordinates)
+  }, [])
 
 
   return (
@@ -84,17 +88,31 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     console.error(e);
   }
 
-    if (!itineraryData) {
-      return {
-        redirect: {
-          destination: '/trips',
-          permanent: false,
-        }
+  console.log({itineraryData})
+
+  if (!itineraryData) {
+    return {
+      redirect: {
+        destination: '/trips',
+        permanent: false,
       }
-    }   
+    }
+  }
+  
+  let activityCoordinates = []
+  
+  for (const tripDay of itineraryData.tripDays) {
+    for (const activity of tripDay.activities) {
+      // In case activity does not have coordinates
+      if (activity.longitude) {
+        activityCoordinates.push([activity.longitude, activity.latitude])
+      }
+    }
+  }
+
 
   return { 
-    props: { ...buildClerkProps(ctx.req), itin: JSON.parse(JSON.stringify(itineraryData)) }
+    props: { ...buildClerkProps(ctx.req), itin: JSON.parse(JSON.stringify(itineraryData)), activityCoordinates: activityCoordinates }
   }
   
 }

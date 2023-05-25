@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import axios from 'axios';
 import { SearchBox,  } from '@mapbox/search-js-react';
-import { useAtomValue, useAtom } from 'jotai';
-import { mapAtom, searchMarkerCoordinatesAtom } from '../../store';
+import { useAtomValue, useAtom, useSetAtom } from 'jotai';
+import { mapAtom, searchMarkerCoordinatesAtom, activityCoordinatesAtom } from '../../atomStore';
 import { IActivityForm } from '../../types/itinerary';
 
 const searchBoxStyling = {
@@ -20,15 +20,20 @@ const ActivityForm = ({setActivitiesState, tripDayId, }: IActivityForm) => {
     const [searchBoxValue, setSearchBoxValue] = useState('');
     const mapInstance = useAtomValue(mapAtom)  
     const [searchMarkerCoordinates, setSearchMarkerCoordinates] = useAtom(searchMarkerCoordinatesAtom)
+    const setActivityCoordinates = useSetAtom(activityCoordinatesAtom)
 
     const createAcitivity = async () => {
         if (activityDetails.name.length === 0) return
+
+        setSearchBoxValue('')
+
+        setActivityCoordinates((coords) => [...coords, searchMarkerCoordinates])
     
         const call = await axios.post('/api/activities', {
-            activityName: activityDetails.name,
-            activityContactInfo: '',
-            activityNote: '',
-            acitvityAddress: activityDetails.address,
+            name: activityDetails.name,
+            contactInfo: '',
+            note: '',
+            address: activityDetails.address,
             tripDayId: tripDayId,
             longitude: searchMarkerCoordinates[0],
             latitude: searchMarkerCoordinates[1]
@@ -40,8 +45,7 @@ const ActivityForm = ({setActivitiesState, tripDayId, }: IActivityForm) => {
     }
 
     const handleRetrieve = (res: any) => {
-        setSearchMarkerCoordinates((coords) => [res.features[0]?.properties.coordinates.longitude, res.features[0]?.properties.coordinates.latitude])
-        console.log({res})
+        setSearchMarkerCoordinates([res.features[0]?.properties.coordinates.longitude, res.features[0]?.properties.coordinates.latitude])
         setActivityDetails({
             name: res.features[0].properties?.name_preferred || res.features[0].properties.name,
             address: res.features[0].properties?.full_address || ''
