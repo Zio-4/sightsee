@@ -9,29 +9,25 @@ const Activity = (
     { readOnly, 
       setReadOnly, 
       deleteActivity, 
-      city, 
       contactInfo, 
-      country, 
       endTime, 
       id, 
       name, 
       note, 
       photo, 
-      postalCode,
       startTime,
-      street, 
+      address,
+      longitude,
+      latitude, 
       tripDayId}: IActivityProps) => {
     const [activityState, setActivityState] = useState({
-        city: city,
         contactInfo: contactInfo,
-        country: country,
         endTime: `${endTime ? format(new Date(endTime), 'HH') : '--:-- --'}:${endTime ? format(new Date(endTime), 'mm') : '--:-- --'}`,
         name: name,
         note: note,
         photo: photo,
-        postcalCode: postalCode,
+        address: address,
         startTime: `${startTime ? format(new Date(startTime), 'HH'): '--:-- --'}:${startTime ? format(new Date(startTime), 'mm') : '--:-- --'}`,
-        street: street
     })
     const [timeDropDown, setTimeDropDown] = useState(false)
     const [displayStartTime, setDisplayStartTime] = useState(activityState.startTime)
@@ -176,7 +172,7 @@ const Activity = (
                             
                         </div>
 
-                        <button title='delete-button' onClick={() => deleteActivity(id)}>
+                        <button title='delete-button' onClick={() => deleteActivity(id, [longitude, latitude])}>
                             <BsTrashFill className='bg-red-400 p-1 cursor-pointer rounded-md text-white hover:bg-red-500' size={25}/>
                         </button>
                     </div>

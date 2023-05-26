@@ -33,7 +33,7 @@ const MapGL = () => {
 
         {searchMarkerCoordinates[0] && <Marker longitude={searchMarkerCoordinates[0]} latitude={searchMarkerCoordinates[1]}/>}
 
-        {activityCoordinates.map(coords => coords[0] && <Marker key={coords[0]} longitude={coords[0]} latitude={coords[1]}/>)}
+        {activityCoordinates.map((coords, i) => coords[0] && <Marker key={i} longitude={coords[0]} latitude={coords[1]}/>)}
     </MapComponent>
   )
 }

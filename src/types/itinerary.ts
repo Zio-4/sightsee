@@ -3,17 +3,16 @@ import { ActivityCoordinates } from "./map"
 // Itinerary
 
 export type Activity = {
-    city: string
     contactInfo: string
-    country: string
     endTime: string
     id: number
     name: string
     note: string
     photo: string | null
-    postalCode: string
     startTime: string
-    street: string
+    address: string
+    latitude: number | undefined
+    longitude: number | undefined
     tripDayId: number
 }
 type TripDay = {
@@ -59,19 +58,18 @@ export interface IActivityForm {
 // Activity
 export interface IActivityProps {
     setReadOnly: Dispatch<SetStateAction<boolean>>
-    deleteActivity: (activityId: number) => Promise<void>
+    deleteActivity: (activityId: number, activityCoordinates: [number | undefined, number | undefined]) => Promise<void>
     readOnly: boolean
-    city: string
+    address: string
     contactInfo: string
-    country: string
     endTime: string
     id: number
     name: string
     note: string
     photo: string | null
-    postalCode: string
     startTime: string
-    street: string
+    latitude: number | undefined
+    longitude: number | undefined
     tripDayId: number
 }
 

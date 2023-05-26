@@ -88,7 +88,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     console.error(e);
   }
 
-  console.log({itineraryData})
 
   if (!itineraryData) {
     return {

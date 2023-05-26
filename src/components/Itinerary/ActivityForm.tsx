@@ -28,6 +28,8 @@ const ActivityForm = ({setActivitiesState, tripDayId, }: IActivityForm) => {
         setSearchBoxValue('')
 
         setActivityCoordinates((coords) => [...coords, searchMarkerCoordinates])
+
+        setSearchMarkerCoordinates((prev) => [undefined, undefined])
     
         const call = await axios.post('/api/activities', {
             name: activityDetails.name,
@@ -38,8 +40,6 @@ const ActivityForm = ({setActivitiesState, tripDayId, }: IActivityForm) => {
             longitude: searchMarkerCoordinates[0],
             latitude: searchMarkerCoordinates[1]
         })
-
-        console.log(call.data)
 
         setActivitiesState((prev) => [...prev, call.data])
     }
