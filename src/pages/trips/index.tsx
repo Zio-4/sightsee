@@ -102,6 +102,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   
   const { userId } = getAuth(ctx.req);
 
+  console.log('userID: ', userId)
+
   if (!userId) {
     return {
       props: { ...buildClerkProps(ctx.req), noItins: true }
