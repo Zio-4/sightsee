@@ -102,8 +102,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   
   const { userId } = getAuth(ctx.req);
 
-  console.log('userID: ', userId)
-
   if (!userId) {
     return {
       props: { ...buildClerkProps(ctx.req), noItins: true }
@@ -123,11 +121,13 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     })
     data = dbResponse;
 
-    if (data.length) {
-      return { props: { ...buildClerkProps(ctx.req), itineraryData: JSON.parse(JSON.stringify(data)) } }
-    }
   } catch (e) {
     console.error(e);
+  }
+
+  // @ts-ignore
+  if (data.length) {
+    return { props: { ...buildClerkProps(ctx.req), itineraryData: JSON.parse(JSON.stringify(data)) } }
   }
 
   // signed in but have no itineraries
