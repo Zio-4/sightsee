@@ -8,7 +8,7 @@ async function main() {
         return prisma.profile.create({
             data: {
                 clerkId: `${i}`,
-                bio: 'I love to travel to far away places. Check out my itineraries to learn about awesome places you can visit for cheap!',
+                bio: 'I love to travel to far away places. Check out my trips to learn about awesome places you can visit for cheap!',
                 distanceUnits: 'MILES',
                 dateFormat: 'MONTH',
                 timeFormat: 'TWELVE',
@@ -39,26 +39,24 @@ async function main() {
                             createMany: {
                                 data: [
                                     {
-                                        name: 'City Skyline',
+                                        name: 'Empire State Building',
                                         startTime: new Date(),
                                         endTime: new Date(),
                                         contactInfo: '925-925-9259',
                                         note: 'Cool place',
-                                        street: '29',
-                                        postalCode: '89432',
-                                        city: 'Gotham',
-                                        country: 'USA', 
+                                        address: '20 W 34th St., New York, NY 10001',
+                                        longitude: 73.9857,
+                                        latitude: 40.7484
                                     },
                                     {
-                                        name: 'Dinner',
+                                        name: 'Salesforce Tower',
                                         startTime: new Date(),
                                         endTime: new Date(),
                                         contactInfo: '925-925-9259',
                                         note: 'Very cozy',
-                                        street: '138',
-                                        postalCode: '89532',
-                                        city: 'Gotham',
-                                        country: 'USA', 
+                                        address: '415 Mission St, San Francisco, CA 94105',
+                                        longitude: 122.3972,
+                                        latitude: 37.7897
                                     },
                                 ]
                             }

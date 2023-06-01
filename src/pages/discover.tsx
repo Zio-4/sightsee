@@ -33,6 +33,6 @@ export const getServerSideProps: GetServerSideProps = async () => {
   })
 
   return { 
-    props: { initialItineraries: JSON.parse(JSON.stringify(initialItineraries)) } 
+    props: { itineraries: JSON.parse(JSON.stringify(initialItineraries)) } 
   }
 } 

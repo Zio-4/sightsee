@@ -14,7 +14,7 @@ export const itineraries = [
         name: 'Boys trip',
         startDate: new Date(),
         endDate: new Date('January 10, 2023 03:24:00'),
-        likes: 10,
+        likes: 12,
         destinations: "Barbados, Las Vegas, Berlin",
         public: true
     },
@@ -22,7 +22,7 @@ export const itineraries = [
         name: 'Yayaya I am Lorde',
         startDate: new Date(),
         endDate: new Date('January 10, 2023 03:24:00'),
-        likes: 10,
+        likes: 553,
         destinations: "South Park, Colorado",
         public: true
     },
@@ -30,7 +30,7 @@ export const itineraries = [
         name: 'Chinese Government sucks',
         startDate: new Date(),
         endDate: new Date('January 10, 2023 03:24:00'),
-        likes: 10,
+        likes: 356,
         destinations: "Beijing, China",
         public: true
     },
@@ -38,7 +38,7 @@ export const itineraries = [
         name: 'Um whatever',
         startDate: new Date(),
         endDate: new Date('January 10, 2023 03:24:00'),
-        likes: 10,
+        likes: 435,
         destinations: "Mexico",
         public: true
     },
@@ -46,7 +46,7 @@ export const itineraries = [
         name: 'Islands',
         startDate: new Date(),
         endDate: new Date('January 10, 2023 03:24:00'),
-        likes: 10,
+        likes: 200,
         destinations: "St Martin, St Lucia",
         public: true
     },
@@ -54,7 +54,7 @@ export const itineraries = [
         name: 'For the night is dark and full of terrors',
         startDate: new Date(),
         endDate: new Date('January 10, 2023 03:24:00'),
-        likes: 10,
+        likes: 109,
         destinations: "Westoros, Assai, Winterfell",
         public: true
     },

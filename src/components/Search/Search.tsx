@@ -8,12 +8,14 @@ import { IItineraryList } from '../../types/trips'
 import { Itinerary } from '../../types/itinerary'
 
 
-const Search = ({ itineraries } : IItineraryList) => {
+const Search = ({ itineraries }: IItineraryList) => {
     const [query, setQuery] = useState('')
     const [searchResults, setSearchResults] = useState<Itinerary[]>([])
     const [loading, setLoading] = useState(false)
     const [noResults, setNoResults] = useState(false)
     const debouncedSearchQuery = useDebounce(query, 500)
+
+    console.log(itineraries)
 
     useEffect(() => {
 
@@ -68,7 +70,6 @@ const Search = ({ itineraries } : IItineraryList) => {
         </div>
       </div> */}
 
-
       <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-5 mt-10 pb-10'>
 
         {searchResults.length && !loading ? (
@@ -108,3 +109,7 @@ const Search = ({ itineraries } : IItineraryList) => {
 }
 
 export default Search
+
+
+
+

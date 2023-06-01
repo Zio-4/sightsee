@@ -10,7 +10,7 @@ import Loader from '../components/Layout-Navigation/Loader'
 import { prisma } from '../server/db/client'
 import { IProfileData } from '../types/profile'
 
-const profile = ({ profile } : IProfileData) => {
+const profile = ({ profile} : IProfileData) => {
   const { user, isLoaded } = useUser()
   const [editing, setEditing] = useState(false)
   const [formValues, setFormValues] = useState({
@@ -23,6 +23,8 @@ const profile = ({ profile } : IProfileData) => {
     remindersNotification: profile.remindersNotification,
     collaboratorNotification: profile.collaboratorJoinedNotification
   })
+
+  console.log(profile)
 
 
   useEffect(() => {
