@@ -24,7 +24,6 @@ export const serverSchema = z.object({
   DATABASE_URL_PROD: z.string(),
   DATABASE_URL_DEV: z.string(),
   DATABASE_URL_TEST: z.string(),
-  DATABASE_URL: z.string(),
   UNSPLASH_ACCESS_KEY: z.string(),
   UNSPLASH_SECRET_KEY: z.string(),
   CLERK_SECRET_KEY: z.string(),
