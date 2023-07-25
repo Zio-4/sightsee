@@ -4,30 +4,18 @@ import React, { useEffect, useState } from 'react'
 import SearchCard from './SearchCard'
 import { BiSearch } from 'react-icons/bi'
 import axios from 'axios'
+import { IItineraryList } from '../../types/trips'
+import { Itinerary } from '../../types/itinerary'
 
-interface IItinerary {
-    coverPhoto: string
-    destinations: string
-    endDate: string
-    id: number
-    likes: number
-    name: string
-    creator: string
-    profileId: number
-    public: boolean
-    startDate: string
-}
 
-interface IInitialItineraries {
-    initialItineraries: IItinerary[]
-  }
-
-const Search = ({ initialItineraries } : IInitialItineraries) => {
+const Search = ({ itineraries }: IItineraryList) => {
     const [query, setQuery] = useState('')
-    const [searchResults, setSearchResults] = useState<IItinerary[]>([])
+    const [searchResults, setSearchResults] = useState<Itinerary[]>([])
     const [loading, setLoading] = useState(false)
     const [noResults, setNoResults] = useState(false)
     const debouncedSearchQuery = useDebounce(query, 500)
+
+    console.log(itineraries)
 
     useEffect(() => {
 
@@ -82,7 +70,6 @@ const Search = ({ initialItineraries } : IInitialItineraries) => {
         </div>
       </div> */}
 
-
       <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-5 mt-10 pb-10'>
 
         {searchResults.length && !loading ? (
@@ -93,25 +80,21 @@ const Search = ({ initialItineraries } : IInitialItineraries) => {
                       destinations={s.destinations}
                       creator={s.creator}
                       likes={s.likes}
-                      startDate={s.startDate}
-                      endDate={s.endDate}
                       coverPhoto={s.coverPhoto}
                       id={s.id}
                     />
         })) : null}
 
         {!loading && !debouncedSearchQuery.length ? (
-          initialItineraries.map(itin  => {
+          itineraries.map(itinerary  => {
             return <SearchCard 
-                      key={itin.id} 
-                      name={itin.name} 
-                      destinations={itin.destinations} 
-                      creator={itin.creator} 
-                      likes={itin.likes} 
-                      startDate={itin.startDate}
-                      endDate={itin.endDate}
-                      coverPhoto={itin.coverPhoto}
-                      id={itin.id}
+                      key={itinerary.id} 
+                      name={itinerary.name} 
+                      destinations={itinerary.destinations} 
+                      creator={itinerary.creator} 
+                      likes={itinerary.likes} 
+                      coverPhoto={itinerary.coverPhoto}
+                      id={itinerary.id}
                     />
               })
         ): null}
@@ -126,3 +109,7 @@ const Search = ({ initialItineraries } : IInitialItineraries) => {
 }
 
 export default Search
+
+
+
+

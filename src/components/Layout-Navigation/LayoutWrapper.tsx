@@ -1,6 +1,11 @@
-import React from 'react'
+import * as React from 'react';
+// import type { ReactNode } from 'react'
 
-const LayoutWrapper = ({children}: any) => {
+type Props = {
+  children?: React.ReactNode
+};
+
+const LayoutWrapper = ({ children }: Props) => {
   return (
     <div className='flex justify-center w-full'>
             <div className='w-10/12 lg:w-8/12'>

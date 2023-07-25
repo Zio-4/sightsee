@@ -1,40 +1,41 @@
 import React, { useState } from 'react'
 import { useSession } from 'next-auth/react'
 import axios from 'axios';
-import ActivityForm from './ActivityForm';
+// import ActivityForm from './ActivityForm';
 import format from 'date-fns/format';
 import Activity from './Activity'
+import dynamic from 'next/dynamic'
+import { ITripDay } from '../../types/itinerary';
+import { useAtom } from 'jotai';
+import { activityCoordinatesAtom } from '../../atomStore';
 
-interface IActivity {
-    city: string
-    contactInfo: string
-    country: string
-    endTime: string
-    id: number
-    name: string
-    note: string
-    photo: string | null
-    postalCode: string
-    startTime: string
-    street: string
-    tripDayId: number
-  }
-interface ITripDayProps {
-    date: Date
-    activities: IActivity[] | [],
-    tripDayId: number
-}
+// SearchBox component requires the document
+const ActivityForm = dynamic(() => import('../Itinerary/ActivityForm'), {ssr: false})
 
-const TripDay = ({date, activities, tripDayId}: ITripDayProps) => {
+const TripDay = ({date, activities, tripDayId,}: ITripDay) => {
     const [ readOnly, setReadOnly ] = useState(true);
-    const [activitiesState, setActivitiesState] = useState(activities) 
+    const [activitiesState, setActivitiesState] = useState(activities)
+    const [activityCoordinatesState, setActivityCoordinatesState] = useAtom(activityCoordinatesAtom)
 
-    const deleteActivity = async (activityId: number) => {
+    const deleteActivity = async (activityId: number, activityCoordinates: [number | undefined, number | undefined]) => {
         const call = await axios.delete('/api/activities', { 
            data: { activityId: activityId } 
         })
 
         setActivitiesState((prev) => prev.filter(act => act.id !== activityId))
+
+        setActivityCoordinatesState((prev) => {
+            const updatedCoordinatesState = [...prev];
+
+            for (let i = 0; i < updatedCoordinatesState.length; i++) {
+                if (updatedCoordinatesState[i]![0] === activityCoordinates[0] && updatedCoordinatesState[i]![1] === activityCoordinates[1]) {
+                    updatedCoordinatesState.splice(i, 1);
+                    return updatedCoordinatesState;
+                }
+            }
+
+            return updatedCoordinatesState; // Return the updated state if no coordinates were removed
+        })
     }
 
 
@@ -52,24 +53,23 @@ const TripDay = ({date, activities, tripDayId}: ITripDayProps) => {
                             readOnly={readOnly} 
                             setReadOnly={setReadOnly} 
                             deleteActivity={deleteActivity}
-                            city={act.city}
                             contactInfo={act.contactInfo}
-                            country={act.country}
                             endTime={act.endTime}
                             id={act.id}
                             name={act.name}
                             note={act.note}
                             photo={act.photo}
-                            postalCode={act.postalCode}
+                            address={act.address}
                             startTime={act.startTime}
-                            street={act.street}
+                            longitude={act.longitude}
+                            latitude={act.latitude}
                             tripDayId={act.tripDayId}
                         />
             })
         )}
         </div>
     
-        <ActivityForm  setActivitiesState={setActivitiesState} tripDayId={tripDayId}/>
+        <ActivityForm  setActivitiesState={setActivitiesState} tripDayId={tripDayId} />
     </div>
   )
 }

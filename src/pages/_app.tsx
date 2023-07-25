@@ -1,5 +1,5 @@
 import { type AppType } from "next/app";
-import { type Session } from "next-auth";
+// import { type Session } from "next-auth";
 import Navbar from "../components/Layout-Navigation/Navbar";
 import Footer from "../components/Layout-Navigation/Footer";
 import { ClerkProvider } from "@clerk/nextjs";
@@ -14,10 +14,10 @@ const cabin = Merriweather_Sans({
   style: ['normal','italic'],
   subsets: ['latin'],
 })
-
-const MyApp: AppType<{ session: Session | null }> = ({
+// { session: Session | null }
+const MyApp: AppType = ({
   Component,
-  pageProps: { session, ...pageProps },
+  pageProps: { ...pageProps },
 }) => {
   return (
     <ClerkProvider {...pageProps}>

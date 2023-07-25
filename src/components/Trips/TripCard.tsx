@@ -5,16 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import ProfilePlaceholder from '../../assets/profile-placeholder.png'
 import { useUser } from "@clerk/nextjs";
-
-interface ITripCard {
-    title: String,
-    destinations: String
-    startDate: Date,
-    endDate: Date,
-    collaborators: String[] | [],
-    id: Number
-    bgImage: string
-}
+import { ITripCard } from '../../types/trips'
 
 const TripCard = ({ title, startDate, endDate, collaborators, id, destinations}: ITripCard) => {
     const { user } = useUser();

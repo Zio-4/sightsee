@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { useSession } from 'next-auth/react'
 import ProfilePlaceholder from '../assets/profile-placeholder.png'
 import Image from 'next/image'
-import { getServerAuthSession } from '../server/common/get-server-auth-session'
 import axios from 'axios'
 import { GetServerSideProps } from 'next'
 import LayoutWrapper from '../components/Layout-Navigation/LayoutWrapper'
@@ -10,32 +8,23 @@ import { getAuth, buildClerkProps, } from "@clerk/nextjs/server";
 import { useUser } from "@clerk/nextjs";
 import Loader from '../components/Layout-Navigation/Loader'
 import { prisma } from '../server/db/client'
-interface IProfileData {
-  profileData: {
-    clerkId: number
-    bio: string
-    distanceUnits: string
-    dateFormat: string
-    timeFormat: string
-    commentsNotification: boolean
-    remindersNotification: boolean
-    collaboratorJoinedNotification: boolean
-  }
-}
+import { IProfileData } from '../types/profile'
 
-const profile = ({ profileData } : IProfileData) => {
+const profile = ({ profile} : IProfileData) => {
   const { user, isLoaded } = useUser()
   const [editing, setEditing] = useState(false)
   const [formValues, setFormValues] = useState({
     username: '',
-    bio: profileData.bio || 'Tell the world what kind of traveler you are!',
-    distanceUnits: profileData.distanceUnits,
-    dateFormat: profileData.dateFormat,
-    timeFormat: profileData.timeFormat,
-    commentsNotification: profileData.commentsNotification,
-    remindersNotification: profileData.remindersNotification,
-    collaboratorNotification: profileData.collaboratorJoinedNotification
+    bio: profile.bio || 'Tell the world what kind of traveler you are!',
+    distanceUnits: profile.distanceUnits,
+    dateFormat: profile.dateFormat,
+    timeFormat: profile.timeFormat,
+    commentsNotification: profile.commentsNotification,
+    remindersNotification: profile.remindersNotification,
+    collaboratorNotification: profile.collaboratorJoinedNotification
   })
+
+  console.log(profile)
 
 
   useEffect(() => {
@@ -116,17 +105,17 @@ const profile = ({ profileData } : IProfileData) => {
                       <label htmlFor='units' className='font-bold'>Distance Units</label>
                       
                       <div className='space-x-4'>
-                        <input onChange={handleInput} value={'MILES'} type='radio' disabled={!editing} defaultChecked={profileData.distanceUnits === 'MILES'} id='milesFormat' name='distanceUnits' className='text-sky-400 border-gray-300 w-5 h-5'/>
+                        <input onChange={handleInput} value={'MILES'} type='radio' disabled={!editing} defaultChecked={profile.distanceUnits === 'MILES'} id='milesFormat' name='distanceUnits' className='text-sky-400 border-gray-300 w-5 h-5'/>
                         <label htmlFor='milesFormat' className=''>Miles <span className='text-gray-400 text-sm'>(mi)</span></label>
                       </div>
 
                       <div className='space-x-4'>
-                        <input onChange={handleInput} type='radio' value={'KILOMETERS'} disabled={!editing} defaultChecked={profileData.distanceUnits === 'KILOMETERS'} id='kilometersFormat' name='distanceUnits' className=' text-sky-400 border-gray-300 w-5 h-5'/>
+                        <input onChange={handleInput} type='radio' value={'KILOMETERS'} disabled={!editing} defaultChecked={profile.distanceUnits === 'KILOMETERS'} id='kilometersFormat' name='distanceUnits' className=' text-sky-400 border-gray-300 w-5 h-5'/>
                         <label htmlFor='kilometersFormat'>Kilometers <span className='text-gray-400 text-sm'>(km)</span></label>
                       </div>
 
                       <div className='space-x-4'>
-                        <input onChange={handleInput} type='radio' value={'BANANAS'} disabled={!editing} defaultChecked={profileData.distanceUnits === 'BANANAS'} id='bananasFormat' name='distanceUnits' className=' text-sky-400 border-gray-300 w-5 h-5'/>
+                        <input onChange={handleInput} type='radio' value={'BANANAS'} disabled={!editing} defaultChecked={profile.distanceUnits === 'BANANAS'} id='bananasFormat' name='distanceUnits' className=' text-sky-400 border-gray-300 w-5 h-5'/>
                         <label htmlFor='bananasFormat'>Bananas <span className='text-gray-400 text-sm'>(🍌)</span></label>
                       </div>
                     </div>
@@ -134,11 +123,11 @@ const profile = ({ profileData } : IProfileData) => {
                     <div className='flex flex-col space-y-2 space-x-2'>
                       <label className='font-bold'>Date format</label>
                       <div className='space-x-4'>
-                        <input onChange={handleInput} value={'MONTH'} type='radio' id='monthFirst' disabled={!editing} defaultChecked={profileData.dateFormat === 'MONTH'} name='dateFormat' className='text-sky-400 border-gray-300 w-5 h-5'/>
+                        <input onChange={handleInput} value={'MONTH'} type='radio' id='monthFirst' disabled={!editing} defaultChecked={profile.dateFormat === 'MONTH'} name='dateFormat' className='text-sky-400 border-gray-300 w-5 h-5'/>
                         <label htmlFor='monthFirst'>Month/Day <span className='text-gray-400 text-sm'>(5/23)</span></label>
                       </div>
                       <div className='space-x-4'>
-                        <input onChange={handleInput} value={'DAY'} type='radio' id='dayFirst' disabled={!editing} defaultChecked={profileData.dateFormat === 'DAY'} name='dateFormat' className='text-sky-400 border-gray-300 w-5 h-5'/>
+                        <input onChange={handleInput} value={'DAY'} type='radio' id='dayFirst' disabled={!editing} defaultChecked={profile.dateFormat === 'DAY'} name='dateFormat' className='text-sky-400 border-gray-300 w-5 h-5'/>
                         <label htmlFor='dayFirst'>Day/Month <span className='text-gray-400 text-sm'>(23/5)</span></label>
                       </div>
                     </div>
@@ -147,11 +136,11 @@ const profile = ({ profileData } : IProfileData) => {
                       <label className='font-bold'>Time format</label>
 
                       <div className='space-x-4'>
-                        <input onChange={handleInput} type='radio' id='12' disabled={!editing} value={'TWELVE'} defaultChecked={profileData.timeFormat === 'TWELVE'} name='timeFormat' className=' text-sky-400 border-gray-300 w-5 h-5'/>
+                        <input onChange={handleInput} type='radio' id='12' disabled={!editing} value={'TWELVE'} defaultChecked={profile.timeFormat === 'TWELVE'} name='timeFormat' className=' text-sky-400 border-gray-300 w-5 h-5'/>
                         <label htmlFor='12'>12h <span className='text-gray-400 text-sm'>(1:30pm)</span></label>
                       </div>
                       <div className='space-x-4'>
-                        <input onChange={handleInput} type='radio' id='24' disabled={!editing} value={'TWENTYFOUR'} defaultChecked={profileData.timeFormat === 'TWENTYFOUR'} name='timeFormat' className='text-sky-400 border-gray-300 w-5 h-5'/>
+                        <input onChange={handleInput} type='radio' id='24' disabled={!editing} value={'TWENTYFOUR'} defaultChecked={profile.timeFormat === 'TWENTYFOUR'} name='timeFormat' className='text-sky-400 border-gray-300 w-5 h-5'/>
                         <label htmlFor='24'>24h <span className='text-gray-400 text-sm'>(13:30)</span></label>
                       </div>
                     </div>
@@ -160,17 +149,17 @@ const profile = ({ profileData } : IProfileData) => {
 
                   <div className='space-y-2'>
                     <div className='block custom1:flex md:items-center items space-x-2'>
-                      <input onChange={handleInput} type='checkbox' disabled={!editing} defaultChecked={profileData.commentsNotification} id='commented' name='commentsNotification' className='border-gray-300 rounded-md text-sky-400 w-5 h-5'></input>
+                      <input onChange={handleInput} type='checkbox' disabled={!editing} defaultChecked={profile.commentsNotification} id='commented' name='commentsNotification' className='border-gray-300 rounded-md text-sky-400 w-5 h-5'></input>
                       <label htmlFor='commented'>Someone commented on your itinerary</label>
                     </div>
 
                     <div className='block custom1:flex md:items-center items space-x-2'>
-                      <input onChange={handleInput} type='checkbox' disabled={!editing} defaultChecked={profileData.remindersNotification} id='reminders' name='remindersNotification' className='border-gray-300 rounded-md text-sky-400 w-5 h-5'></input>
+                      <input onChange={handleInput} type='checkbox' disabled={!editing} defaultChecked={profile.remindersNotification} id='reminders' name='remindersNotification' className='border-gray-300 rounded-md text-sky-400 w-5 h-5'></input>
                       <label htmlFor='reminders'>Reminders about your upcoming trip</label>
                     </div>
 
                     <div className='block custom1:flex md:items-center items space-x-2'>
-                      <input onChange={handleInput} type='checkbox' disabled={!editing} defaultChecked={profileData.collaboratorJoinedNotification} id='friendJoined' name='collaboratorNotification' className='border-gray-300 rounded-md text-sky-400 w-5 h-5'></input>
+                      <input onChange={handleInput} type='checkbox' disabled={!editing} defaultChecked={profile.collaboratorJoinedNotification} id='friendJoined' name='collaboratorNotification' className='border-gray-300 rounded-md text-sky-400 w-5 h-5'></input>
                       <label htmlFor='friendJoined'>Your friend joined your trip as a collaborator</label>
                     </div>
                   </div>
@@ -198,7 +187,7 @@ export default profile
 
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  // const profileData = await getServerAuthSession({ req, res });
+  // const profile = await getServerAuthSession({ req, res });
 
   const { userId } = getAuth(ctx.req);
 
@@ -211,10 +200,10 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     }
   }
   
-  let profileData
+  let profile
 
   try {
-    profileData = await prisma.profile.findUnique({
+    profile = await prisma.profile.findUnique({
       where: { clerkId: userId }
     })
   } catch (error) {
@@ -223,10 +212,10 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
 
   return {
-    props: { ...buildClerkProps(ctx.req), profileData: profileData}
+    props: { ...buildClerkProps(ctx.req), profile: profile}
   }
 
-  // handle case if profileData dosen't return anything
+  // handle case if profile dosen't return anything
 }
 
 

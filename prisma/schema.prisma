@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL_DEV")
 }
 
 enum DistanceUnits {
@@ -77,11 +77,10 @@ model Activity {
   endTime     DateTime?
   contactInfo String?
   note        String?
-  street      String?
-  postalCode  String?
-  city        String?
-  country     String?
+  address     String?
   tripDayId   Int?
   photo       String?
   tripDay     TripDay?  @relation(fields: [tripDayId], references: [id], onDelete: Cascade)
+  longitude   Float?
+  latitude    Float?
 }

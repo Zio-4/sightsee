@@ -3,12 +3,8 @@ import { Dialog, Transition } from '@headlessui/react'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import axios from 'axios'
+import { IModal } from '../../types/navigation'
 
-interface IModal {
-    isOpen: boolean
-    toggleModal: () => void
-    path: string
-}
 
 const Modal = ({isOpen, toggleModal, path}: IModal) => {
     const router = useRouter()

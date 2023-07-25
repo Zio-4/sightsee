@@ -1,57 +1,31 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import ViewItinerary from '../../components/View/ViewItinerary'
-import Map from '../../components/Map'
 import { prisma } from '../../server/db/client'
 import { type GetServerSideProps } from 'next'
 import { FaMapMarkedAlt } from 'react-icons/fa'
 import { SlNote } from 'react-icons/sl'
-import { getServerAuthSession } from '../../server/common/get-server-auth-session'
+import { buildClerkProps } from "@clerk/nextjs/server";
+import { IItineraryPage } from '../../types/itinerary'
+import { useSetAtom } from 'jotai'
+import { activityCoordinatesAtom } from '../../atomStore'
+import MapGL from '../../components/MapGL'
 
-interface IActivity {
-    city: string
-    contactInfo: string
-    country: string
-    endTime: string
-    id: number
-    name: string
-    note: string
-    photo: string | null
-    postalCode: string
-    startTime: string
-    street: string
-    tripDayId: number
-  }
-  interface ITripDay {
-    activities: IActivity[] | []
-    date: Date
-    id: number
-    itineraryId: number
-  }
-  
-  interface IItineraryData {
-    coverPhoto?: string
-    destinations: string
-    endDate: Date
-    id: number
-    likes: number
-    name: string
-    public: boolean
-    profileId: number
-    startDate: Date
-    tripDays: ITripDay[]
-    creator: string
-  }
-
-const ItineraryPage = (itineraryData: IItineraryData) => {
+const ItineraryPage = ({ itin, activityCoordinates }: IItineraryPage) => {
     const [viewState, setViewState] = useState(false)
+    const setActivityCoordinates = useSetAtom(activityCoordinatesAtom)
+
+    useEffect(() => {
+      setActivityCoordinates(activityCoordinates)
+    }, [])
 
     return (
       <div className='grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3'>
         <div className={`${viewState && 'hidden'} lg:block 2xl:col-start-1 2xl:col-end-1 shadow-lg shadow-gray-600 z-[999]`}>
-          <ViewItinerary itin={itineraryData} />
+          <ViewItinerary itin={itin} />
         </div>
         <div className={`${!viewState && 'hidden'} lg:block 2xl:col-start-2 2xl:col-end-4`}>
-          <Map />
+          {/* Map goes here */}
+          <MapGL />
         </div>
   
         <button onClick={() => setViewState((prev) => !prev)} className='lg:hidden z-[1000] fixed bottom-4 right-4 p-3 text-sm transition-colors duration-300 rounded-full shadow-xl text-violet-100 bg-violet-500 hover:bg-violet-600 shadow-violet-500'>{viewState ? <SlNote size={27}/> : <FaMapMarkedAlt size={27} />}</button>
@@ -61,13 +35,13 @@ const ItineraryPage = (itineraryData: IItineraryData) => {
 
 export default ItineraryPage
 
-export const getServerSideProps: GetServerSideProps = async ({req, res, query}) => {
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
     let itineraryData;
   
     try {           
       const data = await prisma.itinerary.findUnique({
         where: {
-          id: Number(query.id),
+          id: Number(ctx.query.id),
         },
         include: {
           tripDays: {
@@ -88,8 +62,32 @@ export const getServerSideProps: GetServerSideProps = async ({req, res, query}) 
       console.error(e);
     }
 
-    return { 
-      props: JSON.parse(JSON.stringify(itineraryData))
+    if (!itineraryData) {
+      return {
+        redirect: {
+          destination: '/trips',
+          permanent: false,
+        }
+      }
     }
+
+    let activityCoordinates = []
+  
+    for (const tripDay of itineraryData.tripDays) {
+      for (const activity of tripDay.activities) {
+        // In case activity does not have coordinates
+        if (activity.longitude) {
+          activityCoordinates.push([activity.longitude, activity.latitude])
+        }
+      }
+    }
+  
+    return { 
+      props: { ...buildClerkProps(ctx.req), itin: JSON.parse(JSON.stringify(itineraryData)), activityCoordinates: activityCoordinates }
+    }
+
+    // return { 
+    //   props: JSON.parse(JSON.stringify(itineraryData))
+    // }
 
   }

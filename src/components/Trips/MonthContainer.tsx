@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import TripCard from './TripCard'
+import { IMonthContainer, Months } from '../../types/trips'
+import { Itinerary } from '../../types/itinerary'
 
-interface IMonths {
-    [key: string]: string
-}
-
-const months: IMonths = {
+const months: Months = {
     '0': 'January',
     '1': 'February',
     '2': 'March',
@@ -20,26 +18,6 @@ const months: IMonths = {
     '11': 'December',
 }
 
-interface IItineraryData {
-    coverPhoto: string | null
-    destinations: string
-    endDate: string
-    id: number
-    likes: number
-    profileId: number
-    public: boolean
-    startDate: string
-    name: string
-  }
-
-interface IMonthContainer {
-    startMonth: string
-    startYear: string
-    itineraries: IItineraryData[]
-    selectedIndex: number
-    monthContainersCheck: () => void
-}
-
 const MonthContainer = ({startMonth, startYear, itineraries, selectedIndex, monthContainersCheck}: IMonthContainer) => {
     const [filteredItineraries, setFilteredItineraries] = useState(itineraries)
 
@@ -49,7 +27,7 @@ const MonthContainer = ({startMonth, startYear, itineraries, selectedIndex, mont
         const currentDate = new Date()
         const compareDate = new Date(`${currentDate.getMonth() + 1} ${currentDate.getDate()} ${currentDate.getFullYear()}`)
 
-        let filtered: IItineraryData[]
+        let filtered: Itinerary[]
 
         if (selectedIndex === 0) {
             filtered = itineraries.filter((itin: any) => {

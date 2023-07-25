@@ -1,41 +1,33 @@
-import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import axios from 'axios';
 import { BsTrashFill } from 'react-icons/bs'
-import { AiFillEdit } from 'react-icons/ai'
-import { TbNotes } from 'react-icons/tb'
-import { format, parse } from 'date-fns'
-
-interface IActivityProps {
-    setReadOnly: Dispatch<SetStateAction<boolean>>
-    deleteActivity: (activityId: number) => Promise<void>
-    readOnly: boolean
-    city: string
-    contactInfo: string
-    country: string
-    endTime: string
-    id: number
-    name: string
-    note: string
-    photo: string | null
-    postalCode: string
-    startTime: string
-    street: string
-    tripDayId: number
-}
+import { format } from 'date-fns'
+import { IActivityProps } from '../../types/itinerary';
 
 
-const Activity = ({readOnly, setReadOnly, deleteActivity, city, contactInfo, country, endTime, id, name, note, photo, postalCode, startTime, street, tripDayId}: IActivityProps) => {
+const Activity = (
+    { readOnly, 
+      setReadOnly, 
+      deleteActivity, 
+      contactInfo, 
+      endTime, 
+      id, 
+      name, 
+      note, 
+      photo, 
+      startTime,
+      address,
+      longitude,
+      latitude, 
+      tripDayId}: IActivityProps) => {
     const [activityState, setActivityState] = useState({
-        city: city,
         contactInfo: contactInfo,
-        country: country,
         endTime: `${endTime ? format(new Date(endTime), 'HH') : '--:-- --'}:${endTime ? format(new Date(endTime), 'mm') : '--:-- --'}`,
         name: name,
         note: note,
         photo: photo,
-        postcalCode: postalCode,
+        address: address,
         startTime: `${startTime ? format(new Date(startTime), 'HH'): '--:-- --'}:${startTime ? format(new Date(startTime), 'mm') : '--:-- --'}`,
-        street: street
     })
     const [timeDropDown, setTimeDropDown] = useState(false)
     const [displayStartTime, setDisplayStartTime] = useState(activityState.startTime)
@@ -82,15 +74,11 @@ const Activity = ({readOnly, setReadOnly, deleteActivity, city, contactInfo, cou
         }
 
         await axios.put('/api/activities', {
-            activityName: activityState.name,
-            activityStartTime: tempStartDate,
-            activityEndTime: tempEndDate,
-            activityContactInfo: activityState.contactInfo,
-            activityNote: activityState.note,
-            activityStreet: activityState.street,
-            activityPostalCode: activityState.postcalCode,
-            activityCity: activityState.city,
-            activityCountry: activityState.country,
+            name: activityState.name,
+            startTime: tempStartDate,
+            endTime: tempEndDate,
+            contactInfo: activityState.contactInfo,
+            note: activityState.note,
             activityId: id
         })
     }
@@ -184,7 +172,7 @@ const Activity = ({readOnly, setReadOnly, deleteActivity, city, contactInfo, cou
                             
                         </div>
 
-                        <button title='delete-button' onClick={() => deleteActivity(id)}>
+                        <button title='delete-button' onClick={() => deleteActivity(id, [longitude, latitude])}>
                             <BsTrashFill className='bg-red-400 p-1 cursor-pointer rounded-md text-white hover:bg-red-500' size={25}/>
                         </button>
                     </div>

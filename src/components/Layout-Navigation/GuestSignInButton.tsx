@@ -2,12 +2,9 @@ import React from 'react'
 import { FaUserCircle } from 'react-icons/fa'
 import { useRouter } from 'next/router'
 import { SignUpButton, SignInButton } from "@clerk/nextjs";
+import { IGuestSignInButton } from '../../types/navigation';
 
-interface IProps {
-    isHidden: boolean
-}
-
-const GuestSignInButton = ({isHidden}: IProps) => {
+const GuestSignInButton = ({isHidden}: IGuestSignInButton) => {
   const router = useRouter()
 
   return (

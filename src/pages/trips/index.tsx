@@ -1,37 +1,15 @@
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { FaPlane } from 'react-icons/fa'
-import { unstable_getServerSession } from 'next-auth'
-import { authOptions } from '../api/auth/[...nextauth]'
 import { prisma } from '../../server/db/client'
 import { GetServerSideProps } from 'next'
 import LayoutWrapper from '../../components/Layout-Navigation/LayoutWrapper'
 import { Tab } from '@headlessui/react'
 import TabPanelContainer from '../../components/Trips/TabPanelContainer'
 import { getAuth, buildClerkProps } from "@clerk/nextjs/server";
+import { IItineraryList, ItinerariesMap, INoData } from '../../types/trips'
 
-interface IItineraryData {
-  coverPhoto: string | null
-  destinations: string
-  endDate: string
-  id: number
-  likes: number
-  profileId: number
-  public: boolean
-  startDate: string
-  name: string
-}
-interface IServerProps {
-  itineraryData: IItineraryData[]
-}
 
-interface INoData {
-  noItins: boolean
-}
-
-interface IItinerariesMap {
-  [key: string]: IItineraryData[]
-}
 
   // Don't really know what the filter does in this case, tested with and without and couldn't notice a difference.
   // The boolean object always evaluates to true when passed in a conditional statement so nothing will get filetered here?
@@ -42,19 +20,19 @@ function classNames(...classes: string[]) {
 
 const filters =['CURRENT', 'UPCOMING', 'PAST']
 
-const trips = (serverProps: IServerProps | INoData) => {
+const trips = (serverProps: IItineraryList | INoData) => {
     const [selectedIndex, setSelectedIndex] = useState(0)
-    const [itinerariesByDate, setItinerariesByDate] = useState<IItinerariesMap>({})
+    const [itinerariesByDate, setItinerariesByDate] = useState<ItinerariesMap>({})
     const router = useRouter()
 
  
   // Filters itineraries by thier dates. Ex. '1-2023' => [itin1, itin2, ...etc]   
   useEffect(() => {
-    if ("itineraryData" in serverProps) {
-      const itinerariesMap: IItinerariesMap = {}
+    if ("itineraries" in serverProps) {
+      const itinerariesMap: ItinerariesMap = {}
 
 
-      for (const itin of serverProps.itineraryData) {
+      for (const itin of serverProps.itineraries) {
         const start = new Date(itin.startDate)
   
         const startMonth = start.getMonth()
@@ -77,7 +55,6 @@ const trips = (serverProps: IServerProps | INoData) => {
     <LayoutWrapper>
       <div className='relative'>
             <h2 className='text-center text-4xl mt-16 mb-8'>Your Trips</h2>
-            
 
             <Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
               <Tab.List className="flex space-x-1 rounded-xl bg-blue-900/20 p-1 w-full xl:w-1/2 mx-auto">
@@ -144,11 +121,15 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     })
     data = dbResponse;
 
-    if (data.length) {
-      return { props: { ...buildClerkProps(ctx.req), itineraryData: JSON.parse(JSON.stringify(data)) } }
-    }
   } catch (e) {
     console.error(e);
+  }
+
+  console.log('data from call: ', data)
+
+  // @ts-ignore
+  if (data.length) {
+    return { props: { ...buildClerkProps(ctx.req), itineraryData: JSON.parse(JSON.stringify(data)) } }
   }
 
   // signed in but have no itineraries

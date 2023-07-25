@@ -12,13 +12,12 @@ export default async function (
         try {
             const data = await prisma.activity.create({
                 data: {
-                    name: req.body.activityName,
-                    contactInfo: req.body.activityContactInfo,
-                    note: req.body.activityNote,
-                    street: req.body.activityStreet,
-                    postalCode: req.body.activityPostalCode,
-                    city: req.body.activityCity,
-                    country: req.body.activityCountry,
+                    name: req.body.name,
+                    contactInfo: req.body.contactInfo,
+                    note: req.body.note,
+                    address: req.body.address,
+                    longitude: req.body.longitude,
+                    latitude: req.body.latitude,
                     tripDay: {
                         connect: { id: req.body.tripDayId }
                     }
@@ -36,15 +35,14 @@ export default async function (
             const data = await prisma.activity.update({
                 where: { id: req.body.activityId },
                 data: { 
-                    name: req.body.activityName,
-                    startTime: req.body.activityStartTime,
-                    endTime: req.body.activityEndTime,
-                    contactInfo: req.body.activityContactInfo,
-                    note: req.body.activityNote,
-                    street: req.body.activityStreet,
-                    postalCode: req.body.activityPostalCode,
-                    city: req.body.activityCity,
-                    country: req.body.activityCountry,
+                    name: req.body.name,
+                    startTime: req.body.startTime,
+                    endTime: req.body.endTime,
+                    contactInfo: req.body.contactInfo,
+                    note: req.body.note,
+                    address: req.body.address,
+                    longitude: req.body.longitude,
+                    latitude: req.body.latitude,
                  },
             })
 

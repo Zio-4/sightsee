@@ -1,16 +1,9 @@
-import React, { Dispatch, SetStateAction } from 'react'
+import React from 'react'
 import { AiOutlineInfoCircle } from 'react-icons/ai'
 import Calendar from 'react-calendar'
+import { ITripsPlanForm } from '../../types/trips'
 
-interface ITripsPlanPage {
-    handleSubmit: (event: React.FormEvent<HTMLFormElement>) => Promise<void>
-    handleInput: (event: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => void
-    setCalendarDates: Dispatch<SetStateAction<Date[]>>
-    calendarDates: Date[]
-    submitIsDisabled: boolean
-}
-
-const TripPlanForm = ({handleSubmit, handleInput, setCalendarDates, calendarDates, submitIsDisabled}:  ITripsPlanPage) => {
+const TripPlanForm = ({ handleSubmit, handleInput, setCalendarDates, calendarDates, submitIsDisabled }:  ITripsPlanForm) => {
   return (
     <div className='w-full md:w-3/4 xl:w-2/5 mt-12 mx-auto pb-10'>
             <h3 className='text-3xl font-semibold text-center'>Plan a new trip!</h3>
