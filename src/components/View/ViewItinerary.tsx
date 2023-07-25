@@ -7,7 +7,6 @@ import { IItineraryData } from '../../types/itinerary';
 
 const ViewItinerary = ({itin}: IItineraryData) => {
 
-
   return (
     <div className='bg-blue-100 shadow-xl shadow-black min-h-screen'>
         <Image src={itin.coverPhoto!} alt='Itinerary cover' width={300} height={200} priority={true} className='w-full h-80' />

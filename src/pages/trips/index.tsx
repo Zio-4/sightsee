@@ -125,6 +125,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     console.error(e);
   }
 
+  console.log('data from call: ', data)
+
   // @ts-ignore
   if (data.length) {
     return { props: { ...buildClerkProps(ctx.req), itineraryData: JSON.parse(JSON.stringify(data)) } }

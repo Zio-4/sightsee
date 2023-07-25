@@ -6,7 +6,7 @@ import { FaMapMarkedAlt } from 'react-icons/fa'
 import { SlNote } from 'react-icons/sl'
 import axios from 'axios'
 import { useAuth } from '@clerk/nextjs'
-import { getAuth, buildClerkProps } from "@clerk/nextjs/server";
+import { buildClerkProps } from "@clerk/nextjs/server";
 import MapGL from '../../components/MapGL'
 import { IItineraryPage } from '../../types/itinerary'
 import { useSetAtom } from 'jotai'
@@ -57,7 +57,7 @@ export default TripPage
 
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const { userId } = getAuth(ctx.req);
+  // const { userId } = getAuth(ctx.req);
 
   // Check that itinerary profileId matches the user id
   // OR that ip address matches
@@ -108,7 +108,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       }
     }
   }
-
 
   return { 
     props: { ...buildClerkProps(ctx.req), itin: JSON.parse(JSON.stringify(itineraryData)), activityCoordinates: activityCoordinates }

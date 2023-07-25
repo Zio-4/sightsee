@@ -4,11 +4,6 @@ import { useSetAtom, useAtomValue } from 'jotai';
 import { mapAtom, searchMarkerCoordinatesAtom, activityCoordinatesAtom } from '../atomStore';
 import * as React from 'react';
 
-type MapCoords = {
-  longitude: number;
-  latitude: number;
-  zoom: number;
-};
 
 const MapGL = () => {
   const mapRef = React.useRef(null)
