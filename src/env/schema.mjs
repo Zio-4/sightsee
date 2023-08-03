@@ -21,6 +21,14 @@ export const serverSchema = z.object({
   // ),
   // DISCORD_CLIENT_ID: z.string(),
   // DISCORD_CLIENT_SECRET: z.string(),
+  DATABASE_URL_PROD: z.string(),
+  DATABASE_URL_DEV: z.string(),
+  DATABASE_URL_TEST: z.string(),
+  UNSPLASH_ACCESS_KEY: z.string(),
+  UNSPLASH_SECRET_KEY: z.string(),
+  CLERK_SECRET_KEY: z.string(),
+  WEBHOOK_SECRET_USER_CREATED: z.string(),
+  WEBHOOK_SECRET_USER_DELETED: z.string(),
 });
 
 /**
@@ -30,6 +38,8 @@ export const serverSchema = z.object({
  */
 export const clientSchema = z.object({
   // NEXT_PUBLIC_CLIENTVAR: z.string(),
+  NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN: z.string(),
+  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string()
 });
 
 /**
@@ -40,4 +50,6 @@ export const clientSchema = z.object({
  */
 export const clientEnv = {
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
+  NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN: process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN,
+  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
 };
