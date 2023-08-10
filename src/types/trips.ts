@@ -55,6 +55,10 @@ export interface IItineraryList {
   itineraries: Itinerary[]
 }
 
+export interface IItineraryListData {
+  itineraryData: Itinerary[]
+}
+
 export interface INoData {
   noItins: boolean
 }

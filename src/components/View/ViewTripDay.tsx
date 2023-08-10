@@ -5,6 +5,8 @@ import { ITripDay } from '../../types/itinerary';
 
 const ViewTripDay = ({date, activities, tripDayId}: ITripDay) => {
 
+    console.log(activities)
+
   return (
     <div className='w-full p-3 text-black'>
         <div className='flex justify-between'>
