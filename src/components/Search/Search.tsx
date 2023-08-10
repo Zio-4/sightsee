@@ -15,7 +15,6 @@ const Search = ({ itineraries }: IItineraryList) => {
     const [noResults, setNoResults] = useState(false)
     const debouncedSearchQuery = useDebounce(query, 500)
 
-    console.log(itineraries)
 
     useEffect(() => {
 

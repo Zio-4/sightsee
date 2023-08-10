@@ -12,6 +12,7 @@ export default async function (
         case 'POST':
           // Note: Use Zod or similar library to validate req body
           const { userId } = getAuth(req)
+
           let query
 
           const comma = req.body.destinations.indexOf(',')

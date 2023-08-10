@@ -7,7 +7,7 @@ import LayoutWrapper from '../../components/Layout-Navigation/LayoutWrapper'
 import { Tab } from '@headlessui/react'
 import TabPanelContainer from '../../components/Trips/TabPanelContainer'
 import { getAuth, buildClerkProps } from "@clerk/nextjs/server";
-import { IItineraryList, ItinerariesMap, INoData } from '../../types/trips'
+import { IItineraryListData, ItinerariesMap, INoData } from '../../types/trips'
 
 
 
@@ -20,7 +20,7 @@ function classNames(...classes: string[]) {
 
 const filters =['CURRENT', 'UPCOMING', 'PAST']
 
-const trips = (serverProps: IItineraryList | INoData) => {
+const trips = (serverProps: IItineraryListData | INoData) => {
     const [selectedIndex, setSelectedIndex] = useState(0)
     const [itinerariesByDate, setItinerariesByDate] = useState<ItinerariesMap>({})
     const router = useRouter()
@@ -28,11 +28,11 @@ const trips = (serverProps: IItineraryList | INoData) => {
  
   // Filters itineraries by thier dates. Ex. '1-2023' => [itin1, itin2, ...etc]   
   useEffect(() => {
-    if ("itineraries" in serverProps) {
+    if ("itineraryData" in serverProps) {
       const itinerariesMap: ItinerariesMap = {}
 
 
-      for (const itin of serverProps.itineraries) {
+      for (const itin of serverProps.itineraryData) {
         const start = new Date(itin.startDate)
   
         const startMonth = start.getMonth()
@@ -124,8 +124,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   } catch (e) {
     console.error(e);
   }
-
-  console.log('data from call: ', data)
 
   // @ts-ignore
   if (data.length) {
