@@ -2,7 +2,7 @@ import React from 'react'
 import { format, parse } from 'date-fns'
 import { Activity } from '../../types/itinerary'
 
-const ViewActivity = ({city, contactInfo, country, endTime, id, name, photo, postalCode, startTime, street}: Activity) => {
+const ViewActivity = ({contactInfo, endTime, id, name, photo, startTime}: Activity) => {
     const formattedStartTime = `${startTime ? format(new Date(startTime), 'HH'): '--:-- --'}:${startTime ? format(new Date(startTime), 'mm') : '--:-- --'}`
     const formattedEndTime = `${endTime ? format(new Date(endTime), 'HH') : '--:-- --'}:${endTime ? format(new Date(endTime), 'mm') : '--:-- --'}`
 
