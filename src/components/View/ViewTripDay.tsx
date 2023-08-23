@@ -17,16 +17,15 @@ const ViewTripDay = ({date, activities, tripDayId}: ITripDay) => {
             {activities.map(act => {
                 return <ViewActivity
                             key={act.id} 
-                            city={act.city}
+                            address={act.address}
+                            longitude={act.longitude}
+                            latitude={act.latitude}
                             contactInfo={act.contactInfo}
-                            country={act.country}
                             endTime={act.endTime}
                             id={act.id}
                             name={act.name}
                             photo={act.photo}
-                            postalCode={act.postalCode}
                             startTime={act.startTime}
-                            street={act.street}
                             note={act.note}
                             tripDayId={act.tripDayId}
                         />
