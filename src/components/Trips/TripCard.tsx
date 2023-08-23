@@ -1,6 +1,6 @@
 import React from 'react'
-import { BsThreeDotsVertical } from 'react-icons/bs'
-import { FaUserCircle } from 'react-icons/fa'
+// import { BsThreeDotsVertical } from 'react-icons/bs'
+// import { FaUserCircle } from 'react-icons/fa'
 import Link from 'next/link'
 import Image from 'next/image'
 import ProfilePlaceholder from '../../assets/profile-placeholder.png'
