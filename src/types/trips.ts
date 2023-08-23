@@ -55,8 +55,11 @@ export interface IItineraryList {
   itineraries: Itinerary[]
 }
 
-export interface IItineraryListData {
-  itineraryData: Itinerary[]
+type itinMap = {
+  [key: string]: Itinerary[]
+}
+export interface IMappedItineraries {
+  itineraryData: itinMap
 }
 
 export interface INoData {

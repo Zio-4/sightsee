@@ -21,13 +21,14 @@ const TabPanelContainer = ({itinerariesByDate, selectedFilter, selectedIndex}: I
   return (
     <div>
         {Object.keys(itinerariesByDate).map((date, i) => {
-            return <MonthContainer key={i} 
-                                  startMonth={date.length === 6 ? date.substring(0,1) : date.substring(0,2)} 
-                                  startYear={date.substring(2)} 
-                                  itineraries={itinerariesByDate[date]!} 
-                                  selectedIndex={selectedIndex} 
-                                  monthContainersCheck={monthContainersCheck}
-                      />
+            return <MonthContainer 
+                      key={i} 
+                      startMonth={date.length === 6 ? date.substring(0,1) : date.substring(0,2)} 
+                      startYear={date.substring(2)} 
+                      itineraries={itinerariesByDate[date]!} 
+                      selectedIndex={selectedIndex} 
+                      monthContainersCheck={monthContainersCheck}
+                   />
         })}
 
         {monthContainersAreEmpty && (

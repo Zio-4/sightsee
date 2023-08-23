@@ -7,8 +7,7 @@ import LayoutWrapper from '../../components/Layout-Navigation/LayoutWrapper'
 import { Tab } from '@headlessui/react'
 import TabPanelContainer from '../../components/Trips/TabPanelContainer'
 import { getAuth, buildClerkProps } from "@clerk/nextjs/server";
-import { IItineraryListData, ItinerariesMap, INoData } from '../../types/trips'
-
+import { IMappedItineraries, ItinerariesMap, INoData } from '../../types/trips'
 
 
   // Don't really know what the filter does in this case, tested with and without and couldn't notice a difference.
@@ -20,35 +19,9 @@ function classNames(...classes: string[]) {
 
 const filters =['CURRENT', 'UPCOMING', 'PAST']
 
-const trips = (serverProps: IItineraryListData | INoData) => {
+const trips = (serverProps: IMappedItineraries | INoData) => {
     const [selectedIndex, setSelectedIndex] = useState(0)
-    const [itinerariesByDate, setItinerariesByDate] = useState<ItinerariesMap>({})
     const router = useRouter()
-
- 
-  // Filters itineraries by thier dates. Ex. '1-2023' => [itin1, itin2, ...etc]   
-  useEffect(() => {
-    if ("itineraryData" in serverProps) {
-      const itinerariesMap: ItinerariesMap = {}
-
-
-      for (const itin of serverProps.itineraryData) {
-        const start = new Date(itin.startDate)
-  
-        const startMonth = start.getMonth()
-        const startYear = start.getFullYear()  
-
-        if (itinerariesMap[`${startMonth}-${startYear}`]) {
-          itinerariesMap[`${startMonth}-${startYear}`]!.push(itin)
-        } else {
-          itinerariesMap[`${startMonth}-${startYear}`] = [itin]  
-        }
-      }
-
-      setItinerariesByDate(itinerariesMap)
-    }
-
-  }, [])
 
 
   return (
@@ -80,13 +53,15 @@ const trips = (serverProps: IItineraryListData | INoData) => {
               </div>
               <Tab.Panels className="mt-2">
                 {filters.map(filter => {
-                  return (<Tab.Panel key={filter}>
-                  {"itineraryData" in serverProps && Object.keys(itinerariesByDate).length ? (
-                    <TabPanelContainer itinerariesByDate={itinerariesByDate} selectedFilter={filters[selectedIndex]!} selectedIndex={selectedIndex}/>
-                  ) : (
-                      <h2 className='text-center text-xl mt-32 w-full'>{`You don't have any ${filters[selectedIndex]?.toLocaleLowerCase()} trips. Now's the perfect time to plan for a getaway!`}</h2>
-                  )}
-                  </Tab.Panel>)
+                  return (
+                    <Tab.Panel key={filter}>
+                      {"itineraryData" in serverProps && Object.keys(serverProps.itineraryData).length ? (
+                        <TabPanelContainer itinerariesByDate={serverProps.itineraryData} selectedFilter={filters[selectedIndex]!} selectedIndex={selectedIndex}/>
+                      ) : (
+                          <h2 className='text-center text-xl mt-32 w-full'>{`You don't have any ${filters[selectedIndex]?.toLocaleLowerCase()} trips. Now's the perfect time to plan for a getaway!`}</h2>
+                      )}
+                    </Tab.Panel>
+                  )
                 })}
               </Tab.Panels>
             </Tab.Group>
@@ -99,16 +74,15 @@ const trips = (serverProps: IItineraryListData | INoData) => {
 export default trips
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  
   const { userId } = getAuth(ctx.req);
 
-  if (!userId) {
-    return {
-      props: { ...buildClerkProps(ctx.req), noItins: true }
-    }
-  }
+  // if (!userId) {
+  //   return {
+  //     props: { ...buildClerkProps(ctx.req), noItins: true }
+  //   }
+  // }
 
-  let data;
+  let data: any;
 
   try {
     const dbResponse = await prisma.itinerary.findMany({
@@ -125,12 +99,26 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     console.error(e);
   }
 
-  // @ts-ignore
+
   if (data.length) {
-    return { props: { ...buildClerkProps(ctx.req), itineraryData: JSON.parse(JSON.stringify(data)) } }
+    const itinerariesMap: ItinerariesMap = {}
+
+    for (const itin of data) {
+      const start = new Date(itin.startDate)
+
+      const startMonth = start.getMonth()
+      const startYear = start.getFullYear()  
+
+      if (itinerariesMap[`${startMonth}-${startYear}`]) {
+        itinerariesMap[`${startMonth}-${startYear}`]!.push(itin)
+      } else {
+        itinerariesMap[`${startMonth}-${startYear}`] = [itin]  
+      }
+    }
+
+    return { props: { ...buildClerkProps(ctx.req), itineraryData: JSON.parse(JSON.stringify(itinerariesMap)) } }
   }
 
   // signed in but have no itineraries
   return { props: { ...buildClerkProps(ctx.req), noItins: true } }
-  
 }

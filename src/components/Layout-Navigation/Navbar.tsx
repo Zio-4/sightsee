@@ -16,7 +16,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [path, setPath] = useState('')
 
-  const { user, isSignedIn, isLoaded } = useUser()
+  const { user, isSignedIn } = useUser()
 
 
   const toggleModal = () => {
@@ -106,7 +106,9 @@ const Navbar = () => {
 
             {isSignedIn ? (
                 <div className='relative w-1.5/12 hidden md:flex justify-end' onMouseEnter={() => setToolTipHideState(!toolTipHideState)} onMouseLeave={() => setToolTipHideState(!toolTipHideState)} >
-                    <Image  src={user.profileImageUrl || ProfilePlaceholder} alt='profile avatar' width={32} height={32} className=' rounded-full cursor-pointer'/>
+                    <div className='rounded-full'>
+                      <Image  src={user.profileImageUrl || ProfilePlaceholder} alt='profile avatar' width={32} height={32} className='rounded-full cursor-pointer'/>
+                    </div>
 
                     <div className='absolute z-10 right-0 top-8 w-[7rem]'>
                       <div className={`bg-neutral-100 text-black rounded-md p-3 ${toolTipHideState && 'hidden'}`}>
