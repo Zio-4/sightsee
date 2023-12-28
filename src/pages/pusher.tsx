@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import Pusher from 'pusher-js';
+import pusherInstance from '../lib/pusher';
 import axios from 'axios';
 
 
@@ -8,13 +8,8 @@ function pusher() {
     const [input, setInput] = React.useState('')
 
     useEffect(() => {
-        // Handle incoming messages from pusher
-        const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY, {
-            cluster: process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER,
-            // encrypted: true
-        })
-        
-        const channel = pusher.subscribe('test-channel');
+        // Handle incoming messages from pusher        
+        const channel = pusherInstance.subscribe('test-channel');
             channel.bind('test-updated', function(msg) {;
             // Handle the received data, update the messages state
             updateItineraryState(msg.data);

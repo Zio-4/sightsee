@@ -34,7 +34,7 @@ export type Itinerary = {
     startDate: Date
     tripDays: TripDay[]
     creator: string
-  }
+}
 
 export interface IItineraryData {
     itin: Itinerary

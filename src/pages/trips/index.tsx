@@ -8,7 +8,7 @@ import { Tab } from '@headlessui/react'
 import TabPanelContainer from '../../components/Trips/TabPanelContainer'
 import { getAuth, buildClerkProps } from "@clerk/nextjs/server";
 import { IMappedItineraries, ItinerariesMap, INoData } from '../../types/trips'
-
+import { Itinerary } from '../../types/itinerary'
 
   // Don't really know what the filter does in this case, tested with and without and couldn't notice a difference.
   // The boolean object always evaluates to true when passed in a conditional statement so nothing will get filetered here?
@@ -76,34 +76,54 @@ export default trips
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { userId } = getAuth(ctx.req);
 
-  // if (!userId) {
-  //   return {
-  //     props: { ...buildClerkProps(ctx.req), noItins: true }
-  //   }
-  // }
-
   let data: any;
 
   try {
-    const dbResponse = await prisma.itinerary.findMany({
-      where: {
-        profileId: userId,
-      },
-      orderBy:{
-        startDate: 'asc'
-      }
-    })
-    data = dbResponse;
+    if (userId) {
+      data = await prisma.profile.findUnique({
+        where: {
+          clerkId: userId
+        },
+        include: {
+          itineraries: {
+            orderBy:{
+                startDate: 'asc'
+              }
+          },
+          collaborations: {
+            include: {
+              itinerary: true
+            }
+          }
+        }
+      })
+    }
+
 
   } catch (e) {
     console.error(e);
   }
 
+  // add collaboration itineraries if they are not in the users itineraries
+  const allItineraries = data.itineraries
 
-  if (data.length) {
+  // Create a Set of ids from array1 for quick lookup
+  const idsInUsersItineraries = new Set(allItineraries.map((obj: Itinerary) => obj.id));
+
+  // Iterate over array2 and add objects to array1 if the id is not already present
+  data.collaborations.forEach((obj: any) => {
+    if (!idsInUsersItineraries.has(obj.itineraryId)) {
+      // Add field for conditional rendering tag in component
+      obj.itinerary.collaborator = true
+      allItineraries.push(obj.itinerary);
+    }
+  });
+
+
+  if (allItineraries.length) {
     const itinerariesMap: ItinerariesMap = {}
 
-    for (const itin of data) {
+    for (const itin of allItineraries) {
       const start = new Date(itin.startDate)
 
       const startMonth = start.getMonth()
@@ -115,6 +135,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         itinerariesMap[`${startMonth}-${startYear}`] = [itin]  
       }
     }
+
 
     return { props: { ...buildClerkProps(ctx.req), itineraryData: JSON.parse(JSON.stringify(itinerariesMap)) } }
   }

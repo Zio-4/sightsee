@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL_PROD")
+  url      = env("DATABASE_URL_DEV")
 }
 
 enum DistanceUnits {
@@ -34,6 +34,7 @@ model Profile {
   collaboratorJoinedNotification Boolean
   itineraries                    Itinerary[]
   comments                       Comment[]
+  collaborations                 Collaboration[]
 }
 
 model Itinerary {
@@ -51,6 +52,15 @@ model Itinerary {
   comments     Comment[]
   profile      Profile?  @relation(fields: [profileId], references: [clerkId], onDelete: Cascade)
   tripDays     TripDay[]
+  collaborationId Int?
+  collaboration Collaboration?
+}
+
+model Collaboration {
+  id          Int        @id @default(autoincrement())
+  itineraryId Int        @unique
+  itinerary   Itinerary  @relation(fields: [itineraryId], references: [id], onDelete: Cascade)
+  profile     Profile[]
 }
 
 model TripDay {

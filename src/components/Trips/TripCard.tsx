@@ -1,13 +1,13 @@
 import React from 'react'
 // import { BsThreeDotsVertical } from 'react-icons/bs'
-// import { FaUserCircle } from 'react-icons/fa'
+import { FaUserCircle } from 'react-icons/fa'
 import Link from 'next/link'
 import Image from 'next/image'
 import ProfilePlaceholder from '../../assets/profile-placeholder.png'
 import { useUser } from "@clerk/nextjs";
 import { ITripCard } from '../../types/trips'
 
-const TripCard = ({ title, startDate, endDate, collaborators, id, destinations}: ITripCard) => {
+const TripCard = ({ title, startDate, endDate, collaborator, collaborators, id, destinations}: ITripCard) => {
     const { user } = useUser();
 
   return (
@@ -23,15 +23,16 @@ const TripCard = ({ title, startDate, endDate, collaborators, id, destinations}:
             
             <p className='italic text-slate-500'>{destinations}</p>
             <p className='text-sm' title='itinerary-date'>{startDate.toLocaleDateString()} - {endDate.toLocaleDateString()}</p>
+            {collaborator && <div className="badge badge-accent">Collaborator</div>}
             
             {/* Profile images of collaborators */}
             <div className='flex mt-8'>
                 <Image src={user?.profileImageUrl || ProfilePlaceholder} alt='collaborator' height={30} width={30} className='rounded-full'/>
-                {/* <FaUserCircle size={30}/>
                 <FaUserCircle size={30}/>
                 <FaUserCircle size={30}/>
                 <FaUserCircle size={30}/>
-                <FaUserCircle size={30}/> */}
+                <FaUserCircle size={30}/>
+                <FaUserCircle size={30}/>
             </div>
         </Link>
     </div>
