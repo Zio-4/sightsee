@@ -36,12 +36,12 @@ const TripPage = ({ itin, activityCoordinates }: IItineraryPage) => {
 
   return (
     <>
-    <TripLayout 
-      viewState={viewState}
-      setViewState={setViewState}
-      itineraryChild={<Itinerary itin={itin} />}
-      mapChild={<MapGL />}
-    />
+      <TripLayout 
+        viewState={viewState}
+        setViewState={setViewState}
+        itineraryChild={<Itinerary itin={itin} />}
+        mapChild={<MapGL />}
+      />
     </>
   )
 }
@@ -104,7 +104,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     }
   }
 
-  return { 
+  return {  
     props: { ...buildClerkProps(ctx.req), itin: JSON.parse(JSON.stringify(itineraryData)), activityCoordinates: activityCoordinates }
   }
   
