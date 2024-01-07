@@ -8,12 +8,13 @@ import { buildClerkProps } from "@clerk/nextjs/server";
 import MapGL from '../../components/MapGL'
 import { IItineraryPage } from '../../types/itinerary'
 import { useSetAtom } from 'jotai'
-import { activityCoordinatesAtom } from '../../atomStore'
+import { itineraryAtom, activityCoordinatesAtom } from '../../atomStore'
 import TripLayout from '../../components/Trips/TripLayout'
 
 const TripPage = ({ itin, activityCoordinates }: IItineraryPage) => {
   const [viewState, setViewState] = useState(false)
   const { isSignedIn } = useAuth()
+  const setItinerary = useSetAtom(itineraryAtom)
   const setActivityCoordinates = useSetAtom(activityCoordinatesAtom)
 
   useEffect(() => {
@@ -30,6 +31,7 @@ const TripPage = ({ itin, activityCoordinates }: IItineraryPage) => {
   }, [isSignedIn])
 
   useEffect(() => {
+    setItinerary({ ...itin })
     setActivityCoordinates(activityCoordinates)
   }, [])
 
@@ -39,7 +41,8 @@ const TripPage = ({ itin, activityCoordinates }: IItineraryPage) => {
       <TripLayout 
         viewState={viewState}
         setViewState={setViewState}
-        itineraryChild={<Itinerary itin={itin} />}
+        // itineraryChild={<Itinerary itin={itin} />}
+        itineraryChild={<Itinerary />}
         mapChild={<MapGL />}
       />
     </>

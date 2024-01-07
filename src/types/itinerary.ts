@@ -15,7 +15,7 @@ export type Activity = {
     longitude: number | undefined
     tripDayId: number
 }
-type TripDay = {
+export type TripDay = {
     activities: Activity[] | []
     date: Date
     id: number
