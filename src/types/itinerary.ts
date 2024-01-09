@@ -16,7 +16,7 @@ export type Activity = {
     tripDayId: number
 }
 export type TripDay = {
-    activities: Activity[] | []
+    activities: Activity[]
     date: Date
     id: number
     itineraryId: number
@@ -51,7 +51,6 @@ export interface ITripDay {
 // Activity form
 
 export interface IActivityForm {
-    setActivitiesState: Dispatch<SetStateAction<Activity[]>>,
     tripDayId: number,
 }
 

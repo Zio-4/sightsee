@@ -5,8 +5,8 @@ import { format } from 'date-fns'
 import { IActivityProps } from '../../types/itinerary';
 
 
-const Activity = (
-    { readOnly, 
+const Activity = ({
+      readOnly, 
       setReadOnly, 
       deleteActivity, 
       contactInfo, 
@@ -19,26 +19,33 @@ const Activity = (
       address,
       longitude,
       latitude, 
-      tripDayId}: IActivityProps) => {
-    const [activityState, setActivityState] = useState({
-        contactInfo: contactInfo,
-        endTime: `${endTime ? format(new Date(endTime), 'HH') : '--:-- --'}:${endTime ? format(new Date(endTime), 'mm') : '--:-- --'}`,
-        name: name,
-        note: note,
-        photo: photo,
-        address: address,
-        startTime: `${startTime ? format(new Date(startTime), 'HH'): '--:-- --'}:${startTime ? format(new Date(startTime), 'mm') : '--:-- --'}`,
-    })
+      tripDayId
+    }: IActivityProps) => {
+    // const [activityState, setActivityState] = useState({
+    //     contactInfo: contactInfo,
+    //     endTime: `${endTime ?
+    //         format(new Date(endTime), 'HH') : 
+    //         '--:-- --'}
+    //         :
+    //         ${endTime ? 
+    //         format(new Date(endTime), 'mm') :
+    //         '--:-- --'}`,
+    //     name: name,
+    //     note: note,
+    //     photo: photo,
+    //     address: address,
+    //     startTime: `${startTime ? format(new Date(startTime), 'HH'): '--:-- --'}:${startTime ? format(new Date(startTime), 'mm') : '--:-- --'}`,
+    // })
+    // const [displayStartTime, setDisplayStartTime] = useState(activityState.startTime)
+    // const [displayEndTime, setDisplayEndTime] = useState(activityState.endTime)
     const [timeDropDown, setTimeDropDown] = useState(false)
-    const [displayStartTime, setDisplayStartTime] = useState(activityState.startTime)
-    const [displayEndTime, setDisplayEndTime] = useState(activityState.endTime)
     const clearedTimeRef = useRef(false)
 
     useEffect(() => {
         const apiCall = async () => {
             if (clearedTimeRef.current) {
-                setDisplayStartTime(`${activityState.startTime}`)
-                setDisplayEndTime(`${activityState.endTime}`)
+                // setDisplayStartTime(`${activityState.startTime}`)
+                // setDisplayEndTime(`${activityState.endTime}`)
                 await sendUpdateReq()
                 clearedTimeRef.current = false
             }
@@ -48,8 +55,7 @@ const Activity = (
 
 
     const updateActivity = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setActivityState({...activityState, [e.target.name]: e.target.value})
-        
+        // setActivityState({...activityState, [e.target.name]: e.target.value})
     }
 
     const sendUpdateReq = async () => {
@@ -115,27 +121,42 @@ const Activity = (
 
     const clearTime = () => {
         setTimeDropDown(prev => !prev)
-        setActivityState({...activityState, 'startTime': '--:-- --', 'endTime': '--:-- --'})
+        // setActivityState({...activityState, 'startTime': '--:-- --', 'endTime': '--:-- --'})
         clearedTimeRef.current = true
     }
 
     const saveTime = async () => {
         setTimeDropDown(prev => !prev)
-        setDisplayStartTime(activityState.startTime)
-        setDisplayEndTime(activityState.endTime)
+        // setDisplayStartTime(activityState.startTime)
+        // setDisplayEndTime(activityState.endTime)
         await sendUpdateReq()
     }
 
 
 
   return (
-
         <div  >
             <div className='flex flex-col'>
-                <input onChange={updateActivity} name='name' value={activityState.name} readOnly={readOnly} onFocus={() => setReadOnly(false)} onBlur={handleBlur} className='bg-white bg-opacity-40 rounded-md p-1 outline-none w-fit h-fit'/>
+                <input 
+                    onChange={updateActivity} 
+                    name='name' 
+                    value={activityState.name} 
+                    readOnly={readOnly} 
+                    onFocus={() => setReadOnly(false)} 
+                    onBlur={handleBlur} 
+                    className='bg-white bg-opacity-40 rounded-md p-1 outline-none w-fit h-fit'
+                />
 
                 <div className='bg-white bg-opacity-40 rounded-md p-2 mt-2'>
-                    <textarea value={activityState.note} name='note' onFocus={() => setReadOnly(false)} onBlur={handleBlur} placeholder='Add notes, links, etc.' onChange={updateActivity} className='bg-transparent p-1 focus:ring-0 focus:ring-offset-0 border-0 resize-none mt-2 placeholder-slate-400 w-full' />
+                    <textarea 
+                        value={activityState.note} 
+                        name='note' 
+                        onFocus={() => setReadOnly(false)} 
+                        onBlur={handleBlur} 
+                        placeholder='Add notes, links, etc.' 
+                        onChange={updateActivity} 
+                        className='bg-transparent p-1 focus:ring-0 focus:ring-offset-0 border-0 resize-none mt-2 placeholder-slate-400 w-full' 
+                    />
                     
                     <div className='flex justify-between'>
                         <div  className=' bg-sky-200 text-sky-600 rounded-full p-1 w-fit text-xs cursor-pointer relative'>
@@ -158,9 +179,21 @@ const Activity = (
                             {timeDropDown && (
                                 <div className='absolute top-10 bg-slate-400 p-3 rounded-lg z-10'>
                                     <div className='flex'>
-                                        <input value={activityState.startTime} onChange={updateActivity} type='time' name='startTime' className='rounded-md border-0'/>
+                                        <input 
+                                            value={activityState.startTime} 
+                                            onChange={updateActivity} 
+                                            type='time' 
+                                            name='startTime' 
+                                            className='rounded-md border-0'
+                                        />
                                         <p>-</p>
-                                        <input value={activityState.endTime} onChange={updateActivity} type='time' name='endTime' className='rounded-md border-0'/>
+                                        <input 
+                                            value={activityState.endTime} 
+                                            onChange={updateActivity} 
+                                            type='time' 
+                                            name='endTime' 
+                                            className='rounded-md border-0'
+                                        />
                                     </div>
 
                                     <div className='flex justify-around mt-4 text-lg'>

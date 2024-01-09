@@ -2,7 +2,12 @@ import React, { useState } from 'react'
 import axios from 'axios';
 import { SearchBox,  } from '@mapbox/search-js-react';
 import { useAtomValue, useAtom, useSetAtom } from 'jotai';
-import { mapAtom, searchMarkerCoordinatesAtom, activityCoordinatesAtom } from '../../atomStore';
+import { 
+    mapAtom,
+    searchMarkerCoordinatesAtom,
+    activityCoordinatesAtom,
+    addActivity
+ } from '../../atomStore';
 import { IActivityForm } from '../../types/itinerary';
 
 const searchBoxStyling = {
@@ -12,7 +17,7 @@ const searchBoxStyling = {
 }
 
 
-const ActivityForm = ({setActivitiesState, tripDayId, }: IActivityForm) => {
+const ActivityForm = ({ tripDayId, }: IActivityForm) => {
     const [activityDetails, setActivityDetails] = useState({
         name: '',
         address: ''
@@ -41,7 +46,8 @@ const ActivityForm = ({setActivitiesState, tripDayId, }: IActivityForm) => {
             latitude: searchMarkerCoordinates[1]
         })
 
-        setActivitiesState((prev) => [...prev, call.data])
+        // setActivitiesState((prev) => [...prev, call.data])
+        addActivity(call.data)
     }
 
     const handleRetrieve = (res: any) => {

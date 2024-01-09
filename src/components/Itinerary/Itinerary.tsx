@@ -10,10 +10,6 @@ const Itinerary = ({itin}: IItineraryData) => {
   // get itinerary data from atom
   const itinerary = useAtomValue(itineraryAtom)
 
-   useEffect(() => {
-    console.log(itinerary)
-    }, [])
-
   return (
     <div>
       {itinerary.name && (
