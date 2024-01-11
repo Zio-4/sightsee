@@ -1,14 +1,25 @@
-import React, { useEffect } from 'react'
+import React, { use, useEffect } from 'react'
 import TripDay from './TripDay'
 import format from 'date-fns/format';
 import Image from 'next/image'
 import { IItineraryData } from '../../types/itinerary';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useAtom } from 'jotai';
 import { itineraryAtom } from '../../atomStore';
+import { focusAtom } from 'jotai-optics'
+import { splitAtom } from 'jotai/utils'
 
 const Itinerary = ({itin}: IItineraryData) => {
   // get itinerary data from atom
   const itinerary = useAtomValue(itineraryAtom)
+
+  const tripDaysAtom = focusAtom(itineraryAtom, (optic) => optic.prop('tripDays'))
+  const tripDayAtomState = useAtomValue(tripDaysAtom)
+  console.log('trip days atom state (focused: ', tripDayAtomState)
+  // const tripDaysSplitAtom = splitAtom(tripDaysAtom)
+  // console.log(tripDaysSplitAtom)
+  // // const tripDays = useAtomValue(tripDaysSplitAtom)
+  // const [tripDays] = useAtom(tripDaysSplitAtom)
+  // console.log(tripDays) 
 
   return (
     <div>
@@ -26,14 +37,15 @@ const Itinerary = ({itin}: IItineraryData) => {
           <div className='w-11/12 md:w-10/12 lg:w-11/2 mx-auto'>
               <div className='bg-inherit w-full mt-5 flex'>
                   <div className='grid grid-cols-1 divide-y divide-white text-black w-full'>
-                    {itinerary.tripDays.map((day) => {
-                      return <TripDay 
-                                key={day.id} 
-                                date={new Date(day.date)} 
-                                activities={day.activities}
-                                tripDayId={day.id}
+                    {/* {tripDays.map((day) => {
+                      return <TripDay
+                                tripDayAtom={day} 
+                                // key={day.id} 
+                                // date={new Date(day.date)} 
+                                // activities={day.activities}
+                                // tripDayId={day.id}
                               />
-                    })}
+                    })} */}
                   </div>
               </div>
           </div>

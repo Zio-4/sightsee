@@ -3,23 +3,51 @@ import axios from 'axios';
 import { BsTrashFill } from 'react-icons/bs'
 import { format } from 'date-fns'
 import { IActivityProps } from '../../types/itinerary';
+import { useAtom } from 'jotai';
+
+// const itin = {
+//     name: 'test',
+//     tripDays: [
+//         {
+//             activities: [
+//                 {
+//                     contactInfo: 'test',
+//                     endTime: new Date(),
+//                     id: 1,
+//                     name: 'test',
+//                     note: 'test',
+//                     photo: 'test',
+//                     startTime: new Date(),
+//                     address: 'test',
+//                     longitude: 123,
+//                     latitude: 123,
+//                     tripDayId: 1
+//                 }
+//             ],
+//             date: new Date(),
+//             id: 1,
+//             itineraryId: 1
+//         }
+//     ],
+// }
 
 
 const Activity = ({
-      readOnly, 
-      setReadOnly, 
-      deleteActivity, 
-      contactInfo, 
-      endTime, 
-      id, 
-      name, 
-      note, 
-      photo, 
-      startTime,
-      address,
-      longitude,
-      latitude, 
-      tripDayId
+    //   readOnly, 
+    //   setReadOnly, 
+    //   deleteActivity, 
+    //   contactInfo, 
+    //   endTime, 
+    //   id, 
+    //   name, 
+    //   note, 
+    //   photo, 
+    //   startTime,
+    //   address,
+    //   longitude,
+    //   latitude, 
+    //   tripDayId
+        activityAtom
     }: IActivityProps) => {
     // const [activityState, setActivityState] = useState({
     //     contactInfo: contactInfo,
@@ -38,8 +66,11 @@ const Activity = ({
     // })
     // const [displayStartTime, setDisplayStartTime] = useState(activityState.startTime)
     // const [displayEndTime, setDisplayEndTime] = useState(activityState.endTime)
+    const [activityState, setActivityState] = useAtom(activityAtom)
     const [timeDropDown, setTimeDropDown] = useState(false)
     const clearedTimeRef = useRef(false)
+
+    console.log({activityState})
 
     useEffect(() => {
         const apiCall = async () => {
@@ -85,12 +116,12 @@ const Activity = ({
             endTime: tempEndDate,
             contactInfo: activityState.contactInfo,
             note: activityState.note,
-            activityId: id
+            // activityId: id
         })
     }
 
     const handleBlur = async () => {
-        setReadOnly(true)
+        // setReadOnly(true)
         
         await sendUpdateReq()
     }
@@ -136,7 +167,7 @@ const Activity = ({
 
   return (
         <div  >
-            <div className='flex flex-col'>
+            {/* <div className='flex flex-col'>
                 <input 
                     onChange={updateActivity} 
                     name='name' 
@@ -210,7 +241,7 @@ const Activity = ({
                         </button>
                     </div>
                 </div>
-            </div>
+            </div> */}
         </div>
 
   )

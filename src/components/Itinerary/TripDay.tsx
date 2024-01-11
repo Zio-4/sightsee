@@ -1,17 +1,24 @@
-import React, { useState } from 'react'
+import React, { use, useState } from 'react'
 import axios from 'axios';
 // import ActivityForm from './ActivityForm';
 import format from 'date-fns/format';
 import Activity from './Activity'
 import dynamic from 'next/dynamic'
 import { ITripDay } from '../../types/itinerary';
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
+import { focusAtom } from 'jotai-optics';
+import { splitAtom } from 'jotai/utils';
 import { activityCoordinatesAtom, removeActivity } from '../../atomStore';
 
 // SearchBox component requires the document
 const ActivityForm = dynamic(() => import('../Itinerary/ActivityForm'), {ssr: false})
 
-const TripDay = ({date, activities, tripDayId,}: ITripDay) => {
+// {date, activities, tripDayId,}: ITripDay
+const TripDay = (tripDayAtom) => {
+    const activitiesFocused = focusAtom(tripDayAtom, (tripDay) => tripDay.activities)
+    const activitiesSplit = splitAtom(activitiesFocused)
+    const activities = useAtomValue(activitiesSplit)
+
     const [ readOnly, setReadOnly ] = useState(true);
     // const [activitiesState, setActivitiesState] = useState(activities)
     const [activityCoordinatesState, setActivityCoordinatesState] = useAtom(activityCoordinatesAtom)
@@ -50,21 +57,22 @@ const TripDay = ({date, activities, tripDayId,}: ITripDay) => {
         {activities.length > 0 && (
             activities.map(act => {
                 return <Activity
-                            key={act.id} 
-                            readOnly={readOnly} 
-                            setReadOnly={setReadOnly} 
-                            deleteActivity={deleteActivity}
-                            contactInfo={act.contactInfo}
-                            endTime={act.endTime}
-                            id={act.id}
-                            name={act.name}
-                            note={act.note}
-                            photo={act.photo}
-                            address={act.address}
-                            startTime={act.startTime}
-                            longitude={act.longitude}
-                            latitude={act.latitude}
-                            tripDayId={act.tripDayId}
+                            activityAtom={act}
+                            // key={act.id} 
+                            // readOnly={readOnly} 
+                            // setReadOnly={setReadOnly} 
+                            // deleteActivity={deleteActivity}
+                            // contactInfo={act.contactInfo}
+                            // endTime={act.endTime}
+                            // id={act.id}
+                            // name={act.name}
+                            // note={act.note}
+                            // photo={act.photo}
+                            // address={act.address}
+                            // startTime={act.startTime}
+                            // longitude={act.longitude}
+                            // latitude={act.latitude}
+                            // tripDayId={act.tripDayId}
                         />
             })
         )}

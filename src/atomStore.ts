@@ -3,7 +3,6 @@ import { Itinerary, MarkerCoordinates } from './types/itinerary'
 import { ActivityCoordinates } from './types/map'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { TripDay, Activity } from './types/itinerary'
-import { set } from 'date-fns'
 
 export const mapAtom = atom({})
 
