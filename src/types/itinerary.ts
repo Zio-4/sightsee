@@ -16,7 +16,7 @@ export type Activity = {
     tripDayId: number
 }
 export type TripDay = {
-    activities: Activity[]
+    activities: Activity[] | number[]
     date: Date
     id: number
     itineraryId: number
@@ -32,7 +32,7 @@ export type Itinerary = {
     public: boolean
     profileId: number
     startDate: Date
-    tripDays: TripDay[]
+    tripDays: TripDay[] | number[]
     creator: string
 }
 
@@ -80,6 +80,8 @@ export type MarkerCoordinates = [number | undefined, number | undefined]
 // trips/[id]
 
 export interface IItineraryPage {
-    itin: Itinerary
+    itinerary: Itinerary,
+    tripDays: TripDay[],
+    activities: Activity[],
     activityCoordinates: ActivityCoordinates
 }

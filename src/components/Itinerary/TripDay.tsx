@@ -1,4 +1,8 @@
-import React, { use, useState } from 'react'
+import React, { 
+    use,
+    useState,
+    useCallback 
+} from 'react'
 import axios from 'axios';
 // import ActivityForm from './ActivityForm';
 import format from 'date-fns/format';
@@ -8,16 +12,19 @@ import { ITripDay } from '../../types/itinerary';
 import { useAtom, useAtomValue } from 'jotai';
 import { focusAtom } from 'jotai-optics';
 import { splitAtom } from 'jotai/utils';
-import { activityCoordinatesAtom, removeActivity } from '../../atomStore';
+import { 
+    activityCoordinatesAtom, 
+    removeActivity,
+    tripDaysAtom,
+} from '../../atomStore';
 
 // SearchBox component requires the document
 const ActivityForm = dynamic(() => import('../Itinerary/ActivityForm'), {ssr: false})
 
 // {date, activities, tripDayId,}: ITripDay
-const TripDay = (tripDayAtom) => {
-    const activitiesFocused = focusAtom(tripDayAtom, (tripDay) => tripDay.activities)
-    const activitiesSplit = splitAtom(activitiesFocused)
-    const activities = useAtomValue(activitiesSplit)
+const TripDay = (tripDayId) => {
+    const tripDays = useAtomValue(tripDaysAtom)
+     const tripDay = tripDays[tripDayId]
 
     const [ readOnly, setReadOnly ] = useState(true);
     // const [activitiesState, setActivitiesState] = useState(activities)
@@ -54,11 +61,11 @@ const TripDay = (tripDayAtom) => {
         </div>
 
         <div className='space-y-3'>
-        {activities.length > 0 && (
-            activities.map(act => {
+        {tripDay.activities.length > 0 && (
+            tripDay.activities.map(activityId => {
                 return <Activity
-                            activityAtom={act}
-                            // key={act.id} 
+                            activityId={activityId}
+                            key={activityId} 
                             // readOnly={readOnly} 
                             // setReadOnly={setReadOnly} 
                             // deleteActivity={deleteActivity}

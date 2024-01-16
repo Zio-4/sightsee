@@ -4,6 +4,7 @@ import { BsTrashFill } from 'react-icons/bs'
 import { format } from 'date-fns'
 import { IActivityProps } from '../../types/itinerary';
 import { useAtom } from 'jotai';
+import { activitiesAtom, selectActivity } from '../../atomStore';
 
 // const itin = {
 //     name: 'test',
@@ -47,7 +48,7 @@ const Activity = ({
     //   longitude,
     //   latitude, 
     //   tripDayId
-        activityAtom
+        activityId
     }: IActivityProps) => {
     // const [activityState, setActivityState] = useState({
     //     contactInfo: contactInfo,
@@ -66,7 +67,8 @@ const Activity = ({
     // })
     // const [displayStartTime, setDisplayStartTime] = useState(activityState.startTime)
     // const [displayEndTime, setDisplayEndTime] = useState(activityState.endTime)
-    const [activityState, setActivityState] = useAtom(activityAtom)
+    const [activityState, setActivity] = useAtom(selectActivity(activityId))
+
     const [timeDropDown, setTimeDropDown] = useState(false)
     const clearedTimeRef = useRef(false)
 
