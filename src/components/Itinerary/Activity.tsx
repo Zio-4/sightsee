@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { use, useEffect, useRef, useState } from 'react'
 import axios from 'axios';
 import { BsTrashFill } from 'react-icons/bs'
 import { format } from 'date-fns'
@@ -72,8 +72,6 @@ const Activity = ({
     const [timeDropDown, setTimeDropDown] = useState(false)
     const clearedTimeRef = useRef(false)
 
-    console.log({activityState})
-
     useEffect(() => {
         const apiCall = async () => {
             if (clearedTimeRef.current) {
@@ -85,6 +83,10 @@ const Activity = ({
         }
         apiCall()
     }, [activityState])
+
+    useEffect(() => {
+        console.log('loop test')
+    }, [])
 
 
     const updateActivity = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

@@ -4,6 +4,7 @@ import React, {
     useCallback 
 } from 'react'
 import axios from 'axios';
+import { useEffect } from 'react';
 // import ActivityForm from './ActivityForm';
 import format from 'date-fns/format';
 import Activity from './Activity'
@@ -15,16 +16,30 @@ import { splitAtom } from 'jotai/utils';
 import { 
     activityCoordinatesAtom, 
     removeActivity,
+    selectTripDay,
     tripDaysAtom,
+    tripDayIdAtom,
+    selectedTripDayAtom
 } from '../../atomStore';
 
 // SearchBox component requires the document
 const ActivityForm = dynamic(() => import('../Itinerary/ActivityForm'), {ssr: false})
 
 // {date, activities, tripDayId,}: ITripDay
-const TripDay = (tripDayId) => {
-    const tripDays = useAtomValue(tripDaysAtom)
-     const tripDay = tripDays[tripDayId]
+const TripDay = ({tripDayId}) => {
+    const [, setTripDayId] = useAtom(tripDayIdAtom);
+
+    useEffect(() => {
+      setTripDayId(tripDayId);
+    }, [tripDayId, setTripDayId]);
+  
+    const [tripDay] = useAtom(selectedTripDayAtom);
+  
+
+    // const [tripDay, setTripDay] = useAtom(selectTripDay(tripDayId))
+
+    // const tripDays = useAtomValue(tripDaysAtom)
+    //  const tripDay = tripDays[tripDayId]
 
     const [ readOnly, setReadOnly ] = useState(true);
     // const [activitiesState, setActivitiesState] = useState(activities)
@@ -53,15 +68,18 @@ const TripDay = (tripDayId) => {
         })
     }
 
+    function formattedDate() {
+        return format(new Date(tripDay.date), 'MMM do')
+    }
 
   return (
     <div className='w-full p-3 text-black'>
         <div className='flex justify-between'>
-            <p className='mb-3 text-xl font-semibold'>{format(date, 'MMM do')}</p>
+            <p className='mb-3 text-xl font-semibold'>{tripDay ? format(new Date(tripDay.date), 'MMM do') : ''}</p>
         </div>
 
         <div className='space-y-3'>
-        {tripDay.activities.length > 0 && (
+        {/* {tripDay.activities.length > 0 && (
             tripDay.activities.map(activityId => {
                 return <Activity
                             activityId={activityId}
@@ -82,7 +100,7 @@ const TripDay = (tripDayId) => {
                             // tripDayId={act.tripDayId}
                         />
             })
-        )}
+        )} */}
         </div>
     
         <ActivityForm tripDayId={tripDayId} />

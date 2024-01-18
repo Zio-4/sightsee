@@ -140,21 +140,21 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const tripDays = {};
     const activities = {};
 
-    itinerary.tripDays = data.tripDays.map(day => day.id)
-
     data.tripDays.forEach((day: TripDay) => {
+      day.activities.forEach((activity: Activity) => {
+        if (activity.longitude) {
+          //@ts-ignore
+          activityCoordinates.push([activity.longitude, activity.latitude])
+        }
         // @ts-ignore
-        tripDays[day.id] = { ...day, activities: day.activities.map(activity => activity.id) };
-
-        day.activities.forEach((activity: Activity) => {
-            if (activity.longitude) {
-              //@ts-ignore
-              activityCoordinates.push([activity.longitude, activity.latitude])
-            }
-            // @ts-ignore
-            activities[activity.id] = { ...activity };
-        });
+        activities[activity.id] = { ...activity };
+      });  
+      
+      // @ts-ignore
+      tripDays[day.id] = { ...day, activities: day.activities.map(activity => activity.id) };
     });
+
+    itinerary.tripDays = data.tripDays.map(day => day.id)
 
     return { itinerary, tripDays, activities };
   };
@@ -186,9 +186,9 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     props: { 
       ...buildClerkProps(ctx.req), 
       // itin: JSON.parse(JSON.stringify(itineraryData)), 
-      itinerary: normalizedData.itinerary,
-      tripDays: normalizedData.tripDays,
-      activities: normalizedData.activities,
+      itinerary: JSON.parse(JSON.stringify(normalizedData.itinerary)),
+      tripDays: JSON.parse(JSON.stringify(normalizedData.tripDays)),
+      activities: JSON.parse(JSON.stringify(normalizedData.activities)),
       activityCoordinates: activityCoordinates
     }
   }

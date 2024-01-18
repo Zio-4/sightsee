@@ -33,10 +33,10 @@ const Itinerary = ({itin}: IItineraryData) => {
             <div className='w-11/12 md:w-10/12 lg:w-11/2 mx-auto'>
                 <div className='bg-inherit w-full mt-5 flex'>
                     <div className='grid grid-cols-1 divide-y divide-white text-black w-full'>
-                      {itinerary.tripDays.map((dayId, i) => {
+                      {itinerary.tripDays.map((dayId) => {
                         return <TripDay
-                                  tripDay={dayId} 
-                                  key={i} 
+                                  tripDayId={dayId} 
+                                  key={dayId} 
                                   // date={new Date(day.date)} 
                                   // activities={day.activities}
                                   // tripDayId={day.id}

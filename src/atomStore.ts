@@ -20,6 +20,16 @@ export const selectActivity = (activityId: number) => atom(
     (get) => get(activitiesAtom)[activityId]
 );
 
+export const tripDayIdAtom = atom(0); 
+
+export const selectTripDay = (tripDayId: number) => atom(
+    (get) => get(tripDaysAtom)[tripDayId]
+);
+
+export const selectedTripDayAtom = atom(
+    (get) => get(tripDaysAtom)[get(tripDayIdAtom)]
+);
+
 
 export function useSplitAtom(anAtom: PrimitiveAtom<any>) {
     return useAtom(splitAtom(anAtom))
