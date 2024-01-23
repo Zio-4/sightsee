@@ -16,10 +16,7 @@ import { splitAtom } from 'jotai/utils';
 import { 
     activityCoordinatesAtom, 
     removeActivity,
-    selectTripDay,
     tripDaysAtom,
-    tripDayIdAtom,
-    selectedTripDayAtom
 } from '../../atomStore';
 
 // SearchBox component requires the document
@@ -27,15 +24,9 @@ const ActivityForm = dynamic(() => import('../Itinerary/ActivityForm'), {ssr: fa
 
 // {date, activities, tripDayId,}: ITripDay
 const TripDay = ({tripDayId}) => {
-    const [, setTripDayId] = useAtom(tripDayIdAtom);
-
-    useEffect(() => {
-      setTripDayId(tripDayId);
-    }, [tripDayId, setTripDayId]);
+    const [tripDays] = useAtom(tripDaysAtom)
+    const tripDay = tripDays[tripDayId]
   
-    const [tripDay] = useAtom(selectedTripDayAtom);
-  
-
     // const [tripDay, setTripDay] = useAtom(selectTripDay(tripDayId))
 
     // const tripDays = useAtomValue(tripDaysAtom)
@@ -79,7 +70,7 @@ const TripDay = ({tripDayId}) => {
         </div>
 
         <div className='space-y-3'>
-        {/* {tripDay.activities.length > 0 && (
+        {tripDay.activities.length > 0 && (
             tripDay.activities.map(activityId => {
                 return <Activity
                             activityId={activityId}
@@ -100,7 +91,7 @@ const TripDay = ({tripDayId}) => {
                             // tripDayId={act.tripDayId}
                         />
             })
-        )} */}
+        )}
         </div>
     
         <ActivityForm tripDayId={tripDayId} />

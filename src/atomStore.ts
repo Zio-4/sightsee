@@ -15,31 +15,15 @@ export const itineraryAtom = atom<Itinerary>({} as Itinerary)
 export const tripDaysAtom = atom({}) 
 export const activitiesAtom = atom({}) 
 
-// Selector for a specific activity
-export const selectActivity = (activityId: number) => atom(
-    (get) => get(activitiesAtom)[activityId]
-);
+// export function useSplitAtom(anAtom: PrimitiveAtom<any>) {
+//     return useAtom(splitAtom(anAtom))
+// }
 
-export const tripDayIdAtom = atom(0); 
-
-export const selectTripDay = (tripDayId: number) => atom(
-    (get) => get(tripDaysAtom)[tripDayId]
-);
-
-export const selectedTripDayAtom = atom(
-    (get) => get(tripDaysAtom)[get(tripDayIdAtom)]
-);
-
-
-export function useSplitAtom(anAtom: PrimitiveAtom<any>) {
-    return useAtom(splitAtom(anAtom))
-}
-
-/* if an atom is created here, use `useMemo(() => atom(initValue), [initValue])` instead. */
-export function useFocusAtom(anAtom: PrimitiveAtom<any>, keyFn: (x: any) => any) {
-    console.log('itinerary on focus atom call:', useAtomValue(itineraryAtom))
-    return focusAtom(anAtom, keyFn)
-}
+// /* if an atom is created here, use `useMemo(() => atom(initValue), [initValue])` instead. */
+// export function useFocusAtom(anAtom: PrimitiveAtom<any>, keyFn: (x: any) => any) {
+//     console.log('itinerary on focus atom call:', useAtomValue(itineraryAtom))
+//     return focusAtom(anAtom, keyFn)
+// }
 
 // Removes an activity from the itinerary state
 export const removeActivity = (activityId: number, tripDayId: number) => {
