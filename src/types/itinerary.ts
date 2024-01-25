@@ -11,15 +11,25 @@ export type Activity = {
     photo: string | null
     startTime: string
     address: string
-    latitude: number | undefined
-    longitude: number | undefined
+    latitude: number
+    longitude: number
     tripDayId: number
 }
+
+export interface IActivitesAtom {
+    [key: string]: Activity
+}
+
 export type TripDay = {
-    activities: Activity[] | number[]
+    // activities: Activity[] | number[]
+    activities: number[]
     date: Date
     id: number
     itineraryId: number
+}
+
+export interface ITripDaysAtom {
+    [key: string]: TripDay
 }
 
 export type Itinerary = {
@@ -42,11 +52,11 @@ export interface IItineraryData {
 
 // TripDay
 
-export interface ITripDay {
-    date: Date
-    activities: Activity[] | [],
-    tripDayId: number,
-}
+// export interface ITripDay {
+//     date: Date
+//     activities: Activity[] | [],
+//     tripDayId: number,
+// }
 
 // Activity form
 

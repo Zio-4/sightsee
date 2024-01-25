@@ -13,7 +13,7 @@ again.
 
 */}
 
-const useDebounce = (value: string, delay: number) => {
+const useDebounce = (value: any, delay: number) => {
     const [debouncedValue, setDebouncedValue] = useState(value)
 
     useEffect(() => {

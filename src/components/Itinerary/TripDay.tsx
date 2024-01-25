@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 import format from 'date-fns/format';
 import Activity from './Activity'
 import dynamic from 'next/dynamic'
-import { ITripDay } from '../../types/itinerary';
+// import { ITripDay } from '../../types/itinerary';
 import { useAtom, useAtomValue } from 'jotai';
 import { focusAtom } from 'jotai-optics';
 import { splitAtom } from 'jotai/utils';
@@ -18,31 +18,28 @@ import {
     removeActivity,
     tripDaysAtom,
 } from '../../atomStore';
+import { tr } from 'date-fns/locale';
 
 // SearchBox component requires the document
-const ActivityForm = dynamic(() => import('../Itinerary/ActivityForm'), {ssr: false})
+const ActivityForm = dynamic(() => import('../Itinerary/ActivityForm'), { ssr: false })
+
 
 // {date, activities, tripDayId,}: ITripDay
-const TripDay = ({tripDayId}) => {
+const TripDay = ({ tripDayId }: {tripDayId: number}) => {
     const [tripDays] = useAtom(tripDaysAtom)
-    const tripDay = tripDays[tripDayId]
-  
-    // const [tripDay, setTripDay] = useAtom(selectTripDay(tripDayId))
-
-    // const tripDays = useAtomValue(tripDaysAtom)
-    //  const tripDay = tripDays[tripDayId]
+    const tripDay = tripDays[tripDayId.toString()]
 
     const [ readOnly, setReadOnly ] = useState(true);
     // const [activitiesState, setActivitiesState] = useState(activities)
     const [activityCoordinatesState, setActivityCoordinatesState] = useAtom(activityCoordinatesAtom)
 
-    const deleteActivity = async (activityId: number, activityCoordinates: [number | undefined, number | undefined]) => {
+    const deleteActivity = async (activityId: number, activityCoordinates: [number, number]) => {
         const call = await axios.delete('/api/activities', { 
            data: { activityId: activityId } 
         })
 
         // setActivitiesState((prev) => prev.filter(act => act.id !== activityId))
-        removeActivity(activityId, tripDayId)
+        removeActivity(activityId, tripDayId, activityCoordinates)
 
         setActivityCoordinatesState((prev) => {
             const updatedCoordinatesState = [...prev];
@@ -60,8 +57,12 @@ const TripDay = ({tripDayId}) => {
     }
 
     function formattedDate() {
-        return format(new Date(tripDay.date), 'MMM do')
+        if (tripDay?.date) {
+            return format(tripDay.date, 'MMM do');
+        }
+        return "Date not available";
     }
+    
 
   return (
     <div className='w-full p-3 text-black'>
@@ -70,10 +71,12 @@ const TripDay = ({tripDayId}) => {
         </div>
 
         <div className='space-y-3'>
-        {tripDay.activities.length > 0 && (
-            tripDay.activities.map(activityId => {
+        {tripDay?.activities &&
+         tripDay?.activities.length > 0 &&
+        (tripDay?.activities.map((activityId: number) => {
                 return <Activity
                             activityId={activityId}
+                            tripDayId={tripDayId}
                             key={activityId} 
                             // readOnly={readOnly} 
                             // setReadOnly={setReadOnly} 
@@ -91,7 +94,8 @@ const TripDay = ({tripDayId}) => {
                             // tripDayId={act.tripDayId}
                         />
             })
-        )}
+        )
+        }
         </div>
     
         <ActivityForm tripDayId={tripDayId} />

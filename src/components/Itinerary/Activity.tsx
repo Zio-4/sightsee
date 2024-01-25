@@ -3,138 +3,74 @@ import axios from 'axios';
 import { BsTrashFill } from 'react-icons/bs'
 import { format } from 'date-fns'
 import { IActivityProps } from '../../types/itinerary';
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { 
-    activitiesAtom, 
-    selectActivity,
-    activityIdAtom,
-    selectedActivityAtom 
+    activitiesAtom,
+    debouncRefAtom,
+    removeActivity,
+    updateActivityAtoms 
 } from '../../atomStore';
-
-// const itin = {
-//     name: 'test',
-//     tripDays: [
-//         {
-//             activities: [
-//                 {
-//                     contactInfo: 'test',
-//                     endTime: new Date(),
-//                     id: 1,
-//                     name: 'test',
-//                     note: 'test',
-//                     photo: 'test',
-//                     startTime: new Date(),
-//                     address: 'test',
-//                     longitude: 123,
-//                     latitude: 123,
-//                     tripDayId: 1
-//                 }
-//             ],
-//             date: new Date(),
-//             id: 1,
-//             itineraryId: 1
-//         }
-//     ],
-// }
+import useDebounce from '../../hooks/useDebounce';
 
 
-const Activity = ({
-    //   readOnly, 
-    //   setReadOnly, 
-    //   deleteActivity, 
-    //   contactInfo, 
-    //   endTime, 
-    //   id, 
-    //   name, 
-    //   note, 
-    //   photo, 
-    //   startTime,
-    //   address,
-    //   longitude,
-    //   latitude, 
-    //   tripDayId
-        activityId
-    }: IActivityProps) => {
-    // const [activityState, setActivityState] = useState({
-    //     contactInfo: contactInfo,
-    //     endTime: `${endTime ?
-    //         format(new Date(endTime), 'HH') : 
-    //         '--:-- --'}
-    //         :
-    //         ${endTime ? 
-    //         format(new Date(endTime), 'mm') :
-    //         '--:-- --'}`,
-    //     name: name,
-    //     note: note,
-    //     photo: photo,
-    //     address: address,
-    //     startTime: `${startTime ? format(new Date(startTime), 'HH'): '--:-- --'}:${startTime ? format(new Date(startTime), 'mm') : '--:-- --'}`,
-    // })
-    // const [displayStartTime, setDisplayStartTime] = useState(activityState.startTime)
-    // const [displayEndTime, setDisplayEndTime] = useState(activityState.endTime)
-    // const [activityState, setActivity] = useAtom(selectActivity(activityId))
+
+const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: number } ) => {
     const [activities] = useAtom(activitiesAtom)
-    const activityState = activities[activityId]
-
+    const activity = activities[activityId.toString()]
     const [timeDropDown, setTimeDropDown] = useState(false)
     const clearedTimeRef = useRef(false)
+    const debouncedActivityUpdate = useDebounce(useAtomValue(debouncRefAtom), 500)
 
     useEffect(() => {
-        const apiCall = async () => {
+        const updateActivityCall = async () => {
             if (clearedTimeRef.current) {
-                // setDisplayStartTime(`${activityState.startTime}`)
-                // setDisplayEndTime(`${activityState.endTime}`)
+                // setDisplayStartTime(`${activity.startTime}`)
+                // setDisplayEndTime(`${activity.endTime}`)
                 await sendUpdateReq()
                 clearedTimeRef.current = false
             }
         }
-        apiCall()
-    }, [activityState])
+        updateActivityCall()
+    }, [activity])
 
-    useEffect(() => {
-        console.log('loop test')
-    }, [])
+    // useEffect(() => {
+    //     console.log('loop test')
+    // }, [])
 
 
     const updateActivity = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        // setActivityState({...activityState, [e.target.name]: e.target.value})
+        updateActivityAtoms(activityId,  { ...activity, [e.target.name]: e.target.value })
     }
 
     const sendUpdateReq = async () => {
         let tempStartDate
 
-        if (activityState.startTime.includes('-')) {
+        if (activity?.startTime.includes('-')) {
             tempStartDate = null
         } else {
             tempStartDate = new Date()
-            tempStartDate.setHours(Number(activityState.startTime.substring(0,2)))
-            tempStartDate.setMinutes(Number(activityState.startTime.substring(3,5)))
+            tempStartDate.setHours(Number(activity?.startTime.substring(0,2)))
+            tempStartDate.setMinutes(Number(activity?.startTime.substring(3,5)))
         }
 
         let tempEndDate
 
-        if (activityState.startTime.includes('-')) {
+        if (activity?.startTime.includes('-')) {
             tempEndDate = null
         } else {
             tempEndDate = new Date()
-            tempEndDate.setHours(Number(activityState.endTime.substring(0,2)))
-            tempEndDate.setMinutes(Number(activityState.endTime.substring(3,5)))
+            tempEndDate.setHours(Number(activity?.endTime.substring(0,2)))
+            tempEndDate.setMinutes(Number(activity?.endTime.substring(3,5)))
         }
 
         await axios.put('/api/activities', {
-            name: activityState.name,
+            name: activity?.name,
             startTime: tempStartDate,
             endTime: tempEndDate,
-            contactInfo: activityState.contactInfo,
-            note: activityState.note,
+            contactInfo: activity?.contactInfo,
+            note: activity?.note,
             // activityId: id
         })
-    }
-
-    const handleBlur = async () => {
-        // setReadOnly(true)
-        
-        await sendUpdateReq()
     }
 
 
@@ -163,14 +99,14 @@ const Activity = ({
 
     const clearTime = () => {
         setTimeDropDown(prev => !prev)
-        // setActivityState({...activityState, 'startTime': '--:-- --', 'endTime': '--:-- --'})
+        // setactivity({...activity, 'startTime': '--:-- --', 'endTime': '--:-- --'})
         clearedTimeRef.current = true
     }
 
     const saveTime = async () => {
         setTimeDropDown(prev => !prev)
-        // setDisplayStartTime(activityState.startTime)
-        // setDisplayEndTime(activityState.endTime)
+        // setDisplayStartTime(activity.startTime)
+        // setDisplayEndTime(activity.endTime)
         await sendUpdateReq()
     }
 
@@ -178,23 +114,18 @@ const Activity = ({
 
   return (
         <div  >
-            {/* <div className='flex flex-col'>
+            <div className='flex flex-col'>
                 <input 
                     onChange={updateActivity} 
                     name='name' 
-                    value={activityState.name} 
-                    readOnly={readOnly} 
-                    onFocus={() => setReadOnly(false)} 
-                    onBlur={handleBlur} 
+                    value={activity?.name} 
                     className='bg-white bg-opacity-40 rounded-md p-1 outline-none w-fit h-fit'
                 />
 
                 <div className='bg-white bg-opacity-40 rounded-md p-2 mt-2'>
                     <textarea 
-                        value={activityState.note} 
+                        value={activity?.note} 
                         name='note' 
-                        onFocus={() => setReadOnly(false)} 
-                        onBlur={handleBlur} 
                         placeholder='Add notes, links, etc.' 
                         onChange={updateActivity} 
                         className='bg-transparent p-1 focus:ring-0 focus:ring-offset-0 border-0 resize-none mt-2 placeholder-slate-400 w-full' 
@@ -202,7 +133,7 @@ const Activity = ({
                     
                     <div className='flex justify-between'>
                         <div  className=' bg-sky-200 text-sky-600 rounded-full p-1 w-fit text-xs cursor-pointer relative'>
-                            {displayStartTime.includes('-') ? (
+                            {/* {displayStartTime.includes('-') ? (
                                 <div onClick={() => setTimeDropDown(prev => !prev)}>
                                     <p className='px-2'>Add time</p>
                                 </div>
@@ -210,11 +141,11 @@ const Activity = ({
                                 <div onClick={() => setTimeDropDown(prev => !prev)} className='flex items-center'>
                                     <p>{getActualTime(displayStartTime)}</p>
 
-                                    {activityState.endTime.includes('-') ? null : <p className='mx-1'>-</p>}
+                                    {activity?.endTime.includes('-') ? null : <p className='mx-1'>-</p>}
 
                                     <p>{getActualTime(displayEndTime)}</p>
                                 </div>
-                            )}
+                            )} */}
  
 
 
@@ -222,7 +153,7 @@ const Activity = ({
                                 <div className='absolute top-10 bg-slate-400 p-3 rounded-lg z-10'>
                                     <div className='flex'>
                                         <input 
-                                            value={activityState.startTime} 
+                                            value={activity?.startTime} 
                                             onChange={updateActivity} 
                                             type='time' 
                                             name='startTime' 
@@ -230,7 +161,7 @@ const Activity = ({
                                         />
                                         <p>-</p>
                                         <input 
-                                            value={activityState.endTime} 
+                                            value={activity?.endTime} 
                                             onChange={updateActivity} 
                                             type='time' 
                                             name='endTime' 
@@ -247,12 +178,12 @@ const Activity = ({
                             
                         </div>
 
-                        <button title='delete-button' onClick={() => deleteActivity(id, [longitude, latitude])}>
+                        <button title='delete-button' onClick={() => removeActivity(activity!.id, tripDayId, [activity!.longitude, activity!.latitude])}>
                             <BsTrashFill className='bg-red-400 p-1 cursor-pointer rounded-md text-white hover:bg-red-500' size={25}/>
                         </button>
                     </div>
                 </div>
-            </div> */}
+            </div>
         </div>
 
   )
