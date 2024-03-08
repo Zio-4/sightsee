@@ -44,6 +44,7 @@ export type Itinerary = {
     startDate: Date
     tripDays: TripDay[] | number[]
     creator: string
+    collborationId: number
 }
 
 export interface IItineraryData {

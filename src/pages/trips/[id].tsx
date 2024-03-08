@@ -12,6 +12,8 @@ import { itineraryAtom, activityCoordinatesAtom, tripDaysAtom, activitiesAtom } 
 import TripLayout from '../../components/Trips/TripLayout'
 import { Activity, TripDay } from '../../types/itinerary'
 import { ActivityCoordinates } from '../../types/map'
+import pusherInstance from '../../lib/pusher'
+import { updateActivityAtoms } from '../../atomStore'
 
 const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IItineraryPage) => {
   const [viewState, setViewState] = useState(false)
@@ -41,6 +43,47 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
     setActivities({ ...activities })
     setActivityCoordinates(activityCoordinates)
   }, [])
+
+  console.log('itinerary', itinerary)
+
+
+  useEffect(() => {
+    // check if itinerary is a collaboration
+    // TODO: use itinerary atom to access property?
+    let channel: any
+
+    if (itinerary.collborationId) {
+      // Handle incoming messages from pusher        
+      channel = pusherInstance.subscribe(`itinerary-${itinerary.id}`);
+
+      channel.bind('update-activity', function(msg: any) {
+        // Handle the received data, update the messages state
+        
+        // Write API route to update activity
+        // pass in the name of the event (update-activity) & channel
+        // and the data to update the activity with
+        // triggerPusherEvent(itinerary.id, 'update-activity', msg.data)
+
+      // messaging system: we need to know what entitity
+      // (itinerary, tripDay, activity) to update and how
+
+        // updateActivityAtom(activityId, msg.data);
+      });
+    }
+
+    return () => {
+      if (channel) {
+        channel.unbind_all();
+        channel.unsubscribe();
+      }
+    };
+  }, [])
+
+  // function triggerPusherEvent() {
+  //   axios.post('/api/pusher', {
+  //     message: 'Hello from the client'
+  //   });
+
 
   return (
     <>
