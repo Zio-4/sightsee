@@ -52,22 +52,25 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
     // TODO: use itinerary atom to access property?
     let channel: any
 
+    // This is handling messages sent from the server
+    // i.e. other users updating the itinerary
     if (itinerary.collborationId) {
-      // Handle incoming messages from pusher        
-      channel = pusherInstance.subscribe(`itinerary-${itinerary.id}`);
+      const channelName = `itinerary-${itinerary.id}`      
+      channel = pusherInstance.subscribe(channelName);
 
-      channel.bind('update-activity', function(msg: any) {
-        // Handle the received data, update the messages state
+      channel.bind('itinerary-event-name', async function(msg: any) {
+        // If it's the same user, we don't need to do anything
+        console.log('received message: ', msg)
         
-        // Write API route to update activity
-        // pass in the name of the event (update-activity) & channel
-        // and the data to update the activity with
-        // triggerPusherEvent(itinerary.id, 'update-activity', msg.data)
+        if (msg.data.userId === itinerary.profileId) {
+          return
+        }
 
-      // messaging system: we need to know what entitity
-      // (itinerary, tripDay, activity) to update and how
+      
+      // How do we know what to update here?
+      // updateActivityAtoms(activityId, msg.data);
 
-        // updateActivityAtom(activityId, msg.data);
+
       });
     }
 
@@ -78,11 +81,6 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
       }
     };
   }, [])
-
-  // function triggerPusherEvent() {
-  //   axios.post('/api/pusher', {
-  //     message: 'Hello from the client'
-  //   });
 
 
   return (

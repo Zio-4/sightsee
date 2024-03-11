@@ -9,6 +9,9 @@ import {
     addActivity
  } from '../../atomStore';
 import { IActivityForm } from '../../types/itinerary';
+import { triggerPusherEvent } from '../../lib/pusherEvent';
+import { itineraryAtom } from '../../atomStore';
+import { useAtomValue } from 'jotai';
 
 const searchBoxStyling = {
     variables: {
@@ -26,6 +29,7 @@ const ActivityForm = ({ tripDayId, }: IActivityForm) => {
     const mapInstance = useAtomValue(mapAtom)  
     const [searchMarkerCoordinates, setSearchMarkerCoordinates] = useAtom(searchMarkerCoordinatesAtom)
     const setActivityCoordinates = useSetAtom(activityCoordinatesAtom)
+    const itinerary = useAtomValue(itineraryAtom)
 
     const createAcitivity = async () => {
         if (activityDetails.name.length === 0) return
@@ -36,7 +40,7 @@ const ActivityForm = ({ tripDayId, }: IActivityForm) => {
 
         setSearchMarkerCoordinates((prev) => [undefined, undefined])
     
-        const call = await axios.post('/api/activities', {
+        const activityFormValues = {
             name: activityDetails.name,
             contactInfo: '',
             note: '',
@@ -44,10 +48,22 @@ const ActivityForm = ({ tripDayId, }: IActivityForm) => {
             tripDayId: tripDayId,
             longitude: searchMarkerCoordinates[0],
             latitude: searchMarkerCoordinates[1]
-        })
+        }
+
 
         // setActivitiesState((prev) => [...prev, call.data])
-        addActivity(call.data)
+        // @ts-ignore
+        addActivity(activityFormValues)
+
+        const res = await axios.post('/api/activities', activityFormValues)
+        console.log('activity creation response:', res)
+
+        // trigger pusher event
+        await triggerPusherEvent(`itinerary-${itinerary.id}`, 'itinerary-event-name', {
+            ...activityFormValues,
+            entity: 'activity',
+            action: 'create'
+        })
     }
 
     const handleRetrieve = (res: any) => {
@@ -61,7 +77,6 @@ const ActivityForm = ({ tripDayId, }: IActivityForm) => {
 
   return (
     <div className='text-black mt-3'>
-
         <div className='flex justify-between'>
             <div className='w-2/3'>
                 <SearchBox 
@@ -91,7 +106,6 @@ const ActivityForm = ({ tripDayId, }: IActivityForm) => {
                 Add activity
             </button>
         </div>
-
 
         {/* <p className='mt-2'>Notes:</p>
         <textarea className='text-black outline-none rounded-md w-1/2'/> */}

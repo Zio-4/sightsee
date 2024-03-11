@@ -33,10 +33,6 @@ const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: nu
         updateActivityCall()
     }, [activity])
 
-    // useEffect(() => {
-    //     console.log('loop test')
-    // }, [])
-
 
     const updateActivity = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         updateActivityAtoms(activityId,  { ...activity, [e.target.name]: e.target.value })
@@ -69,7 +65,7 @@ const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: nu
             endTime: tempEndDate,
             contactInfo: activity?.contactInfo,
             note: activity?.note,
-            // activityId: id
+            activityId: activity?.id
         })
     }
 
@@ -146,8 +142,6 @@ const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: nu
                                     <p>{getActualTime(displayEndTime)}</p>
                                 </div>
                             )} */}
- 
-
 
                             {timeDropDown && (
                                 <div className='absolute top-10 bg-slate-400 p-3 rounded-lg z-10'>
@@ -185,7 +179,6 @@ const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: nu
                 </div>
             </div>
         </div>
-
   )
 }
 

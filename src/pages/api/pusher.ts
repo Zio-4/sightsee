@@ -1,5 +1,6 @@
 import Pusher from "pusher";
 import { NextApiRequest, NextApiResponse } from "next";
+import { getAuth } from "@clerk/nextjs/server";
 
 const pusher = new Pusher({
   appId: process.env.PUSHER_APP_ID,
@@ -11,16 +12,17 @@ const pusher = new Pusher({
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
-    // Trigger a Pusher event
-    const { message } = req.body;
+    const { userId } = getAuth(req)
+    const { channelName, channelEvent, data } = req.body;
 
-    console.log(message);
+    console.log('request body:', req.body);
 
-    await pusher.trigger('test-channel', 'test-updated', {
-      data: message
+    await pusher.trigger(channelName, channelEvent, {
+      ...data,
+      userId
     });
 
-    return res.status(200).json({ message: 'Message sent successfully' });
+    return res.status(200).json({ message: 'Message sent successfully', });
   } else {
     return res.status(405).json({ message: 'Method not allowed' });
   }

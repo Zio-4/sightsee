@@ -21,9 +21,6 @@ function pusher() {
         };
     }, [])
 
-    console.log('Pusher instance:', pusherInstance)
-    console.log('Client env:', clientEnv.NEXT_PUBLIC_PUSHER_APP_KEY)
-    console.log('Client env:', clientEnv.NEXT_PUBLIC_PUSHER_APP_CLUSTER!)
 
     function updateItineraryState(data) {
         setMessages(messages => [...messages, data]);
