@@ -10,7 +10,7 @@ function pusher() {
     useEffect(() => {
         // Handle incoming messages from pusher        
         const channel = pusherInstance.subscribe('test-channel');
-            channel.bind('test-updated', function(msg) {;
+            channel.bind('test-updated', function(msg) {
             // Handle the received data, update the messages state
             updateItineraryState(msg.data);
         });

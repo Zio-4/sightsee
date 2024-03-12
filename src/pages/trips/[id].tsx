@@ -44,9 +44,6 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
     setActivityCoordinates(activityCoordinates)
   }, [])
 
-  console.log('itinerary', itinerary)
-
-
   useEffect(() => {
     // check if itinerary is a collaboration
     // TODO: use itinerary atom to access property?
@@ -54,11 +51,13 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
 
     // This is handling messages sent from the server
     // i.e. other users updating the itinerary
-    if (itinerary.collborationId) {
+    if (itinerary.collaborationId) {
       const channelName = `itinerary-${itinerary.id}`      
       channel = pusherInstance.subscribe(channelName);
 
-      channel.bind('itinerary-event-name', async function(msg: any) {
+      console.log('subscribed to channel:', channelName)
+
+      channel.bind('itinerary-event-name', function(msg: any) {
         // If it's the same user, we don't need to do anything
         console.log('received message: ', msg)
         
@@ -69,8 +68,6 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
       
       // How do we know what to update here?
       // updateActivityAtoms(activityId, msg.data);
-
-
       });
     }
 

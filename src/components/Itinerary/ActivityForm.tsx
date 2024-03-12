@@ -11,7 +11,6 @@ import {
 import { IActivityForm } from '../../types/itinerary';
 import { triggerPusherEvent } from '../../lib/pusherEvent';
 import { itineraryAtom } from '../../atomStore';
-import { useAtomValue } from 'jotai';
 
 const searchBoxStyling = {
     variables: {

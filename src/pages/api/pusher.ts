@@ -3,10 +3,10 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getAuth } from "@clerk/nextjs/server";
 
 const pusher = new Pusher({
-  appId: process.env.PUSHER_APP_ID,
-  key: process.env.PUSHER_APP_KEY,
-  secret: process.env.PUSHER_APP_SECRET,
-  cluster: process.env.PUSHER_APP_CLUSTER,
+  appId: process.env.PUSHER_APP_ID!,
+  key: process.env.PUSHER_APP_KEY!,
+  secret: process.env.PUSHER_APP_SECRET!,
+  cluster: process.env.PUSHER_APP_CLUSTER!,
   useTLS: true
 });
 
@@ -17,10 +17,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     console.log('request body:', req.body);
 
-    await pusher.trigger(channelName, channelEvent, {
+    console.log('appId: ', process.env.PUSHER_APP_ID!);
+
+    console.log('Pusher: ', pusher);
+    console.log('user id', userId)
+
+    const returnMsg = {
       ...data,
       userId
-    });
+    }
+
+    try {
+      await pusher.trigger(channelName, channelEvent, {
+        // ...data,
+        message: 'returnMsg'
+      });
+    } catch (error) {
+      console.error('Error:', error);
+    }
+
 
     return res.status(200).json({ message: 'Message sent successfully', });
   } else {
