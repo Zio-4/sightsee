@@ -13,6 +13,7 @@ import TripLayout from '../../components/Trips/TripLayout'
 import { Activity, TripDay } from '../../types/itinerary'
 import { ActivityCoordinates } from '../../types/map'
 import pusherInstance from '../../lib/pusher'
+import { handlePusherMessage } from '../../lib/handlePusherMessage'
 import { updateActivityAtoms } from '../../atomStore'
 
 const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IItineraryPage) => {
@@ -39,8 +40,8 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
 
   useEffect(() => {
     setItinerary({ ...itinerary })
-    setTripDays({ ...tripDays })
-    setActivities({ ...activities })
+    setTripDays(tripDays)
+    setActivities(activities)
     setActivityCoordinates(activityCoordinates)
   }, [])
 
@@ -61,13 +62,9 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
         // If it's the same user, we don't need to do anything
         console.log('received message: ', msg)
         
-        if (msg.data.userId === itinerary.profileId) {
-          return
-        }
-
-      
-      // How do we know what to update here?
-      // updateActivityAtoms(activityId, msg.data);
+        if (msg.userId === itinerary.profileId) return
+        
+        handlePusherMessage(msg)
       });
     }
 
@@ -173,7 +170,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
    * // normalized.itineraries, normalized.tripDays, normalized.activities
    * // will now have structured data separated by entity type.
    */
-  const normalizeData = (data) => {
+  const normalizeData = (data: any) => {
     const itinerary = data;
     const tripDays = {};
     const activities = {};
@@ -192,7 +189,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       tripDays[day.id] = { ...day, activities: day.activities.map(activity => activity.id) };
     });
 
-    itinerary.tripDays = data.tripDays.map(day => day.id)
+    itinerary.tripDays = data.tripDays.map((day: TripDay) => day.id)
 
     return { itinerary, tripDays, activities };
   };
@@ -208,7 +205,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       }
     }
   }
-  
 
   
   // for (const tripDay of itineraryData.tripDays) {

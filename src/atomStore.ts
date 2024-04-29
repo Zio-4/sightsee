@@ -1,9 +1,10 @@
-import { Itinerary, MarkerCoordinates } from './types/itinerary'
+import { Itinerary, MarkerCoordinates, NormalizedTripDay } from './types/itinerary'
 import { ActivityCoordinates } from './types/map'
 import { useAtomValue, useSetAtom, useAtom, atom, PrimitiveAtom } from 'jotai'
 import { TripDay, Activity, ITripDaysAtom, IActivitesAtom } from './types/itinerary'
 import { focusAtom } from 'jotai-optics'
 import { splitAtom } from 'jotai/utils'
+import { set } from 'date-fns'
 
 export const mapAtom = atom({})
 
@@ -45,26 +46,35 @@ export const removeActivity = (activityId: number, tripDayId: number, activityCo
 }
 
 // Adds an activity to the itinerary state
-export const addActivity = (activity: Activity) => {
-    // const itinerary = useAtomValue(itineraryAtom)
-    // const setItinerary = useSetAtom(itineraryAtom)
-    // const tripDay = itinerary.tripDays.find((tripDay: TripDay) => tripDay.id === activity.tripDayId)
+export const addActivity = (
+    activity: Activity, 
+    tripDays: ITripDaysAtom, 
+    setActivities: Function, 
+    setDebounceRef: Function,
+    setActivityCoordinates: Function
+) => {
+    // add activity id to tripday activity array
+    // add activity to activities state
+    // add activity coordinates to activity coordinates state
 
-    // if (tripDay) {
-    //     tripDay.activities.push(activity)
-    // }
+    const dayToUpdate = tripDays[activity.tripDayId]
+    dayToUpdate!.activities.push(activity.id)
 
-    // setItinerary(itinerary)
+    updateActivityAtoms(activity.id, activity, setActivities, setDebounceRef)
+
+    setActivityCoordinates((prev: ActivityCoordinates) => [...prev, [activity.longitude, activity.latitude]])
 }
 
-export const updateActivityAtoms = (activityId: number, newData: { [key: string]: any }) => {
-    const setActivities = useSetAtom(activitiesAtom)
-    const setDebounceRef = useSetAtom(debouncRefAtom)
-    
-    setActivities((prevActivities) => ({
+export const updateActivityAtoms = (
+    activityId: number, 
+    newData: { [key: string]: any }, 
+    setActivities: Function, 
+    setDebounceRef: Function
+) => {    
+    setActivities((prevActivities: Activity[]) => ({
         ...prevActivities,
         [activityId]: { ...prevActivities[activityId], ...newData },
     }));
 
-    setDebounceRef((prev) => prev + 1)
+    setDebounceRef((prev: number) => prev + 1)
 };

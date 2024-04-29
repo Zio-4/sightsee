@@ -13,14 +13,9 @@ const pusher = new Pusher({
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     const { userId } = getAuth(req)
-    const { channelName, channelEvent, data } = req.body;
+    const { channel, event, data } = req.body;
 
     console.log('request body:', req.body);
-
-    console.log('appId: ', process.env.PUSHER_APP_ID!);
-
-    console.log('Pusher: ', pusher);
-    console.log('user id', userId)
 
     const returnMsg = {
       ...data,
@@ -28,10 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
-      await pusher.trigger(channelName, channelEvent, {
-        // ...data,
-        message: 'returnMsg'
-      });
+      await pusher.trigger(channel, event, returnMsg);
     } catch (error) {
       console.error('Error:', error);
     }

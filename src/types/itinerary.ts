@@ -20,7 +20,7 @@ export interface IActivitesAtom {
     [key: string]: Activity
 }
 
-export type TripDay = {
+export type NormalizedTripDay = {
     // activities: Activity[] | number[]
     activities: number[]
     date: Date
@@ -28,8 +28,15 @@ export type TripDay = {
     itineraryId: number
 }
 
+export type TripDay = {
+    activities: Activity[]
+    date: Date
+    id: number
+    itineraryId: number
+}
+
 export interface ITripDaysAtom {
-    [key: string]: TripDay
+    [key: string]: NormalizedTripDay
 }
 
 export type Itinerary = {
@@ -42,7 +49,7 @@ export type Itinerary = {
     public: boolean
     profileId: number
     startDate: Date
-    tripDays: TripDay[] | number[]
+    tripDays: number[]
     creator: string
     collaborationId: number
 }
@@ -92,7 +99,7 @@ export type MarkerCoordinates = [number | undefined, number | undefined]
 
 export interface IItineraryPage {
     itinerary: Itinerary,
-    tripDays: TripDay[],
-    activities: Activity[],
+    tripDays: ITripDaysAtom,
+    activities: IActivitesAtom,
     activityCoordinates: ActivityCoordinates
 }

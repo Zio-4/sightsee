@@ -4,11 +4,11 @@ import format from 'date-fns/format';
 import Image from 'next/image'
 import { IItineraryData } from '../../types/itinerary';
 import { useAtomValue, useAtom } from 'jotai';
-import { itineraryAtom, useFocusAtom, useSplitAtom } from '../../atomStore';
+import { itineraryAtom, } from '../../atomStore';
 // import { focusAtom } from 'jotai-optics'
 // import { splitAtom } from 'jotai/utils'
 
-const Itinerary = ({itin}: IItineraryData) => {
+const Itinerary = () => {
   // get itinerary data from atom
   const itinerary = useAtomValue(itineraryAtom)
 

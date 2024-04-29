@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import pusherInstance from '../lib/pusher';
 import axios from 'axios';
-import { clientEnv } from '../env/schema.mjs';
 
 function pusher() {
     const [messages, setMessages] = React.useState([])
@@ -10,9 +9,10 @@ function pusher() {
     useEffect(() => {
         // Handle incoming messages from pusher        
         const channel = pusherInstance.subscribe('test-channel');
-            channel.bind('test-updated', function(msg) {
+            channel.bind('test-updated', function(msg: any) {
+            console.log('message received:', msg)
             // Handle the received data, update the messages state
-            updateItineraryState(msg.data);
+            // updateItineraryState(msg.message); 
         });
     
         return () => {
@@ -21,14 +21,13 @@ function pusher() {
         };
     }, [])
 
-
-    function updateItineraryState(data) {
-        setMessages(messages => [...messages, data]);
-    }
+    // function updateItineraryState(data) {
+    //     setMessages(messages => [...messages, data]);
+    // }
 
     function sendMessage() {
-        axios.post('/api/pusher', {
-            message: input
+        axios.post('/api/testPusher', {
+            data: input
         });
     }
 

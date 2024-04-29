@@ -3,7 +3,7 @@ import axios from 'axios';
 import { BsTrashFill } from 'react-icons/bs'
 import { format } from 'date-fns'
 import { IActivityProps } from '../../types/itinerary';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { 
     activitiesAtom,
     debouncRefAtom,
@@ -15,11 +15,13 @@ import useDebounce from '../../hooks/useDebounce';
 
 
 const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: number } ) => {
-    const [activities] = useAtom(activitiesAtom)
+    const [activities, setActivities] = useAtom(activitiesAtom)
     const activity = activities[activityId.toString()]
     const [timeDropDown, setTimeDropDown] = useState(false)
     const clearedTimeRef = useRef(false)
     const debouncedActivityUpdate = useDebounce(useAtomValue(debouncRefAtom), 500)
+    // For activity update
+    const setDebounceRef = useSetAtom(debouncRefAtom);
 
     useEffect(() => {
         const updateActivityCall = async () => {
@@ -35,7 +37,9 @@ const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: nu
 
 
     const updateActivity = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        updateActivityAtoms(activityId,  { ...activity, [e.target.name]: e.target.value })
+        updateActivityAtoms(activityId,  { ...activity, [e.target.name]: e.target.value }, setActivities, setDebounceRef)
+
+        // add network request to update activity
     }
 
     const sendUpdateReq = async () => {
