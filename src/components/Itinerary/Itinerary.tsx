@@ -5,16 +5,10 @@ import Image from 'next/image'
 import { IItineraryData } from '../../types/itinerary';
 import { useAtomValue, useAtom } from 'jotai';
 import { itineraryAtom, } from '../../atomStore';
-// import { focusAtom } from 'jotai-optics'
-// import { splitAtom } from 'jotai/utils'
+
 
 const Itinerary = () => {
-  // get itinerary data from atom
   const itinerary = useAtomValue(itineraryAtom)
-
-  // const keyFn = useCallback((optic) => optic.prop('tripDays'), []);
-  // const tripDaysFocusAtom = useFocusAtom(itineraryAtom, keyFn)
-  // const [splitTripDays] = useSplitAtom(tripDaysFocusAtom)
 
 
   return (
@@ -33,15 +27,12 @@ const Itinerary = () => {
             <div className='w-11/12 md:w-10/12 lg:w-11/2 mx-auto'>
                 <div className='bg-inherit w-full mt-5 flex'>
                     <div className='grid grid-cols-1 divide-y divide-white text-black w-full'>
-                      {itinerary.tripDays.map((dayId) => {
+                      {/* {itinerary.tripDays.map((dayId) => {
                         return <TripDay
                                   tripDayId={dayId} 
                                   key={dayId} 
-                                  // date={new Date(day.date)} 
-                                  // activities={day.activities}
-                                  // tripDayId={day.id}
                                 />
-                      })}
+                      })} */}
                     </div>
                 </div>
             </div>

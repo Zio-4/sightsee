@@ -16,12 +16,11 @@ export type Activity = {
     tripDayId: number
 }
 
-export interface IActivitesAtom {
+export interface Activities {
     [key: string]: Activity
 }
 
 export type NormalizedTripDay = {
-    // activities: Activity[] | number[]
     activities: number[]
     date: Date
     id: number
@@ -35,11 +34,11 @@ export type TripDay = {
     itineraryId: number
 }
 
-export interface ITripDaysAtom {
+export interface TripDays {
     [key: string]: NormalizedTripDay
 }
 
-export type Itinerary = {
+export interface Itinerary {
     coverPhoto: string | null
     destinations: string
     endDate: Date
@@ -52,6 +51,12 @@ export type Itinerary = {
     tripDays: number[]
     creator: string
     collaborationId: number
+}
+
+export interface NormalizedTripData {
+    itinerary: Itinerary
+    tripDays: TripDays
+    activities: Activities
 }
 
 export interface IItineraryData {
@@ -99,7 +104,7 @@ export type MarkerCoordinates = [number | undefined, number | undefined]
 
 export interface IItineraryPage {
     itinerary: Itinerary,
-    tripDays: ITripDaysAtom,
-    activities: IActivitesAtom,
+    tripDays: TripDays,
+    activities: Activities,
     activityCoordinates: ActivityCoordinates
 }

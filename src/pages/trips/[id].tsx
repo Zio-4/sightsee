@@ -10,6 +10,7 @@ import { IItineraryPage } from '../../types/itinerary'
 import { useSetAtom } from 'jotai'
 import { itineraryAtom, activityCoordinatesAtom, tripDaysAtom, activitiesAtom } from '../../atomStore'
 import TripLayout from '../../components/Trips/TripLayout'
+import { ItineraryProvider } from '../../contexts/ItineraryProvider'
 import { Activity, TripDay } from '../../types/itinerary'
 import { ActivityCoordinates } from '../../types/map'
 import pusherInstance from '../../lib/pusher'
@@ -78,15 +79,14 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
 
 
   return (
-    <>
+    <ItineraryProvider>
       <TripLayout 
         viewState={viewState}
         setViewState={setViewState}
-        // itineraryChild={<Itinerary itin={itin} />}
         itineraryChild={<Itinerary />}
         mapChild={<MapGL />}
       />
-    </>
+    </ItineraryProvider>
   )
 }
 
@@ -127,6 +127,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     console.error(e);
   }
 
+
   let activityCoordinates: ActivityCoordinates[] = []
 
 
@@ -136,7 +137,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
    * This function takes the nested data structure fetched from the server,
    * containing the itinerary, trip days, and activities, and normalizes it into
    * separate objects. This normalization is useful for state management in React,
-   * especially when using state management libraries like Jotai.
+   * where updating nested state is difficult.
    * 
    * The function creates three separate objects: itineraries, tripDays, and activities.
    * Each of these objects is a map, where the key is the entity's ID, and the value
@@ -150,7 +151,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
    * and activities. Each is a normalized map of its respective entities.
    * 
    * @example
-   * Example of data input structure:
+   * Input:
    * const data = {
    *   id: 1,
    *   name: 'Sample Itinerary',
@@ -167,8 +168,34 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
    * };
    * 
    * const normalized = normalizeData(data);
-   * // normalized.itineraries, normalized.tripDays, normalized.activities
-   * // will now have structured data separated by entity type.
+   * 
+   * Output:
+   * {
+   *   itinerary: {
+   *       id: 1,
+   *       name: 'Sample Itinerary',
+   *       tripDays: [ 101, 102, 103, ... ],
+   *   },
+   *   tripDays: {
+   *     101: {
+   *       id: 101,
+   *       date: '2021-01-01',
+   *       activities: [ 201, 202, 203, ... ]
+   *     }
+   *   },
+   *   activities: {
+   *     201: {
+   *       id: 201,
+   *       name: 'Activity 1',
+   *       ... other activity properties
+   *     },
+   *     202: {
+   *       id: 202,
+   *       name: 'Activity 2',
+   *       ... other activity properties
+   *     }
+   *   }
+   * }
    */
   const normalizeData = (data: any) => {
     const itinerary = data;
@@ -206,7 +233,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     }
   }
 
-  
+  // Figure out why this is commented out. Are we not using it?
   // for (const tripDay of itineraryData.tripDays) {
   //   for (const activity of tripDay.activities) {
   //     // In case activity does not have coordinates
