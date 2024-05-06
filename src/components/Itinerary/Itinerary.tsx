@@ -1,14 +1,11 @@
-import React, { use, useEffect, useCallback } from 'react'
 import TripDay from './TripDay'
 import format from 'date-fns/format';
 import Image from 'next/image'
-import { IItineraryData } from '../../types/itinerary';
-import { useAtomValue, useAtom } from 'jotai';
-import { itineraryAtom, } from '../../atomStore';
+import { useItineraryContext } from '../../hooks/useItineraryContext'
 
 
 const Itinerary = () => {
-  const itinerary = useAtomValue(itineraryAtom)
+  const { state: { itinerary } } = useItineraryContext()
 
 
   return (
@@ -27,12 +24,12 @@ const Itinerary = () => {
             <div className='w-11/12 md:w-10/12 lg:w-11/2 mx-auto'>
                 <div className='bg-inherit w-full mt-5 flex'>
                     <div className='grid grid-cols-1 divide-y divide-white text-black w-full'>
-                      {/* {itinerary.tripDays.map((dayId) => {
+                      {itinerary.tripDays.map((dayId) => {
                         return <TripDay
                                   tripDayId={dayId} 
                                   key={dayId} 
                                 />
-                      })} */}
+                      })}
                     </div>
                 </div>
             </div>

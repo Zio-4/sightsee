@@ -1,16 +1,21 @@
 import { useReducer, createContext } from 'react';
 import { itineraryReducer } from '../reducers/itineraryReducer';
+import { ItineraryContextType } from '../types/itinerary';
 
-const ItineraryContext = createContext({});
+export const ItineraryContext = createContext<ItineraryContextType | null>(null);
 
 export const ItineraryProvider = ({ children }: React.PropsWithChildren) => {
   const initialState = {
-    itineraries: { },
+    itinerary: { }, 
     tripDays: { },
-    activities: { }
+    activities: { },
+    searchMarkerCoordinates: [undefined, undefined],
+    map: {}
   };
 
   const [state, dispatch] = useReducer(itineraryReducer, initialState);
+
+
 
   return (
     <ItineraryContext.Provider value={{ state, dispatch }}>

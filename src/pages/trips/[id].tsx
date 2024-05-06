@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, } from 'react'
 import Itinerary from '../../components/Itinerary/Itinerary'
 import { prisma } from '../../server/db/client'
 import { type GetServerSideProps } from 'next'
@@ -7,23 +7,17 @@ import { useAuth } from '@clerk/nextjs'
 import { buildClerkProps } from "@clerk/nextjs/server";
 import MapGL from '../../components/MapGL'
 import { IItineraryPage } from '../../types/itinerary'
-import { useSetAtom } from 'jotai'
-import { itineraryAtom, activityCoordinatesAtom, tripDaysAtom, activitiesAtom } from '../../atomStore'
 import TripLayout from '../../components/Trips/TripLayout'
-import { ItineraryProvider } from '../../contexts/ItineraryProvider'
 import { Activity, TripDay } from '../../types/itinerary'
 import { ActivityCoordinates } from '../../types/map'
 import pusherInstance from '../../lib/pusher'
 import { handlePusherMessage } from '../../lib/handlePusherMessage'
-import { updateActivityAtoms } from '../../atomStore'
+import { useItineraryContext } from '../../hooks/useItineraryContext'
 
 const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IItineraryPage) => {
   const [viewState, setViewState] = useState(false)
   const { isSignedIn } = useAuth()
-  const setItinerary = useSetAtom(itineraryAtom)
-  const setTripDays = useSetAtom(tripDaysAtom)
-  const setActivities = useSetAtom(activitiesAtom)
-  const setActivityCoordinates = useSetAtom(activityCoordinatesAtom)
+  const { dispatch } = useItineraryContext()
 
 
   useEffect(() => {
@@ -40,10 +34,15 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
   }, [isSignedIn])
 
   useEffect(() => {
-    setItinerary({ ...itinerary })
-    setTripDays(tripDays)
-    setActivities(activities)
-    setActivityCoordinates(activityCoordinates)
+    dispatch({
+      type: 'SET_ITINERARY',
+      payload: {
+        itinerary,
+        tripDays,
+        activities,
+        activityCoordinates
+      }
+    })
   }, [])
 
   useEffect(() => {
@@ -79,14 +78,12 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
 
 
   return (
-    <ItineraryProvider>
       <TripLayout 
         viewState={viewState}
         setViewState={setViewState}
         itineraryChild={<Itinerary />}
         mapChild={<MapGL />}
       />
-    </ItineraryProvider>
   )
 }
 
@@ -233,15 +230,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     }
   }
 
-  // Figure out why this is commented out. Are we not using it?
-  // for (const tripDay of itineraryData.tripDays) {
-  //   for (const activity of tripDay.activities) {
-  //     // In case activity does not have coordinates
-  //     if (activity.longitude) {
-  //       activityCoordinates.push([activity.longitude, activity.latitude])
-  //     }
-  //   }
-  // }
 
   return {  
     props: { 

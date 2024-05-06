@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from "react"
 import { ActivityCoordinates } from "./map"
+import { type Map } from "react-map-gl";
 // Itinerary
 
 export type Activity = {
@@ -53,23 +54,29 @@ export interface Itinerary {
     collaborationId: number
 }
 
+type ItineraryAction = {
+    type: string
+    payload: any
+}
+
+
+export interface ItineraryContextType {
+    state: NormalizedTripData
+    dispatch: Dispatch<ItineraryAction>
+}
+
 export interface NormalizedTripData {
     itinerary: Itinerary
     tripDays: TripDays
     activities: Activities
+    searchMarkerCoordinates: [number | undefined, number | undefined],
+    map: Map
 }
 
 export interface IItineraryData {
     itin: Itinerary
 }
 
-// TripDay
-
-// export interface ITripDay {
-//     date: Date
-//     activities: Activity[] | [],
-//     tripDayId: number,
-// }
 
 // Activity form
 

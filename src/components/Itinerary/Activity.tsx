@@ -1,27 +1,23 @@
-import React, { use, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import axios from 'axios';
 import { BsTrashFill } from 'react-icons/bs'
 import { format } from 'date-fns'
 import { IActivityProps } from '../../types/itinerary';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { 
-    activitiesAtom,
-    debouncRefAtom,
-    removeActivity,
-    updateActivityAtoms 
-} from '../../atomStore';
 import useDebounce from '../../hooks/useDebounce';
+import { useItineraryContext } from '../../hooks/useItineraryContext'
 
 
 
 const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: number } ) => {
-    const [activities, setActivities] = useAtom(activitiesAtom)
-    const activity = activities[activityId.toString()]
+    const { state: { activities } } = useItineraryContext()
+    const activity = activities[activityId]
+
+
     const [timeDropDown, setTimeDropDown] = useState(false)
     const clearedTimeRef = useRef(false)
-    const debouncedActivityUpdate = useDebounce(useAtomValue(debouncRefAtom), 500)
-    // For activity update
-    const setDebounceRef = useSetAtom(debouncRefAtom);
+    // const debouncedActivityUpdate = useDebounce(useAtomValue(debouncRefAtom), 500)
+    // // For activity update
+    // const setDebounceRef = useSetAtom(debouncRefAtom);
 
     useEffect(() => {
         const updateActivityCall = async () => {
@@ -37,7 +33,7 @@ const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: nu
 
 
     const updateActivity = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        updateActivityAtoms(activityId,  { ...activity, [e.target.name]: e.target.value }, setActivities, setDebounceRef)
+        // updateActivityAtoms(activityId,  { ...activity, [e.target.name]: e.target.value }, setActivities, setDebounceRef)
 
         // add network request to update activity
     }
@@ -176,9 +172,9 @@ const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: nu
                             
                         </div>
 
-                        <button title='delete-button' onClick={() => removeActivity(activity!.id, tripDayId, [activity!.longitude, activity!.latitude])}>
+                        {/* <button title='delete-button' onClick={() => removeActivity(activity!.id, tripDayId, [activity!.longitude, activity!.latitude])}>
                             <BsTrashFill className='bg-red-400 p-1 cursor-pointer rounded-md text-white hover:bg-red-500' size={25}/>
-                        </button>
+                        </button> */}
                     </div>
                 </div>
             </div>

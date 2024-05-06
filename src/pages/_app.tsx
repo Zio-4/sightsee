@@ -8,6 +8,7 @@ import { trpc } from "../utils/trpc";
 
 import "../styles/globals.css";
 import { Merriweather_Sans } from '@next/font/google'
+import { ItineraryProvider } from '../contexts/ItineraryProvider'
 
 const cabin = Merriweather_Sans({
   weight: ['400','500','600', '700'],
@@ -27,10 +28,10 @@ const MyApp: AppType = ({
         {
         //@ts-ignore
         Component.tripPage ? (
-          <>
+          <ItineraryProvider>
             <Navbar />
             <Component {...pageProps} />
-          </>
+          </ItineraryProvider>
         ) : (
           <>
             <Navbar />

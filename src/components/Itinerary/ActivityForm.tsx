@@ -1,19 +1,8 @@
-import React, { use, useState } from 'react'
+import React, { useState } from 'react'
 import axios from 'axios';
 import { SearchBox,  } from '@mapbox/search-js-react';
-import { useAtomValue, useAtom, useSetAtom } from 'jotai';
-import { 
-    mapAtom,
-    searchMarkerCoordinatesAtom,
-    activityCoordinatesAtom,
-    addActivity,
-    tripDaysAtom,
-    activitiesAtom,
-    debouncRefAtom,
- } from '../../atomStore';
 import { IActivityForm } from '../../types/itinerary';
 import { triggerPusherEvent } from '../../lib/pusherEvent';
-import { itineraryAtom } from '../../atomStore';
 
 const searchBoxStyling = {
     variables: {
@@ -60,13 +49,13 @@ const ActivityForm = ({ tripDayId, }: IActivityForm) => {
         console.log('activity creation response:', res)
 
         // Cannot update state before we have the activity id from the server
-        addActivity(
-            res.data, 
-            tripDays, 
-            setActivities, 
-            setDebounceRef, 
-            setActivityCoordinates
-        )
+        // addActivity(
+        //     res.data, 
+        //     tripDays, 
+        //     setActivities, 
+        //     setDebounceRef, 
+        //     setActivityCoordinates
+        // )
 
         // trigger pusher event
         await triggerPusherEvent(`itinerary-${itinerary.id}`, 'itinerary-event-name', {
