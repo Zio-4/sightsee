@@ -3,6 +3,7 @@ import axios from 'axios';
 import { SearchBox,  } from '@mapbox/search-js-react';
 import { IActivityForm } from '../../types/itinerary';
 import { triggerPusherEvent } from '../../lib/pusherEvent';
+import { useItineraryContext } from '../../hooks/useItineraryContext'
 
 const searchBoxStyling = {
     variables: {
@@ -17,23 +18,20 @@ const ActivityForm = ({ tripDayId, }: IActivityForm) => {
         address: ''
     })
     const [searchBoxValue, setSearchBoxValue] = useState('');
-    const mapInstance = useAtomValue(mapAtom)  
-    const [searchMarkerCoordinates, setSearchMarkerCoordinates] = useAtom(searchMarkerCoordinatesAtom)
-    const setActivityCoordinates = useSetAtom(activityCoordinatesAtom)
-    const itinerary = useAtomValue(itineraryAtom)
+    const { state: { itinerary, map, searchMarkerCoordinates }, dispatch } = useItineraryContext()
+    
     // To add activity
-    const tripDays = useAtomValue(tripDaysAtom)
-    const setActivities = useSetAtom(activitiesAtom)
-    const setDebounceRef = useSetAtom(debouncRefAtom)
+    // const tripDays = useAtomValue(tripDaysAtom)
+    // const setActivities = useSetAtom(activitiesAtom)
+    // const setDebounceRef = useSetAtom(debouncRefAtom)
 
     const createAcitivity = async () => {
         if (activityDetails.name.length === 0) return
 
         setSearchBoxValue('')
 
-        setActivityCoordinates((coords) => [...coords, searchMarkerCoordinates])
-
-        setSearchMarkerCoordinates((prev) => [undefined, undefined])
+        // Does this make sense?
+        dispatch({ type: 'SET_SEARCH_MARKER_COORDINATES', payload: searchMarkerCoordinates})
     
         const activityFormValues = {
             name: activityDetails.name,
@@ -66,7 +64,7 @@ const ActivityForm = ({ tripDayId, }: IActivityForm) => {
     }
 
     const handleRetrieve = (res: any) => {
-        setSearchMarkerCoordinates([res.features[0]?.properties.coordinates.longitude, res.features[0]?.properties.coordinates.latitude])
+        dispatch({ type: 'SET_SEARCH_MARKER_COORDINATES', payload: [res.features[0]?.properties.coordinates.longitude, res.features[0]?.properties.coordinates.latitude]})
         setActivityDetails({
             name: res.features[0].properties?.name_preferred || res.features[0].properties.name,
             address: res.features[0].properties?.full_address || ''
@@ -81,7 +79,7 @@ const ActivityForm = ({ tripDayId, }: IActivityForm) => {
                 <SearchBox 
                     accessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!}
                     // @ts-ignore
-                    map={mapInstance} 
+                    map={map} 
                     value={searchBoxValue} 
                     onChange={(text) => setSearchBoxValue(text)}
                     onRetrieve={handleRetrieve}

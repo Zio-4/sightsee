@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react'
 import { Map as MapComponent, NavigationControl, Marker } from 'react-map-gl';
 import * as React from 'react';
 import { type Activity } from '../types/itinerary';
+import { useItineraryContext } from '../hooks/useItineraryContext'
 
 
 const MapGL = () => {
   const mapRef = React.useRef(null)
-  const setMap = useSetAtom(mapAtom)
-  const { state: { activities, searchMarkerCoordinates } } = useItineraryContext()
+  const { state: { activities, searchMarkerCoordinates }, dispatch } = useItineraryContext()
   const firstKeyReturned = Object.keys(activities)[0]
+  // @ts-ignore
   const someActivityCoords = [activities[firstKeyReturned].longitude, activities[firstKeyReturned].latitude]
   const [mapCoords, setMapCoords] = useState({
     // initial coordinates
@@ -20,7 +21,7 @@ const MapGL = () => {
 
   useEffect(() => {
     // @ts-ignore
-    setMap((map) => mapRef.current?.getMap())
+    dispatch({ type: 'SET_MAP', payload: mapRef.current?.getMap()})
   }, [mapRef.current])
 
   return (

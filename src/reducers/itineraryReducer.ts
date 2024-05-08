@@ -4,10 +4,23 @@ import { NormalizedTripData } from "../types/itinerary";
 // TODO add types
 export function itineraryReducer(state: NormalizedTripData, action: any) {
   switch (action.type) {
+    // Sets itinerary, tripDays, activities,
     case 'SET_ITINERARY': {
       return {
         ...state,
         ...action.payload
+      };
+    }
+    case 'SET_MAP': {
+      return {
+        ...state,
+        map: action.payload
+      };
+    }
+    case 'SET_SEARCH_MARKER_COORDINATES': {
+      return {
+        ...state,
+        searchMarkerCoordinates: action.payload
       };
     }
     case 'ITINERARY_UPDATE': {

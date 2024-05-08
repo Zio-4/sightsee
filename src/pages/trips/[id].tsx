@@ -40,7 +40,6 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
         itinerary,
         tripDays,
         activities,
-        activityCoordinates
       }
     })
   }, [])
