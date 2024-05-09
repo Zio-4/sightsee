@@ -3,6 +3,7 @@ import { Map as MapComponent, NavigationControl, Marker } from 'react-map-gl';
 import * as React from 'react';
 import { type Activity } from '../types/itinerary';
 import { useItineraryContext } from '../hooks/useItineraryContext'
+import { s } from 'vitest/dist/env-afee91f0';
 
 
 const MapGL = () => {
@@ -10,7 +11,7 @@ const MapGL = () => {
   const { state: { activities, searchMarkerCoordinates }, dispatch } = useItineraryContext()
   const firstKeyReturned = Object.keys(activities)[0]
   // @ts-ignore
-  const someActivityCoords = [activities[firstKeyReturned].longitude, activities[firstKeyReturned].latitude]
+  const someActivityCoords = [activities[firstKeyReturned]?.longitude, activities[firstKeyReturned]?.latitude]
   const [mapCoords, setMapCoords] = useState({
     // initial coordinates
     longitude: someActivityCoords[0] || 0,

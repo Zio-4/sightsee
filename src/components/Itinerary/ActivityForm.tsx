@@ -21,8 +21,6 @@ const ActivityForm = ({ tripDayId, }: IActivityForm) => {
     const { state: { itinerary, map, searchMarkerCoordinates }, dispatch } = useItineraryContext()
     
     // To add activity
-    // const tripDays = useAtomValue(tripDaysAtom)
-    // const setActivities = useSetAtom(activitiesAtom)
     // const setDebounceRef = useSetAtom(debouncRefAtom)
 
     const createAcitivity = async () => {
@@ -31,7 +29,7 @@ const ActivityForm = ({ tripDayId, }: IActivityForm) => {
         setSearchBoxValue('')
 
         // Does this make sense?
-        dispatch({ type: 'SET_SEARCH_MARKER_COORDINATES', payload: searchMarkerCoordinates})
+        // dispatch({ type: 'UPDATE_SEARCH_MARKER_COORDINATES', payload: searchMarkerCoordinates})
     
         const activityFormValues = {
             name: activityDetails.name,
@@ -47,13 +45,7 @@ const ActivityForm = ({ tripDayId, }: IActivityForm) => {
         console.log('activity creation response:', res)
 
         // Cannot update state before we have the activity id from the server
-        // addActivity(
-        //     res.data, 
-        //     tripDays, 
-        //     setActivities, 
-        //     setDebounceRef, 
-        //     setActivityCoordinates
-        // )
+        dispatch({ type: 'ADD_ACTIVITY', payload: res.data})
 
         // trigger pusher event
         await triggerPusherEvent(`itinerary-${itinerary.id}`, 'itinerary-event-name', {
@@ -64,7 +56,7 @@ const ActivityForm = ({ tripDayId, }: IActivityForm) => {
     }
 
     const handleRetrieve = (res: any) => {
-        dispatch({ type: 'SET_SEARCH_MARKER_COORDINATES', payload: [res.features[0]?.properties.coordinates.longitude, res.features[0]?.properties.coordinates.latitude]})
+        dispatch({ type: 'UPDATE_SEARCH_MARKER_COORDINATES', payload: [res.features[0]?.properties.coordinates.longitude, res.features[0]?.properties.coordinates.latitude]})
         setActivityDetails({
             name: res.features[0].properties?.name_preferred || res.features[0].properties.name,
             address: res.features[0].properties?.full_address || ''

@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react'
 import axios from 'axios';
 import { BsTrashFill } from 'react-icons/bs'
 import { format } from 'date-fns'
-import { IActivityProps } from '../../types/itinerary';
 import useDebounce from '../../hooks/useDebounce';
 import { useItineraryContext } from '../../hooks/useItineraryContext'
 

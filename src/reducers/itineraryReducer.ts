@@ -11,6 +11,15 @@ export function itineraryReducer(state: NormalizedTripData, action: any) {
         ...action.payload
       };
     }
+    // case 'UPDATE_ITINERARY': {
+    //   return {
+    //     ...state,
+    //     itinerary: {
+    //       ...state.itinerary,
+    //       ...action.payload.data
+    //     }
+    //   };
+    // }
     case 'SET_MAP': {
       return {
         ...state,
@@ -21,6 +30,15 @@ export function itineraryReducer(state: NormalizedTripData, action: any) {
       return {
         ...state,
         searchMarkerCoordinates: action.payload
+      };
+    }
+    case 'UPDATE_SEARCH_MARKER_COORDINATES': {
+      return {
+        ...state,
+        searchMarkerCoordinates: {
+          ...state.searchMarkerCoordinates,
+          ...action.payload
+        }
       };
     }
     case 'ITINERARY_UPDATE': {

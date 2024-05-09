@@ -1,9 +1,4 @@
-import { set } from 'date-fns'
-import { 
-    updateActivityAtoms,
-    addActivity,
-    removeActivity
- } from '../atomStore'
+
 
 // Add functions to be passed in 
 export function handlePusherMessage(msg: any) {
@@ -11,9 +6,9 @@ export function handlePusherMessage(msg: any) {
 
     if (entity === 'activity') {
         if (action === 'create') {
-            addActivity(data, )
+            // addActivity(data, )
         } else if (action === 'update') {
-            updateActivityAtoms(data.id, data, setActivities, setDebounceRef)
+            // updateActivityAtoms(data.id, data, setActivities, setDebounceRef)
         } else if (action === 'delete') {
             // removeActivity(data.id, data.tripDayId, data.activityCoords)
         }
