@@ -4,6 +4,7 @@ import { SearchBox,  } from '@mapbox/search-js-react';
 import { IActivityForm } from '../../types/itinerary';
 import { triggerPusherEvent } from '../../lib/pusherEvent';
 import { useItineraryContext } from '../../hooks/useItineraryContext'
+import { set } from 'date-fns';
 
 const searchBoxStyling = {
     variables: {
@@ -19,7 +20,11 @@ const ActivityForm = ({ tripDayId, }: IActivityForm) => {
     })
     const [searchBoxValue, setSearchBoxValue] = useState('');
     const { state: { itinerary, map, searchMarkerCoordinates }, dispatch } = useItineraryContext()
-    
+    const [showToast, setShowToast] = useState({
+        state: false,
+        message: ''
+    })
+
     // To add activity
     // const setDebounceRef = useSetAtom(debouncRefAtom)
 
@@ -29,6 +34,7 @@ const ActivityForm = ({ tripDayId, }: IActivityForm) => {
         setSearchBoxValue('')
 
         // Does this make sense?
+        // Map coordinates don't need to change unless you search for a new location
         // dispatch({ type: 'UPDATE_SEARCH_MARKER_COORDINATES', payload: searchMarkerCoordinates})
     
         const activityFormValues = {
@@ -41,18 +47,27 @@ const ActivityForm = ({ tripDayId, }: IActivityForm) => {
             latitude: searchMarkerCoordinates[1]
         }
 
-        const res = await axios.post('/api/activities', activityFormValues)
-        console.log('activity creation response:', res)
+        try {
+            const res = await axios.post('/api/activities', activityFormValues)
+            console.log('activity creation response:', res)
+            setShowToast({state: true, message: 'Activity added'})        // Cannot update state before we have the activity id from the server
+            setTimeout(() => setShowToast({state: false, message: ''}), 2000)
+            dispatch({ type: 'ACTIVITY_ADD', payload: res.data})
+        } catch (error) {
+            console.error(error)
+            setShowToast({state: true, message: 'There was a problem adding the activity. Please try again'})  
+            setTimeout(() => setShowToast({state: false, message: ''}), 4000)
+        }
+       
 
-        // Cannot update state before we have the activity id from the server
-        dispatch({ type: 'ADD_ACTIVITY', payload: res.data})
 
-        // trigger pusher event
-        await triggerPusherEvent(`itinerary-${itinerary.id}`, 'itinerary-event-name', {
-            ...res.data,
-            entity: 'activity',
-            action: 'create'
-        })
+
+        // // trigger pusher event
+        // await triggerPusherEvent(`itinerary-${itinerary.id}`, 'itinerary-event-name', {
+        //     ...res.data,
+        //     entity: 'activity',
+        //     action: 'create'
+        // })
     }
 
     const handleRetrieve = (res: any) => {
@@ -66,6 +81,14 @@ const ActivityForm = ({ tripDayId, }: IActivityForm) => {
 
   return (
     <div className='text-black mt-3'>
+        {showToast.state && (
+            <div className="toast toast-top toast-start transition-transform duration-300 ease-in-out">
+                <div className="alert alert-info shadow-lg text-white">
+                    <span>{showToast.message}</span>
+                </div>
+            </div>)
+        }
+
         <div className='flex justify-between'>
             <div className='w-2/3'>
                 <SearchBox 
@@ -90,7 +113,7 @@ const ActivityForm = ({ tripDayId, }: IActivityForm) => {
                 onClick={createAcitivity} 
                 name='activityButton' 
                 aria-label='add-activity-button' 
-                className='bg-teal-300 py-1 px-2 rounded-lg text-black hover:bg-teal-500'
+                className='btn btn-accent btn-xs sm:btn-sm'
             >
                 Add activity
             </button>

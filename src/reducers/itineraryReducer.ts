@@ -41,6 +41,7 @@ export function itineraryReducer(state: NormalizedTripData, action: any) {
         }
       };
     }
+    // TRIPDAY
     case 'ITINERARY_UPDATE': {
       return {
         ...state,
@@ -84,6 +85,28 @@ export function itineraryReducer(state: NormalizedTripData, action: any) {
         }
       };
     }
+    // ACTIVITY
+    case 'ACTIVITY_ADD': {
+      return {
+        ...state,
+        tripDays: {
+          ...state.tripDays,
+          [action.payload.tripDayId]: {
+            ...state.tripDays[action.payload.tripDayId],
+            activities: [
+              ...state.tripDays[action.payload.tripDayId]!.activities,
+              action.payload.id
+            ]
+          }
+        },
+        activities: {
+          ...state.activities,
+          [action.payload.id]: {
+            ...action.payload
+          }
+        }
+      };
+    }
     case 'ACTIVITY_UPDATE': {
       return {
         ...state,
@@ -91,7 +114,7 @@ export function itineraryReducer(state: NormalizedTripData, action: any) {
           ...state.activities,
           [action.payload.activityId]: {
             ...state.activities[action.payload.activityId],
-            ...action.payload.data
+            ...action.payload
           }
         }
       };
