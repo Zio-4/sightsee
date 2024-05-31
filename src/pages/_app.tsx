@@ -9,6 +9,7 @@ import { trpc } from "../utils/trpc";
 import "../styles/globals.css";
 import { Merriweather_Sans } from '@next/font/google'
 import { ItineraryProvider } from '../contexts/ItineraryProvider'
+import { Toaster } from "react-hot-toast";
 
 const cabin = Merriweather_Sans({
   weight: ['400','500','600', '700'],
@@ -22,6 +23,7 @@ const MyApp: AppType = ({
 }) => {
   return (
     <ClerkProvider {...pageProps}>
+      <Toaster />
       <div className={cabin.className}>
         <div className="bg-gradient-to-br from-green-300 via-blue-500 to-purple-600 text-white w-full min-h-screen">
 

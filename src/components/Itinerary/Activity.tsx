@@ -4,37 +4,53 @@ import { BsTrashFill } from 'react-icons/bs'
 import { format } from 'date-fns'
 import useDebounce from '../../hooks/useDebounce';
 import { useItineraryContext } from '../../hooks/useItineraryContext'
-
-
+import useDeepCompareEffect from '../../hooks/useDeepCompareEffect';
+import { toast } from 'react-hot-toast';
 
 const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: number } ) => {
     const { state: { activities } } = useItineraryContext()
     const activity = activities[activityId]
-
-
+    console.log(activity)
+    const [inputActivityState, setInputActivityState] = useState({
+        name: activity?.name,
+        startTime: activity?.startTime || null,
+        endTime: activity?.endTime || null,
+        note: activity?.note || '',
+    })
     const [timeDropDown, setTimeDropDown] = useState(false)
     const clearedTimeRef = useRef(false)
-    // const debouncedActivityUpdate = useDebounce(useAtomValue(debouncRefAtom), 500)
-    // // For activity update
-    // const setDebounceRef = useSetAtom(debouncRefAtom);
+    const debouncedInput = useDebounce(inputActivityState, 500)
+    const updateActivityRef = useRef(false)
 
-    useEffect(() => {
-        const updateActivityCall = async () => {
-            if (clearedTimeRef.current) {
-                // setDisplayStartTime(`${activity.startTime}`)
-                // setDisplayEndTime(`${activity.endTime}`)
-                await sendUpdateReq()
-                clearedTimeRef.current = false
+    useDeepCompareEffect(() => {
+        async function sendUpdateReq() {
+            try {
+                await axios.put('/api/activities', {
+                    name: inputActivityState.name,
+                    startTime: inputActivityState.startTime,
+                    endTime: inputActivityState.endTime,
+                    note: inputActivityState.note,
+                    activityId: activityId
+                })
+                updateActivityRef.current = false
+            } catch (error) {
+                console.error(error)
+                toast.error(`There was a problem updating the activity: ${inputActivityState.name}`)
             }
         }
-        updateActivityCall()
-    }, [activity])
+
+        if (updateActivityRef.current) {
+            sendUpdateReq() 
+        }
+    }, [debouncedInput])
 
 
-    const updateActivity = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        // updateActivityAtoms(activityId,  { ...activity, [e.target.name]: e.target.value }, setActivities, setDebounceRef)
+    const updateActivity = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setInputActivityState({...inputActivityState, 
+                              [e.target.name]: e.target.value})
 
         // add network request to update activity
+        updateActivityRef.current = true
     }
 
     const sendUpdateReq = async () => {
@@ -110,16 +126,19 @@ const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: nu
   return (
         <div  >
             <div className='flex flex-col'>
-                <input 
-                    onChange={updateActivity} 
-                    name='name' 
-                    value={activity?.name} 
-                    className='bg-white bg-opacity-40 rounded-md p-1 outline-none w-fit h-fit'
-                />
+                <div className='flex justify-between'>
+                    <input 
+                        onChange={updateActivity} 
+                        name='name' 
+                        value={inputActivityState?.name} 
+                        className='bg-white bg-opacity-40 rounded-md p-1 outline-none w-full h-fit mr-2'
+                    />
+                    <BsTrashFill className='bg-red-400 p-1 m-auto cursor-pointer rounded-md text-white hover:bg-red-500' size={38}/>
+                </div>
 
                 <div className='bg-white bg-opacity-40 rounded-md p-2 mt-2'>
                     <textarea 
-                        value={activity?.note} 
+                        value={inputActivityState?.note} 
                         name='note' 
                         placeholder='Add notes, links, etc.' 
                         onChange={updateActivity} 
@@ -127,12 +146,13 @@ const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: nu
                     />
                     
                     <div className='flex justify-between'>
-                        <div  className=' bg-sky-200 text-sky-600 rounded-full p-1 w-fit text-xs cursor-pointer relative'>
+                         {/* className=' bg-sky-200 text-sky-600 rounded-full p-1 w-fit text-xs cursor-pointer relative' */}
+                        <div  >
                             {/* {displayStartTime.includes('-') ? (
                                 <div onClick={() => setTimeDropDown(prev => !prev)}>
                                     <p className='px-2'>Add time</p>
                                 </div>
-                            ) : (
+                                ) : (
                                 <div onClick={() => setTimeDropDown(prev => !prev)} className='flex items-center'>
                                     <p>{getActualTime(displayStartTime)}</p>
 
@@ -142,7 +162,7 @@ const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: nu
                                 </div>
                             )} */}
 
-                            {timeDropDown && (
+                            {/* {timeDropDown && (
                                 <div className='absolute top-10 bg-slate-400 p-3 rounded-lg z-10'>
                                     <div className='flex'>
                                         <input 
@@ -167,8 +187,23 @@ const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: nu
                                         <button onClick={saveTime} className='rounded-lg px-6 py-1 bg-green-300 text-white hover:bg-green-500'>Save</button>
                                     </div>
                                 </div>
-                            )}
-                            
+                            )} */}
+
+                            <select defaultValue={activity?.startTime} className="select select-ghost max-w-xs" >
+                                <option>10:00 AM</option>
+                                <option>Marge</option>
+                                <option>Bart</option>
+                                <option>Lisa</option>
+                                <option>Maggie</option>
+                            </select>
+                            :
+                            <select defaultValue={activity?.endTime} className="select select-ghost max-w-xs" >
+                                <option>11:00 AM</option>
+                                <option>Marge</option>
+                                <option>Bart</option>
+                                <option>Lisa</option>
+                                <option>Maggie</option>
+                            </select>
                         </div>
 
                         {/* <button title='delete-button' onClick={() => removeActivity(activity!.id, tripDayId, [activity!.longitude, activity!.latitude])}>
