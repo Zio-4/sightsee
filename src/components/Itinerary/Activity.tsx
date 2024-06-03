@@ -6,16 +6,17 @@ import useDebounce from '../../hooks/useDebounce';
 import { useItineraryContext } from '../../hooks/useItineraryContext'
 import useDeepCompareEffect from '../../hooks/useDeepCompareEffect';
 import { toast } from 'react-hot-toast';
+import DatePicker from 'react-datepicker';
 
 const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: number } ) => {
     const { state: { activities } } = useItineraryContext()
     const activity = activities[activityId]
     console.log(activity)
     const [inputActivityState, setInputActivityState] = useState({
-        name: activity?.name,
-        startTime: activity?.startTime || null,
-        endTime: activity?.endTime || null,
-        note: activity?.note || '',
+        name: activity!.name,
+        startTime: activity!.startTime || null,
+        endTime: activity!.endTime || null,
+        note: activity!.note || '',
     })
     const [timeDropDown, setTimeDropDown] = useState(false)
     const clearedTimeRef = useRef(false)
@@ -121,18 +122,27 @@ const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: nu
         await sendUpdateReq()
     }
 
+    const getFormattedTime = (time: string | null | undefined) => {
+        if (time) {
+            return format(new Date(time), 'hh:mm a')
+        }
+
+        return '--:-- --'
+    }
+
 
 
   return (
         <div  >
             <div className='flex flex-col'>
                 <div className='flex justify-between'>
-                    <input 
+                    {/* <input 
                         onChange={updateActivity} 
                         name='name' 
                         value={inputActivityState?.name} 
                         className='bg-white bg-opacity-40 rounded-md p-1 outline-none w-full h-fit mr-2'
-                    />
+                    /> */}
+                    <p className='bg-white bg-opacity-40 rounded-md p-1 outline-none w-full h-fit mr-2'>{inputActivityState?.name}</p>
                     <BsTrashFill className='bg-red-400 p-1 m-auto cursor-pointer rounded-md text-white hover:bg-red-500' size={38}/>
                 </div>
 
@@ -189,21 +199,33 @@ const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: nu
                                 </div>
                             )} */}
 
-                            <select defaultValue={activity?.startTime} className="select select-ghost max-w-xs" >
-                                <option>10:00 AM</option>
-                                <option>Marge</option>
-                                <option>Bart</option>
-                                <option>Lisa</option>
-                                <option>Maggie</option>
-                            </select>
-                            :
-                            <select defaultValue={activity?.endTime} className="select select-ghost max-w-xs" >
-                                <option>11:00 AM</option>
-                                <option>Marge</option>
-                                <option>Bart</option>
-                                <option>Lisa</option>
-                                <option>Maggie</option>
-                            </select>
+
+                            {/* {activity?.startTime && (
+                                <DatePicker
+                                    selected={new Date(activity.startTime)}
+                                    onChange={(date) => updateActivity(date)}
+                                    showTimeSelect
+                                    showTimeSelectOnly
+                                    timeIntervals={15}
+                                    timeCaption="Time"
+                                    dateFormat="h:mm aa"
+                                />
+                            )}
+                            
+                            {activity?.endTime && (
+                                <div>
+                                    <p>-</p>
+                                    <DatePicker
+                                        selected={new Date(activity.endTime)}
+                                        onChange={(date) => updateActivity(date)}
+                                        showTimeSelect
+                                        showTimeSelectOnly
+                                        timeIntervals={15}
+                                        timeCaption="Time"
+                                        dateFormat="h:mm aa"
+                                    />
+                                </div>
+                            )} */}
                         </div>
 
                         {/* <button title='delete-button' onClick={() => removeActivity(activity!.id, tripDayId, [activity!.longitude, activity!.latitude])}>

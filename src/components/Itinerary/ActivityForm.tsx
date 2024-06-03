@@ -8,9 +8,13 @@ import { set } from 'date-fns';
 
 const searchBoxStyling = {
     variables: {
-        borderRadius: '0.5rem'
+        borderRadius: '0.5rem',
+        // border: '3px solid #eee',
+        opacity: '40%',
+        outlineStyle: 'none',
     }
 }
+// 'bg-white bg-opacity-40 rounded-md p-1 outline-none w-full h-fit mr-2'
 
 
 const ActivityForm = ({ tripDayId, }: IActivityForm) => {
@@ -39,6 +43,8 @@ const ActivityForm = ({ tripDayId, }: IActivityForm) => {
     
         const activityFormValues = {
             name: activityDetails.name,
+            startTime: null,
+            endTime: null,
             contactInfo: '',
             note: '',
             address: activityDetails.address,
@@ -58,8 +64,6 @@ const ActivityForm = ({ tripDayId, }: IActivityForm) => {
             setShowToast({state: true, message: 'There was a problem adding the activity. Please try again'})  
             setTimeout(() => setShowToast({state: false, message: ''}), 4000)
         }
-       
-
 
 
         // // trigger pusher event
