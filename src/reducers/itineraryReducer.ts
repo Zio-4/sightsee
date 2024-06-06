@@ -1,3 +1,4 @@
+import { act } from "react-dom/test-utils";
 import { NormalizedTripData } from "../types/itinerary";
 
 
@@ -119,6 +120,29 @@ export function itineraryReducer(state: NormalizedTripData, action: any) {
         }
       };
     }
+    case 'ACTIVITY_DELETE': {  
+      const { activityId, tripDayId } = action.payload;
+  
+      // Copy activities and remove the specific activity
+      const activitiesCopy = { ...state.activities };
+      delete activitiesCopy[activityId];
+  
+      // Copy tripDays and remove the activity from the specific trip day
+      const tripDaysCopy = { ...state.tripDays };
+      if (tripDaysCopy[tripDayId]) {
+        // @ts-ignore
+          tripDaysCopy[tripDayId] = {
+              ...tripDaysCopy[tripDayId],
+              activities: tripDaysCopy[tripDayId]!.activities.filter(id => id !== activityId)
+          };
+      }
+  
+      return {
+          ...state,
+          tripDays: tripDaysCopy,
+          activities: activitiesCopy
+      };
+  }
     default:
       return state;
   }

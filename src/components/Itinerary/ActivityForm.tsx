@@ -58,7 +58,7 @@ const ActivityForm = ({ tripDayId, }: IActivityForm) => {
             console.log('activity creation response:', res)
             setShowToast({state: true, message: 'Activity added'})        // Cannot update state before we have the activity id from the server
             setTimeout(() => setShowToast({state: false, message: ''}), 2000)
-            dispatch({ type: 'ACTIVITY_ADD', payload: res.data})
+            dispatch({ type: 'ACTIVITY_ADD', payload: res.data })
         } catch (error) {
             console.error(error)
             setShowToast({state: true, message: 'There was a problem adding the activity. Please try again'})  

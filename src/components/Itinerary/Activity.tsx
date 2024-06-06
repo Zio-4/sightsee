@@ -9,7 +9,7 @@ import { toast } from 'react-hot-toast';
 import DatePicker from 'react-datepicker';
 
 const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: number } ) => {
-    const { state: { activities } } = useItineraryContext()
+    const { state: { activities }, dispatch } = useItineraryContext()
     const activity = activities[activityId]
     console.log(activity)
     const [inputActivityState, setInputActivityState] = useState({
@@ -130,6 +130,18 @@ const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: nu
         return '--:-- --'
     }
 
+    const removeActivity = async (activityId: number, tripDayId: number, activityCoordinates: [number | undefined, number | undefined]): Promise<void> => {
+        try {
+            const call = await axios.delete('/api/activities', { 
+                data: { activityId: activityId } 
+             })
+
+            dispatch({ type: 'ACTIVITY_DELETE', payload: { activityId, tripDayId } })
+        } catch (error) {
+            console.error(error)
+            toast.error(`There was a problem deleting the activity: ${inputActivityState.name}. Try again`)
+        }
+    }   
 
 
   return (
@@ -143,7 +155,12 @@ const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: nu
                         className='bg-white bg-opacity-40 rounded-md p-1 outline-none w-full h-fit mr-2'
                     /> */}
                     <p className='bg-white bg-opacity-40 rounded-md p-1 outline-none w-full h-fit mr-2'>{inputActivityState?.name}</p>
-                    <BsTrashFill className='bg-red-400 p-1 m-auto cursor-pointer rounded-md text-white hover:bg-red-500' size={38}/>
+                    
+                    <BsTrashFill
+                        onClick={() => removeActivity(activityId, tripDayId, [activity?.longitude, activity?.latitude])} 
+                        className='bg-red-400 p-1 m-auto cursor-pointer rounded-md text-white hover:bg-red-500' 
+                        size={38}
+                    />
                 </div>
 
                 <div className='bg-white bg-opacity-40 rounded-md p-2 mt-2'>
