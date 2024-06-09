@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from "react"
 import { ActivityCoordinates } from "./map"
+
 // Itinerary
 
 export type Activity = {
@@ -11,18 +12,34 @@ export type Activity = {
     photo: string | null
     startTime: string
     address: string
-    latitude: number | undefined
-    longitude: number | undefined
+    latitude: number
+    longitude: number
     tripDayId: number
 }
-type TripDay = {
-    activities: Activity[] | []
+
+export interface Activities {
+    [key: string]: Activity
+}
+
+export type NormalizedTripDay = {
+    activities: number[]
     date: Date
     id: number
     itineraryId: number
 }
 
-export type Itinerary = {
+export type TripDay = {
+    activities: Activity[]
+    date: Date
+    id: number
+    itineraryId: number
+}
+
+export interface TripDays {
+    [key: string]: NormalizedTripDay
+}
+
+export interface Itinerary {
     coverPhoto: string | null
     destinations: string
     endDate: Date
@@ -32,26 +49,38 @@ export type Itinerary = {
     public: boolean
     profileId: number
     startDate: Date
-    tripDays: TripDay[]
+    tripDays: number[]
     creator: string
-  }
+    collaborationId: number
+}
+
+type ItineraryAction = {
+    type: string
+    payload: any
+}
+
+
+export interface ItineraryContextType {
+    state: NormalizedTripData
+    dispatch: Dispatch<ItineraryAction>
+}
+
+export interface NormalizedTripData {
+    itinerary: Itinerary
+    tripDays: TripDays
+    activities: Activities
+    searchMarkerCoordinates: [number | undefined, number | undefined],
+    map: any
+}
 
 export interface IItineraryData {
     itin: Itinerary
 }
 
-// TripDay
-
-export interface ITripDay {
-    date: Date
-    activities: Activity[] | [],
-    tripDayId: number,
-}
 
 // Activity form
 
 export interface IActivityForm {
-    setActivitiesState: Dispatch<SetStateAction<Activity[]>>,
     tripDayId: number,
 }
 
@@ -81,6 +110,8 @@ export type MarkerCoordinates = [number | undefined, number | undefined]
 // trips/[id]
 
 export interface IItineraryPage {
-    itin: Itinerary
+    itinerary: Itinerary,
+    tripDays: TripDays,
+    activities: Activities,
     activityCoordinates: ActivityCoordinates
 }

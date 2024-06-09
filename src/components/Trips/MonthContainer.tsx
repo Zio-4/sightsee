@@ -78,7 +78,8 @@ const MonthContainer = ({startMonth, startYear, itineraries, selectedIndex, mont
                                 endDate={itinEndDate} 
                                 collaborators={['Jason', 'Chris', 'Henry']} 
                                 id={itin.id} bgImage={''} 
-                                destinations={itin.destinations} 
+                                destinations={itin.destinations}
+                                collaborator={itin?.collaborator || false} 
                             />
                 })}
         </div>

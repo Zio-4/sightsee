@@ -17,26 +17,25 @@ const Search = ({ itineraries }: IItineraryList) => {
 
 
     useEffect(() => {
-
-        const getSearchData = async () => {
-          setNoResults(false)
-          setLoading(true)
-          
-          const searchData = await axios.post('/api/search', {destination: debouncedSearchQuery})
-          
-          if (debouncedSearchQuery && !searchData.data.length) {
-            setNoResults(true)
-          } else setNoResults(false)
-    
-          setSearchResults(searchData.data)
-          setLoading(false)
-        }
-    
-        if (debouncedSearchQuery) { 
-          getSearchData()
-        } 
+      const getSearchData = async () => {
+        setNoResults(false)
+        setLoading(true)
         
-      }, [debouncedSearchQuery])
+        const searchData = await axios.post('/api/search', {destination: debouncedSearchQuery})
+        
+        if (debouncedSearchQuery && !searchData.data.length) {
+          setNoResults(true)
+        } else setNoResults(false)
+  
+        setSearchResults(searchData.data)
+        setLoading(false)
+      }
+  
+      if (debouncedSearchQuery) { 
+        getSearchData()
+      } 
+        
+    }, [debouncedSearchQuery])
 
   return (
     <div className='mt-20'>

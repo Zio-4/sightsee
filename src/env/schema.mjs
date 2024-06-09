@@ -29,6 +29,10 @@ export const serverSchema = z.object({
   CLERK_SECRET_KEY: z.string(),
   WEBHOOK_SECRET_USER_CREATED: z.string(),
   WEBHOOK_SECRET_USER_DELETED: z.string(),
+  PUSHER_APP_KEY: z.string(),
+  PUSHER_APP_CLUSTER: z.string(),
+  PUSHER_APP_ID: z.string(),
+  PUSHER_APP_SECRET: z.string(),
 });
 
 /**
@@ -39,7 +43,9 @@ export const serverSchema = z.object({
 export const clientSchema = z.object({
   // NEXT_PUBLIC_CLIENTVAR: z.string(),
   NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN: z.string(),
-  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string()
+  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string(),
+  NEXT_PUBLIC_PUSHER_APP_KEY: z.string(),
+  NEXT_PUBLIC_PUSHER_APP_CLUSTER: z.string(),
 });
 
 /**
@@ -51,5 +57,7 @@ export const clientSchema = z.object({
 export const clientEnv = {
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN: process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN,
-  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+  NEXT_PUBLIC_PUSHER_APP_KEY: process.env.NEXT_PUBLIC_PUSHER_APP_KEY,
+  NEXT_PUBLIC_PUSHER_APP_CLUSTER: process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER,
 };

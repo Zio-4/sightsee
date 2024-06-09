@@ -4,24 +4,24 @@ import { prisma } from '../../server/db/client'
 import { type GetServerSideProps } from 'next'
 import { buildClerkProps } from "@clerk/nextjs/server";
 import { IItineraryPage } from '../../types/itinerary'
-import { useSetAtom } from 'jotai'
-import { activityCoordinatesAtom } from '../../atomStore'
+// import { useSetAtom } from 'jotai'
+// import { activityCoordinatesAtom } from '../../atomStore'
 import MapGL from '../../components/MapGL'
 import TripLayout from '../../components/Trips/TripLayout'
 
-const ItineraryPage = ({ itin, activityCoordinates }: IItineraryPage) => {
+const ItineraryPage = ({ itinerary, tripDays, activities,activityCoordinates }: IItineraryPage) => {
     const [viewState, setViewState] = useState(false)
-    const setActivityCoordinates = useSetAtom(activityCoordinatesAtom)
+    // const setActivityCoordinates = useSetAtom(activityCoordinatesAtom)
 
-    useEffect(() => {
-      setActivityCoordinates(activityCoordinates)
-    }, [])
+    // useEffect(() => {
+    //   setActivityCoordinates(activityCoordinates)
+    // }, [])
 
     return (
       <TripLayout 
         viewState={viewState}
         setViewState={setViewState}
-        itineraryChild={<ViewItinerary itin={itin} />}
+        itineraryChild={<ViewItinerary itin={itinerary} />}
         mapChild={<MapGL />}
       />
     )

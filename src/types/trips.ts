@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from "react"
 import { Itinerary } from "./itinerary"
+import { B } from "vitest/dist/types-94cfe4b4"
 
  // Month container 
 export type Months = {
@@ -35,6 +36,7 @@ export interface ITripCard {
     startDate: Date,
     endDate: Date,
     collaborators: String[] | [],
+    collaborator?: Boolean,
     id: Number
     bgImage: string
 }
