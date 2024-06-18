@@ -80,7 +80,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   try {
     if (userId) {
-      data = await prisma.profile.findUnique({
+      const res = await prisma.profile.findUnique({
         where: {
           clerkId: userId
         },
@@ -97,47 +97,51 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
           }
         }
       })
+
+      if (res) {
+        data = res
+      }
     }
-
-
   } catch (e) {
     console.error(e);
   }
 
-  // add collaboration itineraries if they are not in the users itineraries
-  const allItineraries = data.itineraries
+  if (data?.itineraries) {
+    // add collaboration itineraries if they are not in the users itineraries
+    const allItineraries = data.itineraries
 
-  // Create a Set of ids from array1 for quick lookup
-  const idsInUsersItineraries = new Set(allItineraries.map((obj: Itinerary) => obj.id));
+    // Create a Set of ids from array1 for quick lookup
+    const idsInUsersItineraries = new Set(allItineraries.map((obj: Itinerary) => obj.id));
 
-  // Iterate over array2 and add objects to array1 if the id is not already present
-  data.collaborations.forEach((obj: any) => {
-    if (!idsInUsersItineraries.has(obj.itineraryId)) {
-      // Add field for conditional rendering tag in component
-      obj.itinerary.collaborator = true
-      allItineraries.push(obj.itinerary);
-    }
-  });
-
-
-  if (allItineraries.length) {
-    const itinerariesMap: ItinerariesMap = {}
-
-    for (const itin of allItineraries) {
-      const start = new Date(itin.startDate)
-
-      const startMonth = start.getMonth()
-      const startYear = start.getFullYear()  
-
-      if (itinerariesMap[`${startMonth}-${startYear}`]) {
-        itinerariesMap[`${startMonth}-${startYear}`]!.push(itin)
-      } else {
-        itinerariesMap[`${startMonth}-${startYear}`] = [itin]  
+    // Iterate over array2 and add objects to array1 if the id is not already present
+    data.collaborations.forEach((obj: any) => {
+      if (!idsInUsersItineraries.has(obj.itineraryId)) {
+        // Add field for conditional rendering tag in component
+        obj.itinerary.collaborator = true
+        allItineraries.push(obj.itinerary);
       }
+    });
+
+
+    if (allItineraries.length) {
+      const itinerariesMap: ItinerariesMap = {}
+
+      for (const itin of allItineraries) {
+        const start = new Date(itin.startDate)
+
+        const startMonth = start.getMonth()
+        const startYear = start.getFullYear()  
+
+        if (itinerariesMap[`${startMonth}-${startYear}`]) {
+          itinerariesMap[`${startMonth}-${startYear}`]!.push(itin)
+        } else {
+          itinerariesMap[`${startMonth}-${startYear}`] = [itin]  
+        }
+      }
+
+
+      return { props: { ...buildClerkProps(ctx.req), itineraryData: JSON.parse(JSON.stringify(itinerariesMap)) } }
     }
-
-
-    return { props: { ...buildClerkProps(ctx.req), itineraryData: JSON.parse(JSON.stringify(itinerariesMap)) } }
   }
 
   // signed in but have no itineraries
