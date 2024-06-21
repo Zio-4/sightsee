@@ -51,6 +51,7 @@ export default async function (
                     }))
                   },
                   public: req.body.isPublic,
+                  collaborationId: null,
                   profile: {
                     connect: { clerkId: userId },
                   }
@@ -71,7 +72,8 @@ export default async function (
                     }))
                   },
                   public: req.body.isPublic,
-                  ipAddress: requestIp.getClientIp(req)
+                  ipAddress: requestIp.getClientIp(req),
+                  collaborationId: null,
                 }
               })
             }

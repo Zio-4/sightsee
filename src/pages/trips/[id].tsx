@@ -11,7 +11,7 @@ import TripLayout from '../../components/Trips/TripLayout'
 import { Activity, TripDay } from '../../types/itinerary'
 import { ActivityCoordinates } from '../../types/map'
 import pusherInstance from '../../lib/pusher'
-import { handlePusherMessage } from '../../lib/handlePusherMessage'
+import { useHandlePusherMessage } from '../../lib/handlePusherMessage'
 import { useItineraryContext } from '../../hooks/useItineraryContext'
 
 const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IItineraryPage) => {
@@ -46,7 +46,6 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
 
   useEffect(() => {
     // check if itinerary is a collaboration
-    // TODO: use itinerary atom to access property?
     let channel: any
 
     // This is handling messages sent from the server
@@ -63,7 +62,7 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
         
         if (msg.userId === itinerary.profileId) return
         
-        handlePusherMessage(msg)
+        useHandlePusherMessage(msg)
       });
     }
 
