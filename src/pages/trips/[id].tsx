@@ -4,7 +4,7 @@ import { prisma } from '../../server/db/client'
 import { type GetServerSideProps } from 'next'
 import axios from 'axios'
 import { useAuth } from '@clerk/nextjs'
-import { buildClerkProps } from "@clerk/nextjs/server";
+import { getAuth, buildClerkProps } from "@clerk/nextjs/server";
 import MapGL from '../../components/MapGL'
 import { IItineraryPage } from '../../types/itinerary'
 import TripLayout from '../../components/Trips/TripLayout'
@@ -91,7 +91,7 @@ export default TripPage
 
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  // const { userId } = getAuth(ctx.req);
+  const { userId } = getAuth(ctx.req);
 
   // Check that itinerary profileId matches the user id
   // OR that ip address matches
@@ -117,6 +117,25 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     });
 
     itineraryData = data;
+
+    // For testing
+    // Connect user to collaboration for collaboration with id 1
+    if (userId) {
+      const res = await prisma.collaboration.update({
+        where: {
+          id: 1
+        },
+        data: {
+          profile: {
+            connect: {
+              clerkId: userId
+            }
+          }
+        },
+      })
+
+      console.log('res linking user to collaboration:', res)
+    }
 
   } catch (e) {
     console.error(e);

@@ -106,6 +106,9 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     console.error(e);
   }
 
+  console.log('data:', data)
+  console.log('data.collaborations:', data?.collaborations)
+
   if (data?.itineraries) {
     // add collaboration itineraries if they are not in the users itineraries
     const allItineraries = data.itineraries
