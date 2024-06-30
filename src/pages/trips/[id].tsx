@@ -11,7 +11,7 @@ import TripLayout from '../../components/Trips/TripLayout'
 import { Activity, TripDay } from '../../types/itinerary'
 import { ActivityCoordinates } from '../../types/map'
 import pusherInstance from '../../lib/pusher'
-import { useHandlePusherMessage } from '../../lib/handlePusherMessage'
+import { handlePusherMessage } from '../../lib/handlePusherMessage'
 import { useItineraryContext } from '../../hooks/useItineraryContext'
 
 const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IItineraryPage) => {
@@ -44,10 +44,12 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
     })
   }, [])
 
+
   useEffect(() => {
     // check if itinerary is a collaboration
     let channel: any
 
+    console.log('itinerary:', itinerary)
     // This is handling messages sent from the server
     // i.e. other users updating the itinerary
     if (itinerary.collaborationId) {
@@ -57,12 +59,10 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
       console.log('subscribed to channel:', channelName)
 
       channel.bind('itinerary-event-name', function(msg: any) {
-        // If it's the same user, we don't need to do anything
-        console.log('received message: ', msg)
-        
+        // If it's the same user that sent the message, we don't need to do anything
         if (msg.userId === itinerary.profileId) return
-        
-        useHandlePusherMessage(msg)
+        // Update the UI for collaborators with the new data
+        handlePusherMessage(msg, dispatch)
       });
     }
 

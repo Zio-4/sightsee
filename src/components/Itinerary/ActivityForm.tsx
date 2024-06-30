@@ -53,8 +53,10 @@ const ActivityForm = ({ tripDayId, }: IActivityForm) => {
             latitude: searchMarkerCoordinates[1]
         }
 
+        let res = undefined
+
         try {
-            const res = await axios.post('/api/activities', activityFormValues)
+            res = await axios.post('/api/activities', activityFormValues)
             console.log('activity creation response:', res)
             setShowToast({state: true, message: 'Activity added'})        // Cannot update state before we have the activity id from the server
             setTimeout(() => setShowToast({state: false, message: ''}), 2000)
@@ -66,12 +68,14 @@ const ActivityForm = ({ tripDayId, }: IActivityForm) => {
         }
 
 
-        // // trigger pusher event
-        // await triggerPusherEvent(`itinerary-${itinerary.id}`, 'itinerary-event-name', {
-        //     ...res.data,
-        //     entity: 'activity',
-        //     action: 'create'
-        // })
+        // trigger pusher event if collaboration
+        if (res && itinerary.collaborationId) {
+            await triggerPusherEvent(`itinerary-${itinerary.id}`, 'itinerary-event-name', {
+                ...res.data,
+                entity: 'activity',
+                action: 'create'
+            })
+        }
     }
 
     const handleRetrieve = (res: any) => {

@@ -1,16 +1,15 @@
-import { useItineraryContext } from "../hooks/useItineraryContext"
-
+import { Dispatch } from "react"
 // Add functions to be passed in 
-export function useHandlePusherMessage(msg: any) {
-    const { dispatch } = useItineraryContext()
-
+export function handlePusherMessage(msg: any, dispatch: Dispatch<any>) {
     const { entity, action, ...data } = msg
 
     if (entity === 'activity') {
         if (action === 'create') {
             dispatch({ type: 'ACTIVITY_ADD', payload: data })
+            console.log('activity added from hook')
         } else if (action === 'update') {
-            // updateActivityAtoms(data.id, data, setActivities, setDebounceRef)
+            dispatch({ type: 'ACTIVITY_UPDATE', payload: data })
+            console.log('activity updated from hook')
         } else if (action === 'delete') {
             // removeActivity(data.id, data.tripDayId, data.activityCoords)
         }

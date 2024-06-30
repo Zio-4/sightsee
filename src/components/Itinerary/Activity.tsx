@@ -6,12 +6,12 @@ import useDebounce from '../../hooks/useDebounce';
 import { useItineraryContext } from '../../hooks/useItineraryContext'
 import useDeepCompareEffect from '../../hooks/useDeepCompareEffect';
 import { toast } from 'react-hot-toast';
+import { triggerPusherEvent } from '../../lib/pusherEvent';
 import DatePicker from 'react-datepicker';
 
 const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: number } ) => {
-    const { state: { activities }, dispatch } = useItineraryContext()
+    const { state: { activities, itinerary }, dispatch } = useItineraryContext()
     const activity = activities[activityId]
-    console.log(activity)
     const [inputActivityState, setInputActivityState] = useState({
         name: activity!.name,
         startTime: activity!.startTime || null,
@@ -26,7 +26,7 @@ const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: nu
     useDeepCompareEffect(() => {
         async function sendUpdateReq() {
             try {
-                await axios.put('/api/activities', {
+                const res = await axios.put('/api/activities', {
                     name: inputActivityState.name,
                     startTime: inputActivityState.startTime,
                     endTime: inputActivityState.endTime,
@@ -34,6 +34,14 @@ const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: nu
                     activityId: activityId
                 })
                 updateActivityRef.current = false
+
+                if (itinerary.collaborationId) {
+                    await triggerPusherEvent(`itinerary-${itinerary.id}`, 'itinerary-event-name', {
+                        ...res.data,
+                        entity: 'activity',
+                        action: 'update'
+                    })
+                }
             } catch (error) {
                 console.error(error)
                 toast.error(`There was a problem updating the activity: ${inputActivityState.name}`)
@@ -137,6 +145,14 @@ const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: nu
              })
 
             dispatch({ type: 'ACTIVITY_DELETE', payload: { activityId, tripDayId } })
+
+            if (itinerary.collaborationId) {
+                await triggerPusherEvent(`itinerary-${itinerary.id}`, 'itinerary-event-name', {
+                    ...call.data,
+                    entity: 'activity',
+                    action: 'delete'
+                })
+            }
         } catch (error) {
             console.error(error)
             toast.error(`There was a problem deleting the activity: ${inputActivityState.name}. Try again`)
