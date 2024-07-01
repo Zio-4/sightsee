@@ -118,42 +118,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
     itineraryData = data;
 
-    // For testing
-    // Connect user to collaboration for collaboration with id 1
-    if (userId) {
-      console.log('userId:', userId)
-
-      const res = await prisma.collaboration.create({
-        data: {
-          profile: {
-            connect: {
-              clerkId: userId
-            }
-          }, 
-          itinerary: {
-            connect: {
-              id: 12
-            }
-          },
-        },
-      })
-
-      // const res = await prisma.collaboration.update({
-      //   where: {
-      //     id: 1
-      //   },
-      //   data: {
-      //     profile: {
-      //       connect: {
-      //         clerkId: userId
-      //       }
-      //     }
-      //   },
-      // })
-
-      console.log('res linking user to collaboration:', res)
-    }
-
   } catch (e) {
     console.error(e);
   }
