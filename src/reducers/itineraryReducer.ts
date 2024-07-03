@@ -114,7 +114,7 @@ export function itineraryReducer(state: NormalizedTripData, action: any) {
         activities: {
           ...state.activities,
           [action.payload.activityId]: {
-            ...state.activities[action.payload.activityId],
+            // ...state.activities[action.payload.activityId],
             ...action.payload
           }
         }

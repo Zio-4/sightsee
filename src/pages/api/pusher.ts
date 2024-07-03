@@ -17,19 +17,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     console.log('request body:', req.body);
 
-    const returnMsg = {
+    const returnData = {
       ...data,
       userId
     }
 
     try {
-      await pusher.trigger(channel, event, returnMsg);
+      await pusher.trigger(channel, event, returnData);
     } catch (error) {
       console.error('Error:', error);
     }
 
 
-    return res.status(200).json({ message: 'Message sent successfully', });
+    return res.status(200).json({ message: 'Message sent successfully', data: returnData });
   } else {
     return res.status(405).json({ message: 'Method not allowed' });
   }

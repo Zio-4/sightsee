@@ -35,7 +35,7 @@ const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: nu
                 })
                 updateActivityRef.current = false
 
-                if (itinerary.collaborationId) {
+                if (res && itinerary.collaborationId) {
                     await triggerPusherEvent(`itinerary-${itinerary.id}`, 'itinerary-event-name', {
                         ...res.data,
                         entity: 'activity',
@@ -140,15 +140,15 @@ const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: nu
 
     const removeActivity = async (activityId: number, tripDayId: number, activityCoordinates: [number | undefined, number | undefined]): Promise<void> => {
         try {
-            const call = await axios.delete('/api/activities', { 
+            const res = await axios.delete('/api/activities', { 
                 data: { activityId: activityId } 
              })
 
             dispatch({ type: 'ACTIVITY_DELETE', payload: { activityId, tripDayId } })
 
-            if (itinerary.collaborationId) {
+            if (res &&itinerary.collaborationId) {
                 await triggerPusherEvent(`itinerary-${itinerary.id}`, 'itinerary-event-name', {
-                    ...call.data,
+                    ...res.data,
                     entity: 'activity',
                     action: 'delete'
                 })

@@ -16,7 +16,7 @@ import { useItineraryContext } from '../../hooks/useItineraryContext'
 
 const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IItineraryPage) => {
   const [viewState, setViewState] = useState(false)
-  const { isSignedIn } = useAuth()
+  const { isSignedIn, userId } = useAuth()
   const { dispatch } = useItineraryContext()
 
 
@@ -60,7 +60,7 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
 
       channel.bind('itinerary-event-name', function(msg: any) {
         // If it's the same user that sent the message, we don't need to do anything
-        if (msg.userId === itinerary.profileId) return
+        if (msg.userId === userId) return
         // Update the UI for collaborators with the new data
         handlePusherMessage(msg, dispatch)
       });
