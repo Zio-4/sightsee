@@ -5,14 +5,22 @@ import Activity from './Activity'
 import dynamic from 'next/dynamic'
 import { tr } from 'date-fns/locale';
 import { useItineraryContext } from '../../hooks/useItineraryContext'
+import { useItinerarySelector } from '../../hooks/useItinerarySelector';
 
 // SearchBox component requires the document
 const ActivityForm = dynamic(() => import('../Itinerary/ActivityForm'), { ssr: false })
 
 
-const TripDay = ({ tripDayId }: {tripDayId: number}) => {
+const TripDay = React.memo(({ tripDayId }: {tripDayId: number}) => {
     const { state: { tripDays } } = useItineraryContext()
     const tripDay = tripDays[tripDayId.toString()]
+
+    const activities = useItinerarySelector((state) => {
+        return Object.values(state.activities).filter(
+          (activity) => activity.tripDayId === tripDay.id
+        );
+      });
+
     const [ readOnly, setReadOnly ] = useState(true);
 
     const deleteActivity = async (activityId: number, activityCoordinates: [number, number]) => {
@@ -36,7 +44,7 @@ const TripDay = ({ tripDayId }: {tripDayId: number}) => {
         //     return updatedCoordinatesState; // Return the updated state if no coordinates were removed
         // })
     }
-    
+    console.log(`Rendering trip day: ${tripDayId}`)
 
   return (
     <div className='w-full p-3 text-black'>
@@ -45,13 +53,12 @@ const TripDay = ({ tripDayId }: {tripDayId: number}) => {
         </div>
 
         <div className='space-y-3'>
-        {tripDay?.activities &&
-         tripDay?.activities.length > 0 &&
-        (tripDay?.activities.map((activityId: number) => {
+        {activities.length > 0 &&
+        (activities.map((activity) => {
                 return <Activity
-                            activityId={activityId}
+                            activity={activity}
                             tripDayId={tripDayId}
-                            key={activityId} 
+                            key={activity.id} 
                         />
             })
         )
@@ -61,6 +68,6 @@ const TripDay = ({ tripDayId }: {tripDayId: number}) => {
         <ActivityForm tripDayId={tripDayId} />
     </div>
   )
-}
+})
 
 export default TripDay

@@ -9,9 +9,8 @@ import { toast } from 'react-hot-toast';
 import { triggerPusherEvent } from '../../lib/pusherEvent';
 import DatePicker from 'react-datepicker';
 
-const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: number } ) => {
+const Activity = ({ activity, tripDayId }: { activityId: number, tripDayId: number } ) => {
     const { state: { activities, itinerary }, dispatch } = useItineraryContext()
-    const activity = activities[activityId]
     const [inputActivityState, setInputActivityState] = useState({
         name: activity!.name,
         startTime: activity!.startTime || null,
@@ -23,6 +22,8 @@ const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: nu
     const debouncedInput = useDebounce(inputActivityState, 500)
     const updateActivityRef = useRef(false)
 
+    console.log('activity:', activity)
+
     useDeepCompareEffect(() => {
         async function sendUpdateReq() {
             try {
@@ -31,9 +32,11 @@ const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: nu
                     startTime: inputActivityState.startTime,
                     endTime: inputActivityState.endTime,
                     note: inputActivityState.note,
-                    activityId: activityId
+                    activityId: activity.id
                 })
                 updateActivityRef.current = false
+
+                dispatch({ type: 'ACTIVITY_UPDATE', payload: res.data })
 
                 if (res && itinerary.collaborationId) {
                     await triggerPusherEvent(`itinerary-${itinerary.id}`, 'itinerary-event-name', {
@@ -173,7 +176,7 @@ const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: nu
                     <p className='bg-white bg-opacity-40 rounded-md p-1 outline-none w-full h-fit mr-2'>{inputActivityState?.name}</p>
                     
                     <BsTrashFill
-                        onClick={() => removeActivity(activityId, tripDayId, [activity?.longitude, activity?.latitude])} 
+                        onClick={() => removeActivity(activity.id, tripDayId, [activity?.longitude, activity?.latitude])} 
                         className='bg-red-400 p-1 m-auto cursor-pointer rounded-md text-white hover:bg-red-500' 
                         size={38}
                     />

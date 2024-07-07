@@ -8,7 +8,6 @@ export function handlePusherMessage(msg: any, dispatch: Dispatch<any>) {
             dispatch({ type: 'ACTIVITY_ADD', payload: data })
             console.log('activity added from hook')
         } else if (action === 'update') {
-            console.log('BEFORE activity updated from hook')
             dispatch({ type: 'ACTIVITY_UPDATE', payload: data })
             console.log('activity updated from hook')
         } else if (action === 'delete') {

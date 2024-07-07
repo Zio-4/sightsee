@@ -1,4 +1,4 @@
-import { useReducer, createContext } from 'react';
+import { useReducer, createContext, useMemo } from 'react';
 import { itineraryReducer } from '../reducers/itineraryReducer';
 import { ItineraryContextType } from '../types/itinerary';
 
@@ -15,10 +15,10 @@ export const ItineraryProvider = ({ children }: React.PropsWithChildren) => {
 
   const [state, dispatch] = useReducer(itineraryReducer, initialState);
 
-
+  const value = useMemo(() => ({ state, dispatch }), [state, dispatch]);
 
   return (
-    <ItineraryContext.Provider value={{ state, dispatch }}>
+    <ItineraryContext.Provider value={value}>
       {children}
     </ItineraryContext.Provider>
   );

@@ -17,7 +17,7 @@ const searchBoxStyling = {
 // 'bg-white bg-opacity-40 rounded-md p-1 outline-none w-full h-fit mr-2'
 
 
-const ActivityForm = ({ tripDayId, }: IActivityForm) => {
+const ActivityForm = React.memo(({ tripDayId, }: IActivityForm) => {
     const [activityDetails, setActivityDetails] = useState({
         name: '',
         address: ''
@@ -131,6 +131,6 @@ const ActivityForm = ({ tripDayId, }: IActivityForm) => {
         <textarea className='text-black outline-none rounded-md w-1/2'/> */}
     </div>
   )
-}
+})
 
 export default ActivityForm
