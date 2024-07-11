@@ -15,6 +15,7 @@ import { handlePusherMessage } from '../../lib/handlePusherMessage'
 import { ItineraryContext } from '../../contexts/ItineraryContext'
 import { TripDayContext } from '../../contexts/TripDayContext'
 import { ActivityContext } from '../../contexts/ActivityContext'
+import useItineraryStore from '../../hooks/useItineraryStore'
 
 const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IItineraryPage) => {
   const [viewState, setViewState] = useState(false)
@@ -23,6 +24,8 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
   const { dispatch: tripDayDispatch } = useContext(TripDayContext)
   const { dispatch: activityDispatch } = useContext(ActivityContext)
 
+  const itineraryStore = useItineraryStore(state => state.itinerary)
+  const setItineraryStore = useItineraryStore(state => state.setItinerary)
 
   useEffect(() => {
     const connectItineraryToProfile = async () => {
@@ -46,10 +49,13 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
     //     activities,
     //   }
     // })
+    setItineraryStore(itinerary)
     itineraryDispatch({ type: 'SET_ITINERARY', payload: itinerary })
     tripDayDispatch({ type: 'SET_TRIP_DAYS', payload: tripDays })
     activityDispatch({ type: 'SET_ACTIVITIES', payload: activities })
   }, [])
+
+  console.log('itinerary store:', itineraryStore)
 
 
   useEffect(() => {
