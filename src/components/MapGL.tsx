@@ -1,14 +1,17 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { Map as MapComponent, NavigationControl, Marker } from 'react-map-gl';
 import * as React from 'react';
 import { type Activity } from '../types/itinerary';
-import { useItineraryContext } from '../hooks/useItineraryContext'
-import { s } from 'vitest/dist/env-afee91f0';
+import { ActivityContext } from '../contexts/ActivityContext';
+import { SearchMarkerContext } from '../contexts/SearchMarkerContext';
+import { MapContext } from '../contexts/MapContext';
 
 
-const MapGL = () => {
+const MapGL = React.memo(() => {
   const mapRef = React.useRef(null)
-  const { state: { activities, searchMarkerCoordinates }, dispatch } = useItineraryContext()
+  const { state: activities } = useContext(ActivityContext)
+  const { state: searchMarkerCoordinates } = useContext(SearchMarkerContext)
+  const { dispatch: mapDispatch } = useContext(MapContext)
   const firstKeyReturned = Object.keys(activities)[0]
   // @ts-ignore
   const someActivityCoords = [activities[firstKeyReturned]?.longitude, activities[firstKeyReturned]?.latitude]
@@ -22,7 +25,7 @@ const MapGL = () => {
 
   useEffect(() => {
     // @ts-ignore
-    dispatch({ type: 'SET_MAP', payload: mapRef.current?.getMap()})
+    mapDispatch({ type: 'SET_MAP', payload: mapRef.current?.getMap()})
   }, [mapRef.current])
 
   return (
@@ -56,6 +59,6 @@ const MapGL = () => {
       </MapComponent>
     </div>
   )
-}
+})
 
 export default MapGL

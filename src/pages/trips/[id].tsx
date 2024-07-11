@@ -1,4 +1,4 @@
-import React, { useState, useEffect, } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import Itinerary from '../../components/Itinerary/Itinerary'
 import { prisma } from '../../server/db/client'
 import { type GetServerSideProps } from 'next'
@@ -12,12 +12,16 @@ import { Activity, TripDay } from '../../types/itinerary'
 import { ActivityCoordinates } from '../../types/map'
 import pusherInstance from '../../lib/pusher'
 import { handlePusherMessage } from '../../lib/handlePusherMessage'
-import { useItineraryContext } from '../../hooks/useItineraryContext'
+import { ItineraryContext } from '../../contexts/ItineraryContext'
+import { TripDayContext } from '../../contexts/TripDayContext'
+import { ActivityContext } from '../../contexts/ActivityContext'
 
 const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IItineraryPage) => {
   const [viewState, setViewState] = useState(false)
   const { isSignedIn, userId } = useAuth()
-  const { dispatch } = useItineraryContext()
+  const { dispatch: itineraryDispatch } = useContext(ItineraryContext)
+  const { dispatch: tripDayDispatch } = useContext(TripDayContext)
+  const { dispatch: activityDispatch } = useContext(ActivityContext)
 
 
   useEffect(() => {
@@ -34,14 +38,17 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
   }, [isSignedIn])
 
   useEffect(() => {
-    dispatch({
-      type: 'SET_ITINERARY',
-      payload: {
-        itinerary,
-        tripDays,
-        activities,
-      }
-    })
+    // dispatch({
+    //   type: 'SET_ITINERARY',
+    //   payload: {
+    //     itinerary,
+    //     tripDays,
+    //     activities,
+    //   }
+    // })
+    itineraryDispatch({ type: 'SET_ITINERARY', payload: itinerary })
+    tripDayDispatch({ type: 'SET_TRIP_DAYS', payload: tripDays })
+    activityDispatch({ type: 'SET_ACTIVITIES', payload: activities })
   }, [])
 
 
@@ -62,7 +69,7 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
         // If it's the same user that sent the message, we don't need to do anything
         if (msg.userId === userId) return
         // Update the UI for collaborators with the new data
-        handlePusherMessage(msg, dispatch)
+        handlePusherMessage({msg, itineraryDispatch, tripDayDispatch, activityDispatch})
       });
     }
 

@@ -1,19 +1,13 @@
 import TripDay from './TripDay'
 import format from 'date-fns/format';
 import Image from 'next/image'
-import { useItineraryContext } from '../../hooks/useItineraryContext'
-import React from 'react';
-import { useItinerarySelector } from '../../hooks/useItinerarySelector';
-
+import React, { useContext } from 'react';
+import { ItineraryContext } from '../../contexts/ItineraryContext'
+import { TripDayContext } from '../../contexts/TripDayContext'
 
 const Itinerary = React.memo(() => {
-  const { state: { itinerary } } = useItineraryContext()
-  const selectTripDays = (state: any) => state.tripDays;
-  const tripDays = useItinerarySelector(selectTripDays);
-
-  console.log(tripDays)
-
-  // console.log('Rendering itinerary')
+  const { state: itinerary } = useContext(ItineraryContext)
+  console.log('Rendering itinerary')
 
   return (
     <div>
@@ -31,10 +25,10 @@ const Itinerary = React.memo(() => {
             <div className='w-11/12 md:w-10/12 lg:w-11/2 mx-auto'>
                 <div className='bg-inherit w-full mt-5 flex'>
                     <div className='grid grid-cols-1 divide-y divide-white text-black w-full'>
-                      {Object.values(tripDays).map((tripDay) => {
+                      {itinerary.tripDays.map((tripDayId: string) => {
                         return <TripDay
-                                  tripDayId={tripDay.id}
-                                  key={tripDay.id}
+                                  tripDayId={parseInt(tripDayId)}
+                                  key={tripDayId}
                                 />
                       })}
                     </div>

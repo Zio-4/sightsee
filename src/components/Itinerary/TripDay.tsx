@@ -1,25 +1,17 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import axios from 'axios';
 import format from 'date-fns/format';
 import Activity from './Activity'
 import dynamic from 'next/dynamic'
 import { tr } from 'date-fns/locale';
-import { useItineraryContext } from '../../hooks/useItineraryContext'
-import { useItinerarySelector } from '../../hooks/useItinerarySelector';
-
+import { TripDayContext } from '../../contexts/TripDayContext';
 // SearchBox component requires the document
 const ActivityForm = dynamic(() => import('../Itinerary/ActivityForm'), { ssr: false })
 
 
 const TripDay = React.memo(({ tripDayId }: {tripDayId: number}) => {
-    const { state: { tripDays } } = useItineraryContext()
-    const tripDay = tripDays[tripDayId.toString()]
-
-    const activities = useItinerarySelector((state) => {
-        return Object.values(state.activities).filter(
-          (activity) => activity.tripDayId === tripDay.id
-        );
-      });
+    const { state: tripDays } = useContext(TripDayContext)
+    const tripDay = tripDays[tripDayId]
 
     const [ readOnly, setReadOnly ] = useState(true);
 
@@ -53,12 +45,12 @@ const TripDay = React.memo(({ tripDayId }: {tripDayId: number}) => {
         </div>
 
         <div className='space-y-3'>
-        {activities.length > 0 &&
-        (activities.map((activity) => {
+        {tripDay.activities.length > 0 &&
+        (tripDay.activities.map((activityId: string) => {
                 return <Activity
-                            activity={activity}
+                            activityId={parseInt(activityId)}
                             tripDayId={tripDayId}
-                            key={activity.id} 
+                            key={activityId}
                         />
             })
         )

@@ -1,16 +1,19 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useContext } from 'react'
 import axios from 'axios';
 import { BsTrashFill } from 'react-icons/bs'
 import { format } from 'date-fns'
 import useDebounce from '../../hooks/useDebounce';
-import { useItineraryContext } from '../../hooks/useItineraryContext'
 import useDeepCompareEffect from '../../hooks/useDeepCompareEffect';
 import { toast } from 'react-hot-toast';
 import { triggerPusherEvent } from '../../lib/pusherEvent';
+import { ActivityContext } from '../../contexts/ActivityContext';
+import { ItineraryContext } from '../../contexts/ItineraryContext';
 import DatePicker from 'react-datepicker';
 
-const Activity = ({ activity, tripDayId }: { activityId: number, tripDayId: number } ) => {
-    const { state: { activities, itinerary }, dispatch } = useItineraryContext()
+const Activity = React.memo(({ activityId, tripDayId }: { activityId: number, tripDayId: number } ) => {
+    const { state: activities, dispatch: activityDispatch } = useContext(ActivityContext)
+    const activity = activities[activityId]
+    const { state: itinerary } = useContext(ItineraryContext)
     const [inputActivityState, setInputActivityState] = useState({
         name: activity!.name,
         startTime: activity!.startTime || null,
@@ -22,7 +25,7 @@ const Activity = ({ activity, tripDayId }: { activityId: number, tripDayId: numb
     const debouncedInput = useDebounce(inputActivityState, 500)
     const updateActivityRef = useRef(false)
 
-    console.log('activity:', activity)
+    console.log('activity rendered:', activityId)
 
     useDeepCompareEffect(() => {
         async function sendUpdateReq() {
@@ -36,7 +39,7 @@ const Activity = ({ activity, tripDayId }: { activityId: number, tripDayId: numb
                 })
                 updateActivityRef.current = false
 
-                dispatch({ type: 'ACTIVITY_UPDATE', payload: res.data })
+                activityDispatch({ type: 'ACTIVITY_UPDATE', payload: res.data })
 
                 if (res && itinerary.collaborationId) {
                     await triggerPusherEvent(`itinerary-${itinerary.id}`, 'itinerary-event-name', {
@@ -147,9 +150,9 @@ const Activity = ({ activity, tripDayId }: { activityId: number, tripDayId: numb
                 data: { activityId: activityId } 
              })
 
-            dispatch({ type: 'ACTIVITY_DELETE', payload: { activityId, tripDayId } })
+            activityDispatch({ type: 'ACTIVITY_DELETE', payload: { activityId, tripDayId } })
 
-            if (res &&itinerary.collaborationId) {
+            if (res && itinerary.collaborationId) {
                 await triggerPusherEvent(`itinerary-${itinerary.id}`, 'itinerary-event-name', {
                     ...res.data,
                     entity: 'activity',
@@ -272,6 +275,6 @@ const Activity = ({ activity, tripDayId }: { activityId: number, tripDayId: numb
             </div>
         </div>
   )
-}
+})
 
 export default Activity

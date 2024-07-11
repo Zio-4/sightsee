@@ -1,9 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import axios from 'axios';
 import { SearchBox,  } from '@mapbox/search-js-react';
 import { IActivityForm } from '../../types/itinerary';
 import { triggerPusherEvent } from '../../lib/pusherEvent';
-import { useItineraryContext } from '../../hooks/useItineraryContext'
+import { MapContext } from '../../contexts/MapContext';
+import { SearchMarkerContext } from '../../contexts/SearchMarkerContext';
+import { ItineraryContext } from '../../contexts/ItineraryContext';
+import { ActivityContext } from '../../contexts/ActivityContext';
+import { TripDayContext } from '../../contexts/TripDayContext';
 import { set } from 'date-fns';
 
 const searchBoxStyling = {
@@ -23,14 +27,15 @@ const ActivityForm = React.memo(({ tripDayId, }: IActivityForm) => {
         address: ''
     })
     const [searchBoxValue, setSearchBoxValue] = useState('');
-    const { state: { itinerary, map, searchMarkerCoordinates }, dispatch } = useItineraryContext()
+    const { state: map } = useContext(MapContext)
+    const { state: searchMarkerCoordinates, dispatch: searchMarkerDispatch } = useContext(SearchMarkerContext)
+    const { state: itinerary } = useContext(ItineraryContext)
+    const { dispatch: activityDispatch } = useContext(ActivityContext)
+    const { dispatch: tripDayDispatch } = useContext(TripDayContext)
     const [showToast, setShowToast] = useState({
         state: false,
         message: ''
     })
-
-    // To add activity
-    // const setDebounceRef = useSetAtom(debouncRefAtom)
 
     const createAcitivity = async () => {
         if (activityDetails.name.length === 0) return
@@ -53,14 +58,15 @@ const ActivityForm = React.memo(({ tripDayId, }: IActivityForm) => {
             latitude: searchMarkerCoordinates[1]
         }
 
-        let res = undefined
+        let res = null
 
         try {
             res = await axios.post('/api/activities', activityFormValues)
             console.log('activity creation response:', res)
             setShowToast({state: true, message: 'Activity added'})        // Cannot update state before we have the activity id from the server
             setTimeout(() => setShowToast({state: false, message: ''}), 2000)
-            dispatch({ type: 'ACTIVITY_ADD', payload: res.data })
+            activityDispatch({ type: 'ADD_ACTIVITY', payload: res.data })
+            tripDayDispatch({ type: 'ADD_ACTIVITY', payload: { activityId: res.data.id, tripDayId: tripDayId } })
         } catch (error) {
             console.error(error)
             setShowToast({state: true, message: 'There was a problem adding the activity. Please try again'})  
@@ -79,7 +85,7 @@ const ActivityForm = React.memo(({ tripDayId, }: IActivityForm) => {
     }
 
     const handleRetrieve = (res: any) => {
-        dispatch({ type: 'UPDATE_SEARCH_MARKER_COORDINATES', payload: [res.features[0]?.properties.coordinates.longitude, res.features[0]?.properties.coordinates.latitude]})
+        searchMarkerDispatch({ type: 'UPDATE_SEARCH_MARKER_COORDINATES', payload: [res.features[0]?.properties.coordinates.longitude, res.features[0]?.properties.coordinates.latitude]})
         setActivityDetails({
             name: res.features[0].properties?.name_preferred || res.features[0].properties.name,
             address: res.features[0].properties?.full_address || ''
