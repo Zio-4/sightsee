@@ -17,7 +17,11 @@ const useItineraryStore = create<ItineraryStore>()(
         activities: {},
         setItinerary: (itinerary: any) => set({ itinerary }),
         setTripDays: (tripDays: any) => set({ tripDays }),
-        addTripDay: (tripDayId: number, tripDay: any) => set((state: any) => { state.tripDayId = { ...tripDay } }),
+        addTripDay: (tripDayId: number, tripDay: any) => set((state: any) => {
+            state.itinerary.tripDays.push(tripDayId)
+            state.tripDayId = { ...tripDay }
+            return state
+        }),
         updateTripDay: (tripDayId: number, tripDayData: any) => set((state: any) => { state.tripDayId = { ...state[tripDayId], ...tripDayData } }),
         setActivities: (activities: any) => set({ activities }),
         addActivity: (activityId: number, tripDayId: number, activityData: any) => set((state: any) => {
