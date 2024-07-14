@@ -3,14 +3,17 @@ import axios from 'axios';
 import format from 'date-fns/format';
 import Activity from './Activity'
 import dynamic from 'next/dynamic'
-import { tr } from 'date-fns/locale';
 import { TripDayContext } from '../../contexts/TripDayContext';
+import useItineraryStore from '../../hooks/useItineraryStore';
+
+
 // SearchBox component requires the document
 const ActivityForm = dynamic(() => import('../Itinerary/ActivityForm'), { ssr: false })
 
 
 const TripDay = React.memo(({ tripDayId }: {tripDayId: number}) => {
-    const { state: tripDays } = useContext(TripDayContext)
+    // const { state: tripDays } = useContext(TripDayContext)
+    const tripDays = useItineraryStore(state => state.tripDays)
     const tripDay = tripDays[tripDayId]
 
     const [ readOnly, setReadOnly ] = useState(true);

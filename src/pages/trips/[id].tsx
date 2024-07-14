@@ -45,6 +45,7 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
     setItinerary(itinerary)
     setTripDays(tripDays)
     setActivities(activities)
+    
     itineraryDispatch({ type: 'SET_ITINERARY', payload: itinerary })
     tripDayDispatch({ type: 'SET_TRIP_DAYS', payload: tripDays })
     activityDispatch({ type: 'SET_ACTIVITIES', payload: activities })

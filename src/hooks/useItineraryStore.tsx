@@ -6,8 +6,13 @@ interface ItineraryStore {
     tripDays: any
     activities: any
     setItinerary: (itinerary: any) => void
-    setTripDays: (tripDays: any) => void
-    setActivities: (activities: any) => void
+    setTripDays: (tripDays: any) => void,
+    addTripDay: (tripDayId: number, tripDay: any) => void,
+    updateTripDay: (tripDayId: number, tripDayData: any) => void,
+    setActivities: (activities: any) => void,
+    addActivity: (activityId: number, tripDayId: number, activityData: any) => void,
+    updateActivity: (activityId: number, activityData: any) => void,
+    deleteActivity: (activityId: number, tripDayId: number) => void,
 }
 
 const useItineraryStore = create<ItineraryStore>()(

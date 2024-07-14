@@ -5,13 +5,20 @@ import { type Activity } from '../types/itinerary';
 import { ActivityContext } from '../contexts/ActivityContext';
 import { SearchMarkerContext } from '../contexts/SearchMarkerContext';
 import { MapContext } from '../contexts/MapContext';
+import useItineraryStore from '../hooks/useItineraryStore';
+import useMapStore from '../hooks/useMapStore';
 
 
 const MapGL = React.memo(() => {
   const mapRef = React.useRef(null)
-  const { state: activities } = useContext(ActivityContext)
-  const { state: searchMarkerCoordinates } = useContext(SearchMarkerContext)
-  const { dispatch: mapDispatch } = useContext(MapContext)
+  // const { state: activities } = useContext(ActivityContext)
+  // const { state: searchMarkerCoordinates } = useContext(SearchMarkerContext)
+  // const { dispatch: mapDispatch } = useContext(MapContext)
+  const activities = useItineraryStore(state => state.activities)
+  const searchMarkerCoordinates = useMapStore(state => state.searchMarkerCoordinates)
+  const setMap = useMapStore(state => state.setMap)
+
+
   const firstKeyReturned = Object.keys(activities)[0]
   // @ts-ignore
   const someActivityCoords = [activities[firstKeyReturned]?.longitude, activities[firstKeyReturned]?.latitude]
@@ -25,7 +32,9 @@ const MapGL = React.memo(() => {
 
   useEffect(() => {
     // @ts-ignore
-    mapDispatch({ type: 'SET_MAP', payload: mapRef.current?.getMap()})
+    // mapDispatch({ type: 'SET_MAP', payload: mapRef.current?.getMap()})
+    setMap(mapRef.current?.getMap())
+
   }, [mapRef.current])
 
   return (

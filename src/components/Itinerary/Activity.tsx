@@ -9,11 +9,15 @@ import { triggerPusherEvent } from '../../lib/pusherEvent';
 import { ActivityContext } from '../../contexts/ActivityContext';
 import { ItineraryContext } from '../../contexts/ItineraryContext';
 import DatePicker from 'react-datepicker';
+import useItineraryStore from '../../hooks/useItineraryStore';
 
 const Activity = React.memo(({ activityId, tripDayId }: { activityId: number, tripDayId: number } ) => {
-    const { state: activities, dispatch: activityDispatch } = useContext(ActivityContext)
+    // const { state: activities, dispatch: activityDispatch } = useContext(ActivityContext)
+    const activities = useItineraryStore(state => state.activities)
     const activity = activities[activityId]
-    const { state: itinerary } = useContext(ItineraryContext)
+    const updateActivityInStore = useItineraryStore(state => state.updateActivity)
+    // const { state: itinerary } = useContext(ItineraryContext)
+    const itinerary = useItineraryStore(state => state.itinerary)
     const [inputActivityState, setInputActivityState] = useState({
         name: activity!.name,
         startTime: activity!.startTime || null,
@@ -39,7 +43,8 @@ const Activity = React.memo(({ activityId, tripDayId }: { activityId: number, tr
                 })
                 updateActivityRef.current = false
 
-                activityDispatch({ type: 'ACTIVITY_UPDATE', payload: res.data })
+                // activityDispatch({ type: 'ACTIVITY_UPDATE', payload: res.data })
+                updateActivityInStore(activity.id, res.data)
 
                 if (res && itinerary.collaborationId) {
                     await triggerPusherEvent(`itinerary-${itinerary.id}`, 'itinerary-event-name', {
@@ -150,7 +155,7 @@ const Activity = React.memo(({ activityId, tripDayId }: { activityId: number, tr
                 data: { activityId: activityId } 
              })
 
-            activityDispatch({ type: 'ACTIVITY_DELETE', payload: { activityId, tripDayId } })
+            // activityDispatch({ type: 'ACTIVITY_DELETE', payload: { activityId, tripDayId } })
 
             if (res && itinerary.collaborationId) {
                 await triggerPusherEvent(`itinerary-${itinerary.id}`, 'itinerary-event-name', {
