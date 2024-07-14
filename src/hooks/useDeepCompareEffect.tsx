@@ -1,4 +1,4 @@
-import React, { EffectCallback, Ref, useEffect, useRef, } from 'react';
+import { EffectCallback, useEffect, useRef, } from 'react';
 import isEqual from 'lodash/isEqual';
 
 function useDeepCompareEffect(callback: EffectCallback, dependencies: any[]) {
