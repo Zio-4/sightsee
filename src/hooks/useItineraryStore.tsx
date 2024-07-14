@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { immer } from 'zustand/middleware/immer'
 
 interface ItineraryStore {
     itinerary: any
@@ -9,34 +10,29 @@ interface ItineraryStore {
     setActivities: (activities: any) => void
 }
 
-const useItineraryStore = create<ItineraryStore>()((set) => ({
-    itinerary: {},
-    tripDays: {},
-    activities: {},
-    setItinerary: (itinerary: any) => set(itinerary),
-    setTripDays: (tripDays: any) => set(tripDays ),
-    addTripDay: (tripDayId: number, tripDay: any) => set((state: any) => ({ ...state, [tripDayId]: { ...tripDay } })),
-    updateTripDay: (tripDayId: number, tripDay: any) => set((state: any) => ({ ...state, [tripDayId]: { ...state[tripDayId], ...tripDay } })),
-    setActivities: (activities: any) => set(activities),
-}))
+const useItineraryStore = create<ItineraryStore>()(
+    immer((set) => ({
+        itinerary: {},
+        tripDays: {},
+        activities: {},
+        setItinerary: (itinerary: any) => set({ itinerary }),
+        setTripDays: (tripDays: any) => set({ tripDays }),
+        addTripDay: (tripDayId: number, tripDay: any) => set((state: any) => { state.tripDayId = { ...tripDay } }),
+        updateTripDay: (tripDayId: number, tripDayData: any) => set((state: any) => { state.tripDayId = { ...state[tripDayId], ...tripDayData } }),
+        setActivities: (activities: any) => set({ activities }),
+        addActivity: (activityId: number, tripDayId: number, activityData: any) => set((state: any) => {
+            state.tripDays[tripDayId].activities.push(activityId)
+            state.activities[activityId] = { ...activityData }
+            return state
+        }),
+        updateActivity: (activityId: number, activityData: any) => set((state: any) => { state.activities[activityId] = { ...state.activities[activityId], ...activityData } }),
+        deleteActivity: (activityId: number, tripDayId: number) => set((state: any) => {
+            state.tripDays[tripDayId].activities = state.tripDays[tripDayId].activities.filter((id: number) => id !== activityId)
+            delete state.activities[activityId] 
+            return state
+        }),
+    })),
+)
+
 
 export default useItineraryStore
-
-
-// case 'ADD_TRIP_DAY': {
-//     return {
-//         ...state,
-//         [action.payload.id]: {
-//             ...action.payload
-//         }
-//     }
-// }
-// case 'UPDATE_TRIP_DAY': {
-//     return {
-//         ...state,
-//         [action.payload.id]: {
-//             ...state[action.payload.id],
-//             ...action.payload
-//         }
-//     }
-// }

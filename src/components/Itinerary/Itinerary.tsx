@@ -4,10 +4,12 @@ import Image from 'next/image'
 import React, { useContext } from 'react';
 import { ItineraryContext } from '../../contexts/ItineraryContext'
 import { TripDayContext } from '../../contexts/TripDayContext'
+import useItineraryStore from '../../hooks/useItineraryStore'
 
 const Itinerary = React.memo(() => {
-  const { state: itinerary } = useContext(ItineraryContext)
-  console.log('Rendering itinerary')
+  // const { state: itinerary } = useContext(ItineraryContext)
+  const itinerary = useItineraryStore(state => state.itinerary)
+  console.log('Rendering itinerary:', itinerary)
 
   return (
     <div>

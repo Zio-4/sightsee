@@ -24,8 +24,9 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
   const { dispatch: tripDayDispatch } = useContext(TripDayContext)
   const { dispatch: activityDispatch } = useContext(ActivityContext)
 
-  const itineraryStore = useItineraryStore(state => state.itinerary)
-  const setItineraryStore = useItineraryStore(state => state.setItinerary)
+  const setItinerary = useItineraryStore(state => state.setItinerary)
+  const setTripDays = useItineraryStore(state => state.setTripDays)
+  const setActivities = useItineraryStore(state => state.setActivities)
 
   useEffect(() => {
     const connectItineraryToProfile = async () => {
@@ -41,28 +42,18 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
   }, [isSignedIn])
 
   useEffect(() => {
-    // dispatch({
-    //   type: 'SET_ITINERARY',
-    //   payload: {
-    //     itinerary,
-    //     tripDays,
-    //     activities,
-    //   }
-    // })
-    setItineraryStore(itinerary)
+    setItinerary(itinerary)
+    setTripDays(tripDays)
+    setActivities(activities)
     itineraryDispatch({ type: 'SET_ITINERARY', payload: itinerary })
     tripDayDispatch({ type: 'SET_TRIP_DAYS', payload: tripDays })
     activityDispatch({ type: 'SET_ACTIVITIES', payload: activities })
   }, [])
 
-  console.log('itinerary store:', itineraryStore)
-
 
   useEffect(() => {
     // check if itinerary is a collaboration
     let channel: any
-
-    console.log('itinerary:', itinerary)
     // This is handling messages sent from the server
     // i.e. other users updating the itinerary
     if (itinerary.collaborationId) {
