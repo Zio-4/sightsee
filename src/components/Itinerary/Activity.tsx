@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useContext } from 'react'
+import React, { useRef, useState, } from 'react'
 import axios from 'axios';
 import { BsTrashFill } from 'react-icons/bs'
 import { format } from 'date-fns'
@@ -6,17 +6,14 @@ import useDebounce from '../../hooks/useDebounce';
 import useDeepCompareEffect from '../../hooks/useDeepCompareEffect';
 import { toast } from 'react-hot-toast';
 import { triggerPusherEvent } from '../../lib/pusherEvent';
-import { ActivityContext } from '../../contexts/ActivityContext';
-import { ItineraryContext } from '../../contexts/ItineraryContext';
 import DatePicker from 'react-datepicker';
 import useItineraryStore from '../../hooks/useItineraryStore';
 
 const Activity = React.memo(({ activityId, tripDayId }: { activityId: number, tripDayId: number } ) => {
-    // const { state: activities, dispatch: activityDispatch } = useContext(ActivityContext)
     const activities = useItineraryStore(state => state.activities)
     const activity = activities[activityId]
     const updateActivityInStore = useItineraryStore(state => state.updateActivity)
-    // const { state: itinerary } = useContext(ItineraryContext)
+    const deleteActivity = useItineraryStore(state => state.deleteActivity)
     const itinerary = useItineraryStore(state => state.itinerary)
     const [inputActivityState, setInputActivityState] = useState({
         name: activity!.name,
@@ -28,8 +25,6 @@ const Activity = React.memo(({ activityId, tripDayId }: { activityId: number, tr
     const clearedTimeRef = useRef(false)
     const debouncedInput = useDebounce(inputActivityState, 500)
     const updateActivityRef = useRef(false)
-
-    console.log('activity rendered:', activityId)
 
     useDeepCompareEffect(() => {
         async function sendUpdateReq() {
@@ -44,7 +39,7 @@ const Activity = React.memo(({ activityId, tripDayId }: { activityId: number, tr
                 updateActivityRef.current = false
 
                 // activityDispatch({ type: 'ACTIVITY_UPDATE', payload: res.data })
-                updateActivityInStore(activity.id, res.data)
+                updateActivityInStore(activityId, res.data)
 
                 if (res && itinerary.collaborationId) {
                     await triggerPusherEvent(`itinerary-${itinerary.id}`, 'itinerary-event-name', {
@@ -154,8 +149,8 @@ const Activity = React.memo(({ activityId, tripDayId }: { activityId: number, tr
             const res = await axios.delete('/api/activities', { 
                 data: { activityId: activityId } 
              })
+            deleteActivity(activityId, tripDayId)
 
-            // activityDispatch({ type: 'ACTIVITY_DELETE', payload: { activityId, tripDayId } })
 
             if (res && itinerary.collaborationId) {
                 await triggerPusherEvent(`itinerary-${itinerary.id}`, 'itinerary-event-name', {

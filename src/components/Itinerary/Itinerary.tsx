@@ -1,15 +1,11 @@
 import TripDay from './TripDay'
 import format from 'date-fns/format';
 import Image from 'next/image'
-import React, { useContext } from 'react';
-import { ItineraryContext } from '../../contexts/ItineraryContext'
-import { TripDayContext } from '../../contexts/TripDayContext'
+import React from 'react';
 import useItineraryStore from '../../hooks/useItineraryStore'
 
 const Itinerary = React.memo(() => {
-  // const { state: itinerary } = useContext(ItineraryContext)
   const itinerary = useItineraryStore(state => state.itinerary)
-  console.log('Rendering itinerary:', itinerary)
 
   return (
     <div>

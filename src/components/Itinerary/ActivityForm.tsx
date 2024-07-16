@@ -1,16 +1,10 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, } from 'react'
 import axios from 'axios';
 import { SearchBox,  } from '@mapbox/search-js-react';
 import { IActivityForm } from '../../types/itinerary';
 import { triggerPusherEvent } from '../../lib/pusherEvent';
-import { MapContext } from '../../contexts/MapContext';
-import { SearchMarkerContext } from '../../contexts/SearchMarkerContext';
-import { ItineraryContext } from '../../contexts/ItineraryContext';
-import { ActivityContext } from '../../contexts/ActivityContext';
-import { TripDayContext } from '../../contexts/TripDayContext';
 import useItineraryStore from '../../hooks/useItineraryStore';
 import useMapStore from '../../hooks/useMapStore';
-import { set, update } from 'lodash';
 
 const searchBoxStyling = {
     variables: {
@@ -29,12 +23,6 @@ const ActivityForm = React.memo(({ tripDayId, }: IActivityForm) => {
         address: ''
     })
     const [searchBoxValue, setSearchBoxValue] = useState('');
-    // const { state: map } = useContext(MapContext)
-    // const { state: searchMarkerCoordinates, dispatch: searchMarkerDispatch } = useContext(SearchMarkerContext)
-    // const { state: itinerary } = useContext(ItineraryContext)
-    // const { dispatch: activityDispatch } = useContext(ActivityContext)
-    // const { dispatch: tripDayDispatch } = useContext(TripDayContext)
-
     const map = useMapStore(state => state.map)
     const searchMarkerCoordinates = useMapStore(state => state.searchMarkerCoordinates)
     const setSearchMarkerCoordinates = useMapStore(state => state.setSearchMarkerCoordinates)
@@ -52,7 +40,6 @@ const ActivityForm = React.memo(({ tripDayId, }: IActivityForm) => {
 
         // Does this make sense?
         // Map coordinates don't need to change unless you search for a new location
-        // dispatch({ type: 'UPDATE_SEARCH_MARKER_COORDINATES', payload: searchMarkerCoordinates})
     
         const activityFormValues = {
             name: activityDetails.name,
@@ -73,8 +60,6 @@ const ActivityForm = React.memo(({ tripDayId, }: IActivityForm) => {
             console.log('activity creation response:', res)
             setShowToast({state: true, message: 'Activity added'})        // Cannot update state before we have the activity id from the server
             setTimeout(() => setShowToast({state: false, message: ''}), 2000)
-            // activityDispatch({ type: 'ADD_ACTIVITY', payload: res.data })
-            // tripDayDispatch({ type: 'ADD_ACTIVITY', payload: { activityId: res.data.id, tripDayId: tripDayId } })
             addActivity(res.data.id, tripDayId, res.data)
         } catch (error) {
             console.error(error)
@@ -94,7 +79,6 @@ const ActivityForm = React.memo(({ tripDayId, }: IActivityForm) => {
     }
 
     const handleRetrieve = (res: any) => {
-        //searchMarkerDispatch({ type: 'UPDATE_SEARCH_MARKER_COORDINATES', payload: [res.features[0]?.properties.coordinates.longitude, res.features[0]?.properties.coordinates.latitude]})
         setSearchMarkerCoordinates([res.features[0]?.properties.coordinates.longitude, res.features[0]?.properties.coordinates.latitude])
         
         

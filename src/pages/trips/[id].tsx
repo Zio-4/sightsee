@@ -12,17 +12,11 @@ import { Activity, TripDay } from '../../types/itinerary'
 import { ActivityCoordinates } from '../../types/map'
 import pusherInstance from '../../lib/pusher'
 import { handlePusherMessage } from '../../lib/handlePusherMessage'
-import { ItineraryContext } from '../../contexts/ItineraryContext'
-import { TripDayContext } from '../../contexts/TripDayContext'
-import { ActivityContext } from '../../contexts/ActivityContext'
 import useItineraryStore from '../../hooks/useItineraryStore'
 
 const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IItineraryPage) => {
   const [viewState, setViewState] = useState(false)
   const { isSignedIn, userId } = useAuth()
-  const { dispatch: itineraryDispatch } = useContext(ItineraryContext)
-  const { dispatch: tripDayDispatch } = useContext(TripDayContext)
-  const { dispatch: activityDispatch } = useContext(ActivityContext)
 
   const setItinerary = useItineraryStore(state => state.setItinerary)
   const setTripDays = useItineraryStore(state => state.setTripDays)
@@ -45,10 +39,6 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
     setItinerary(itinerary)
     setTripDays(tripDays)
     setActivities(activities)
-    
-    itineraryDispatch({ type: 'SET_ITINERARY', payload: itinerary })
-    tripDayDispatch({ type: 'SET_TRIP_DAYS', payload: tripDays })
-    activityDispatch({ type: 'SET_ACTIVITIES', payload: activities })
   }, [])
 
 
@@ -67,7 +57,7 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
         // If it's the same user that sent the message, we don't need to do anything
         if (msg.userId === userId) return
         // Update the UI for collaborators with the new data
-        handlePusherMessage({msg, itineraryDispatch, tripDayDispatch, activityDispatch})
+        // handlePusherMessage({msg, itineraryDispatch, tripDayDispatch, activityDispatch})
       });
     }
 

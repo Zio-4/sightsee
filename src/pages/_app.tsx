@@ -8,11 +8,6 @@ import { trpc } from "../utils/trpc";
 
 import "../styles/globals.css";
 import { Merriweather_Sans } from '@next/font/google'
-import { ItineraryProvider } from '../contexts/ItineraryContext'
-import { MapProvider } from '../contexts/MapContext'
-import { SearchMarkerProvider } from '../contexts/SearchMarkerContext'
-import { TripDayProvider } from "../contexts/TripDayContext";
-import { ActivityProvider } from "../contexts/ActivityContext";
 import { Toaster } from "react-hot-toast";
 
 const cabin = Merriweather_Sans({
@@ -30,22 +25,10 @@ const MyApp: AppType = ({
       <Toaster />
       <div className={cabin.className}>
         <div className="bg-gradient-to-br from-green-300 via-blue-500 to-purple-600 text-white w-full min-h-screen">
-
-          <ItineraryProvider>
-            <MapProvider>
-              <SearchMarkerProvider>
-                <TripDayProvider>
-                  <ActivityProvider>
-                    <Navbar />
-                    <Component {...pageProps} />
-                    {/*@ts-ignore */}
-                    {!Component.tripPage && <Footer />}
-                  </ActivityProvider>
-                </TripDayProvider>
-              </SearchMarkerProvider>
-            </MapProvider>
-          </ItineraryProvider>
-
+          <Navbar />
+          <Component {...pageProps} />
+          {/*@ts-ignore */}
+          {!Component.tripPage && <Footer />}
         </div>
       </div>
     </ClerkProvider>

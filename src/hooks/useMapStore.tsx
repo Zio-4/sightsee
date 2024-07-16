@@ -13,7 +13,7 @@ const useMapStore = create<MapStore>()((set) => ({
     map: {},
     searchMarkerCoordinates: [undefined, undefined],
     setMap: (map: any) => set({ map }),
-    setSearchMarkerCoordinates: (coordinates: SearchMarkerCoordinates) => set({ searchMarkerCoordinates: coordinates }),
+    setSearchMarkerCoordinates: (coordinates: SearchMarkerCoordinates) => set(() => ({ searchMarkerCoordinates: coordinates })),
 }));
 
 export default useMapStore;
