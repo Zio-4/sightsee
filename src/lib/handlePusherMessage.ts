@@ -1,22 +1,24 @@
-import { Dispatch } from "react"
+
 // Add functions to be passed in 
-export function handlePusherMessage({msg, itineraryDispatch, tripDayDispatch, activityDispatch}: {
+export function handlePusherMessage({msg, addActivity, updateActivity, deleteActivity}: {
     msg: any,
-    itineraryDispatch: Dispatch<any>,
-    tripDayDispatch: Dispatch<any>,
-    activityDispatch: Dispatch<any>
+    addActivity: (activityId: number, tripDayId: number, activityData: any) => void,
+    updateActivity: (activityId: number, activityData: any) => void,
+    deleteActivity: (activityId: number, tripDayId: number) => void,
 }) {
     const { entity, action, ...data } = msg
 
     if (entity === 'activity') {
         if (action === 'create') {
-            activityDispatch({ type: 'ADD_ACTIVITY', payload: data })
+            addActivity(data.id, data.tripDayId, data)
             console.log('activity added from hook')
         } else if (action === 'update') {
-            activityDispatch({ type: 'UPDATE_ACTIVITY', payload: data })
+            updateActivity(data.id, data)
             console.log('activity updated from hook')
         } else if (action === 'delete') {
-            activityDispatch({ type: 'DELETE_ACTIVITY', payload: data })
+            // activityDispatch({ type: 'DELETE_ACTIVITY', payload: data })
+            deleteActivity(data.id, data.tripDayId)
+            console.log('activity deleted from hook')
         }
     } else if (entity === 'tripDay') {
         if (action === 'create') {

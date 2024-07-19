@@ -21,6 +21,9 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
   const setItinerary = useItineraryStore(state => state.setItinerary)
   const setTripDays = useItineraryStore(state => state.setTripDays)
   const setActivities = useItineraryStore(state => state.setActivities)
+  const addActivity = useItineraryStore(state => state.addActivity)
+  const updateActivity = useItineraryStore(state => state.updateActivity)
+  const deleteActivity = useItineraryStore(state => state.deleteActivity)
 
   useEffect(() => {
     const connectItineraryToProfile = async () => {
@@ -57,7 +60,7 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
         // If it's the same user that sent the message, we don't need to do anything
         if (msg.userId === userId) return
         // Update the UI for collaborators with the new data
-        // handlePusherMessage({msg, itineraryDispatch, tripDayDispatch, activityDispatch})
+        handlePusherMessage({msg, addActivity, updateActivity, deleteActivity})
       });
     }
 
