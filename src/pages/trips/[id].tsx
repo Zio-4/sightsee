@@ -13,6 +13,7 @@ import { ActivityCoordinates } from '../../types/map'
 import pusherInstance from '../../lib/pusher'
 import { handlePusherMessage } from '../../lib/handlePusherMessage'
 import useItineraryStore from '../../hooks/useItineraryStore'
+import { type Channel } from 'pusher-js'
 
 const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IItineraryPage) => {
   const [viewState, setViewState] = useState(false)
@@ -24,6 +25,10 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
   const addActivity = useItineraryStore(state => state.addActivity)
   const updateActivity = useItineraryStore(state => state.updateActivity)
   const deleteActivity = useItineraryStore(state => state.deleteActivity)
+
+  setItinerary(itinerary)
+  setTripDays(tripDays)
+  setActivities(activities)
 
   useEffect(() => {
     const connectItineraryToProfile = async () => {
@@ -38,16 +43,10 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
 
   }, [isSignedIn])
 
-  useEffect(() => {
-    setItinerary(itinerary)
-    setTripDays(tripDays)
-    setActivities(activities)
-  }, [])
-
 
   useEffect(() => {
     // check if itinerary is a collaboration
-    let channel: any
+    let channel: Channel
     // This is handling messages sent from the server
     // i.e. other users updating the itinerary
     if (itinerary.collaborationId) {
