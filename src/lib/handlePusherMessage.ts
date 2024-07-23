@@ -1,7 +1,14 @@
 
+interface PusherMessage {
+    entity: string,
+    action: string,
+    id: number,
+    tripDayId: number,
+}
+
 // Add functions to be passed in 
 export function handlePusherMessage({msg, addActivity, updateActivity, deleteActivity}: {
-    msg: any,
+    msg: PusherMessage,
     addActivity: (activityId: number, tripDayId: number, activityData: any) => void,
     updateActivity: (activityId: number, activityData: any) => void,
     deleteActivity: (activityId: number, tripDayId: number) => void,

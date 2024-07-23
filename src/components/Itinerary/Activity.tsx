@@ -1,4 +1,4 @@
-import React, { useRef, useState, } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import axios from 'axios';
 import { BsTrashFill } from 'react-icons/bs'
 import { format } from 'date-fns'
@@ -38,7 +38,6 @@ const Activity = React.memo(({ activityId, tripDayId }: { activityId: number, tr
                 })
                 updateActivityRef.current = false
 
-                // activityDispatch({ type: 'ACTIVITY_UPDATE', payload: res.data })
                 updateActivityInStore(activityId, res.data)
 
                 if (res && itinerary.collaborationId) {
@@ -58,6 +57,16 @@ const Activity = React.memo(({ activityId, tripDayId }: { activityId: number, tr
             sendUpdateReq() 
         }
     }, [debouncedInput])
+    
+    // This updates the input state when the activity changes from a collaborator
+    useEffect(() => {
+        setInputActivityState({
+          name: activity.name,
+          startTime: activity.startTime || null,
+          endTime: activity.endTime || null,
+          note: activity.note || '',
+        });
+    }, [activity]);
 
 
     const updateActivity = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -149,12 +158,15 @@ const Activity = React.memo(({ activityId, tripDayId }: { activityId: number, tr
             const res = await axios.delete('/api/activities', { 
                 data: { activityId: activityId } 
              })
+
             deleteActivity(activityId, tripDayId)
 
 
             if (res && itinerary.collaborationId) {
                 await triggerPusherEvent(`itinerary-${itinerary.id}`, 'itinerary-event-name', {
                     ...res.data,
+                    id: activityId,
+                    tripDayId: tripDayId,
                     entity: 'activity',
                     action: 'delete'
                 })

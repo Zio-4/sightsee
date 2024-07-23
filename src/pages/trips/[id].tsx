@@ -119,6 +119,38 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     console.error(e);
   }
 
+  // if (itineraryData?.id === 9 && userId) {
+  //   // create collaboration for itinerary
+  //   const res = await prisma.collaboration.create({
+  //     data: {
+  //       itinerary: {
+  //         connect: { id: itineraryData.id }
+  //       },
+  //       profile: {
+  //         connect: { clerkId: userId }
+  //       }
+  //     }
+  //   })
+
+  //   console.log('collaboration created:', res)
+  // }
+
+  // if (userId === "user_2TjSbqnncruvYerUH6m42cyviQv") {
+  //   // link user to collaboration
+  //   const res = await prisma.collaboration.update({
+  //     where: {
+  //       itineraryId: itineraryData?.id
+  //     },
+  //     data: {
+  //       profile: {
+  //         connect: { clerkId: userId }
+  //       }
+  //     }
+  //   })
+
+  //   console.log('collaboration linked:', res)
+  // }
+
 
   let activityCoordinates: ActivityCoordinates[] = []
 
