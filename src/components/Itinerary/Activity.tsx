@@ -1,17 +1,20 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import axios from 'axios';
 import { BsTrashFill } from 'react-icons/bs'
 import { format } from 'date-fns'
 import useDebounce from '../../hooks/useDebounce';
-import { useItineraryContext } from '../../hooks/useItineraryContext'
 import useDeepCompareEffect from '../../hooks/useDeepCompareEffect';
 import { toast } from 'react-hot-toast';
+import { triggerPusherEvent } from '../../lib/pusherEvent';
 import DatePicker from 'react-datepicker';
+import useItineraryStore from '../../hooks/useItineraryStore';
 
-const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: number } ) => {
-    const { state: { activities }, dispatch } = useItineraryContext()
+const Activity = React.memo(({ activityId, tripDayId }: { activityId: number, tripDayId: number } ) => {
+    const activities = useItineraryStore(state => state.activities)
     const activity = activities[activityId]
-    console.log(activity)
+    const updateActivityInStore = useItineraryStore(state => state.updateActivity)
+    const deleteActivity = useItineraryStore(state => state.deleteActivity)
+    const itinerary = useItineraryStore(state => state.itinerary)
     const [inputActivityState, setInputActivityState] = useState({
         name: activity!.name,
         startTime: activity!.startTime || null,
@@ -26,14 +29,24 @@ const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: nu
     useDeepCompareEffect(() => {
         async function sendUpdateReq() {
             try {
-                await axios.put('/api/activities', {
+                const res = await axios.put('/api/activities', {
                     name: inputActivityState.name,
                     startTime: inputActivityState.startTime,
                     endTime: inputActivityState.endTime,
                     note: inputActivityState.note,
-                    activityId: activityId
+                    activityId: activity.id
                 })
                 updateActivityRef.current = false
+
+                updateActivityInStore(activityId, res.data)
+
+                if (res && itinerary.collaborationId) {
+                    await triggerPusherEvent(`itinerary-${itinerary.id}`, 'itinerary-event-name', {
+                        ...res.data,
+                        entity: 'activity',
+                        action: 'update'
+                    })
+                }
             } catch (error) {
                 console.error(error)
                 toast.error(`There was a problem updating the activity: ${inputActivityState.name}`)
@@ -44,6 +57,16 @@ const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: nu
             sendUpdateReq() 
         }
     }, [debouncedInput])
+    
+    // This updates the input state when the activity changes from a collaborator
+    useEffect(() => {
+        setInputActivityState({
+          name: activity.name,
+          startTime: activity.startTime || null,
+          endTime: activity.endTime || null,
+          note: activity.note || '',
+        });
+    }, [activity]);
 
 
     const updateActivity = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -132,11 +155,22 @@ const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: nu
 
     const removeActivity = async (activityId: number, tripDayId: number, activityCoordinates: [number | undefined, number | undefined]): Promise<void> => {
         try {
-            const call = await axios.delete('/api/activities', { 
+            const res = await axios.delete('/api/activities', { 
                 data: { activityId: activityId } 
              })
 
-            dispatch({ type: 'ACTIVITY_DELETE', payload: { activityId, tripDayId } })
+            deleteActivity(activityId, tripDayId)
+
+
+            if (res && itinerary.collaborationId) {
+                await triggerPusherEvent(`itinerary-${itinerary.id}`, 'itinerary-event-name', {
+                    ...res.data,
+                    id: activityId,
+                    tripDayId: tripDayId,
+                    entity: 'activity',
+                    action: 'delete'
+                })
+            }
         } catch (error) {
             console.error(error)
             toast.error(`There was a problem deleting the activity: ${inputActivityState.name}. Try again`)
@@ -157,7 +191,7 @@ const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: nu
                     <p className='bg-white bg-opacity-40 rounded-md p-1 outline-none w-full h-fit mr-2'>{inputActivityState?.name}</p>
                     
                     <BsTrashFill
-                        onClick={() => removeActivity(activityId, tripDayId, [activity?.longitude, activity?.latitude])} 
+                        onClick={() => removeActivity(activity.id, tripDayId, [activity?.longitude, activity?.latitude])} 
                         className='bg-red-400 p-1 m-auto cursor-pointer rounded-md text-white hover:bg-red-500' 
                         size={38}
                     />
@@ -253,6 +287,6 @@ const Activity = ({ activityId, tripDayId }: { activityId: number, tripDayId: nu
             </div>
         </div>
   )
-}
+})
 
 export default Activity

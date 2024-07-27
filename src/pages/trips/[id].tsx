@@ -1,10 +1,10 @@
-import React, { useState, useEffect, } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import Itinerary from '../../components/Itinerary/Itinerary'
 import { prisma } from '../../server/db/client'
 import { type GetServerSideProps } from 'next'
 import axios from 'axios'
 import { useAuth } from '@clerk/nextjs'
-import { buildClerkProps } from "@clerk/nextjs/server";
+import { getAuth, buildClerkProps } from "@clerk/nextjs/server";
 import MapGL from '../../components/MapGL'
 import { IItineraryPage } from '../../types/itinerary'
 import TripLayout from '../../components/Trips/TripLayout'
@@ -12,13 +12,23 @@ import { Activity, TripDay } from '../../types/itinerary'
 import { ActivityCoordinates } from '../../types/map'
 import pusherInstance from '../../lib/pusher'
 import { handlePusherMessage } from '../../lib/handlePusherMessage'
-import { useItineraryContext } from '../../hooks/useItineraryContext'
+import useItineraryStore from '../../hooks/useItineraryStore'
+import { type Channel } from 'pusher-js'
 
 const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IItineraryPage) => {
   const [viewState, setViewState] = useState(false)
-  const { isSignedIn } = useAuth()
-  const { dispatch } = useItineraryContext()
+  const { isSignedIn, userId } = useAuth()
 
+  const setItinerary = useItineraryStore(state => state.setItinerary)
+  const setTripDays = useItineraryStore(state => state.setTripDays)
+  const setActivities = useItineraryStore(state => state.setActivities)
+  const addActivity = useItineraryStore(state => state.addActivity)
+  const updateActivity = useItineraryStore(state => state.updateActivity)
+  const deleteActivity = useItineraryStore(state => state.deleteActivity)
+
+  setItinerary(itinerary)
+  setTripDays(tripDays)
+  setActivities(activities)
 
   useEffect(() => {
     const connectItineraryToProfile = async () => {
@@ -33,22 +43,10 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
 
   }, [isSignedIn])
 
-  useEffect(() => {
-    dispatch({
-      type: 'SET_ITINERARY',
-      payload: {
-        itinerary,
-        tripDays,
-        activities,
-      }
-    })
-  }, [])
 
   useEffect(() => {
     // check if itinerary is a collaboration
-    // TODO: use itinerary atom to access property?
-    let channel: any
-
+    let channel: Channel
     // This is handling messages sent from the server
     // i.e. other users updating the itinerary
     if (itinerary.collaborationId) {
@@ -58,12 +56,10 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
       console.log('subscribed to channel:', channelName)
 
       channel.bind('itinerary-event-name', function(msg: any) {
-        // If it's the same user, we don't need to do anything
-        console.log('received message: ', msg)
-        
-        if (msg.userId === itinerary.profileId) return
-        
-        handlePusherMessage(msg)
+        // If it's the same user that sent the message, we don't need to do anything
+        if (msg.userId === userId) return
+        // Update the UI for collaborators with the new data
+        handlePusherMessage({msg, addActivity, updateActivity, deleteActivity})
       });
     }
 
@@ -92,7 +88,7 @@ export default TripPage
 
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  // const { userId } = getAuth(ctx.req);
+  const { userId } = getAuth(ctx.req);
 
   // Check that itinerary profileId matches the user id
   // OR that ip address matches
@@ -122,6 +118,38 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   } catch (e) {
     console.error(e);
   }
+
+  // if (itineraryData?.id === 9 && userId) {
+  //   // create collaboration for itinerary
+  //   const res = await prisma.collaboration.create({
+  //     data: {
+  //       itinerary: {
+  //         connect: { id: itineraryData.id }
+  //       },
+  //       profile: {
+  //         connect: { clerkId: userId }
+  //       }
+  //     }
+  //   })
+
+  //   console.log('collaboration created:', res)
+  // }
+
+  // if (userId === "user_2TjSbqnncruvYerUH6m42cyviQv") {
+  //   // link user to collaboration
+  //   const res = await prisma.collaboration.update({
+  //     where: {
+  //       itineraryId: itineraryData?.id
+  //     },
+  //     data: {
+  //       profile: {
+  //         connect: { clerkId: userId }
+  //       }
+  //     }
+  //   })
+
+  //   console.log('collaboration linked:', res)
+  // }
 
 
   let activityCoordinates: ActivityCoordinates[] = []

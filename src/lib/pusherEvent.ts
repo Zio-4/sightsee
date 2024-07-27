@@ -1,6 +1,5 @@
 import axios from "axios";
 
-
   // Write API route to update activity
   // pass in the name of the event (itinerary-event-name) & channel
   // and the data to update the activity with

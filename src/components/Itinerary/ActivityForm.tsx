@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, } from 'react'
 import axios from 'axios';
 import { SearchBox,  } from '@mapbox/search-js-react';
 import { IActivityForm } from '../../types/itinerary';
 import { triggerPusherEvent } from '../../lib/pusherEvent';
-import { useItineraryContext } from '../../hooks/useItineraryContext'
-import { set } from 'date-fns';
+import useItineraryStore from '../../hooks/useItineraryStore';
+import useMapStore from '../../hooks/useMapStore';
 
 const searchBoxStyling = {
     variables: {
@@ -17,20 +17,21 @@ const searchBoxStyling = {
 // 'bg-white bg-opacity-40 rounded-md p-1 outline-none w-full h-fit mr-2'
 
 
-const ActivityForm = ({ tripDayId, }: IActivityForm) => {
+const ActivityForm = React.memo(({ tripDayId, }: IActivityForm) => {
     const [activityDetails, setActivityDetails] = useState({
         name: '',
         address: ''
     })
     const [searchBoxValue, setSearchBoxValue] = useState('');
-    const { state: { itinerary, map, searchMarkerCoordinates }, dispatch } = useItineraryContext()
+    const map = useMapStore(state => state.map)
+    const searchMarkerCoordinates = useMapStore(state => state.searchMarkerCoordinates)
+    const setSearchMarkerCoordinates = useMapStore(state => state.setSearchMarkerCoordinates)
+    const itinerary = useItineraryStore(state => state.itinerary)
+    const addActivity = useItineraryStore(state => state.addActivity)
     const [showToast, setShowToast] = useState({
         state: false,
         message: ''
     })
-
-    // To add activity
-    // const setDebounceRef = useSetAtom(debouncRefAtom)
 
     const createAcitivity = async () => {
         if (activityDetails.name.length === 0) return
@@ -39,7 +40,6 @@ const ActivityForm = ({ tripDayId, }: IActivityForm) => {
 
         // Does this make sense?
         // Map coordinates don't need to change unless you search for a new location
-        // dispatch({ type: 'UPDATE_SEARCH_MARKER_COORDINATES', payload: searchMarkerCoordinates})
     
         const activityFormValues = {
             name: activityDetails.name,
@@ -53,12 +53,14 @@ const ActivityForm = ({ tripDayId, }: IActivityForm) => {
             latitude: searchMarkerCoordinates[1]
         }
 
+        let res = null
+
         try {
-            const res = await axios.post('/api/activities', activityFormValues)
+            res = await axios.post('/api/activities', activityFormValues)
             console.log('activity creation response:', res)
             setShowToast({state: true, message: 'Activity added'})        // Cannot update state before we have the activity id from the server
             setTimeout(() => setShowToast({state: false, message: ''}), 2000)
-            dispatch({ type: 'ACTIVITY_ADD', payload: res.data })
+            addActivity(res.data.id, tripDayId, res.data)
         } catch (error) {
             console.error(error)
             setShowToast({state: true, message: 'There was a problem adding the activity. Please try again'})  
@@ -66,16 +68,20 @@ const ActivityForm = ({ tripDayId, }: IActivityForm) => {
         }
 
 
-        // // trigger pusher event
-        // await triggerPusherEvent(`itinerary-${itinerary.id}`, 'itinerary-event-name', {
-        //     ...res.data,
-        //     entity: 'activity',
-        //     action: 'create'
-        // })
+        // trigger pusher event if collaboration
+        if (res && itinerary.collaborationId) {
+            await triggerPusherEvent(`itinerary-${itinerary.id}`, 'itinerary-event-name', {
+                ...res.data,
+                entity: 'activity',
+                action: 'create'
+            })
+        }
     }
 
     const handleRetrieve = (res: any) => {
-        dispatch({ type: 'UPDATE_SEARCH_MARKER_COORDINATES', payload: [res.features[0]?.properties.coordinates.longitude, res.features[0]?.properties.coordinates.latitude]})
+        setSearchMarkerCoordinates([res.features[0]?.properties.coordinates.longitude, res.features[0]?.properties.coordinates.latitude])
+        
+        
         setActivityDetails({
             name: res.features[0].properties?.name_preferred || res.features[0].properties.name,
             address: res.features[0].properties?.full_address || ''
@@ -127,6 +133,6 @@ const ActivityForm = ({ tripDayId, }: IActivityForm) => {
         <textarea className='text-black outline-none rounded-md w-1/2'/> */}
     </div>
   )
-}
+})
 
 export default ActivityForm
