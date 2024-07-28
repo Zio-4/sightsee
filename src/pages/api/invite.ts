@@ -2,6 +2,9 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from '../../server/db/client'
 import { v4 as uuidv4 } from 'uuid';
 import { getAuth } from "@clerk/nextjs/server";
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
     // Check if user is signed in
@@ -23,23 +26,22 @@ export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> 
             data: {
                 inviteeEmail: inviteeEmail,
                 token: token,
-                expiration: new Date(Date.now() + 3600000), // Expire in 1 hour
+                expiration: new Date(Date.now() + 604800000), // Expire in 1 week
                 itineraryId: itineraryId,
                 senderEmail: senderEmail,
                 status: 'PENDING'
             }
         })
 
-        // Send email to invitee
-        const resend = require('resend');
-
-        await resend.emails.send({
+        const emailResult = await resend.emails.send({
             from: 'Sightsee <onboarding@resend.dev>',
             to: inviteeEmail,
             subject: 'You have been invited to join a trip!',
             // text: `You have been invited to join a trip by ${senderEmail}. Click the link below to accept the invitation.`,
             html: `<p>You have been invited to join a trip by ${senderEmail}. Click the link below to accept the invitation.</p><a href="https://sightsee.vercel.app/accept-invite?token=${token}">Accept Invitation</a>`
         });
+
+        console.log('Email result:', emailResult)
 
         res.status(201).json({ message: 'Invitation sent successfully.'})
     } catch (error) {
