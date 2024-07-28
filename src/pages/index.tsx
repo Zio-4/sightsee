@@ -59,7 +59,7 @@ const Home: NextPage = () => {
         })}
 
 
-        <div className="w-full mt-32 xl:mt-44">
+        {/* <div className="w-full mt-32 xl:mt-44">
           <h1 className="text-4xl text-center"> And more to come, including...</h1>
         </div>
 
@@ -87,7 +87,7 @@ const Home: NextPage = () => {
               <p className="text-base">Never wonder how long getting to places will take. We'll let you know so you can plan accordingly.</p>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </LayoutWrapper>
   );

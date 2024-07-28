@@ -33,6 +33,7 @@ export const serverSchema = z.object({
   PUSHER_APP_CLUSTER: z.string(),
   PUSHER_APP_ID: z.string(),
   PUSHER_APP_SECRET: z.string(),
+  RESEND_API_KEY: z.string(),
 });
 
 /**
