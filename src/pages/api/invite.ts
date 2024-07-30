@@ -38,7 +38,10 @@ export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> 
             to: inviteeEmail,
             subject: 'You have been invited to join a trip!',
             // text: `You have been invited to join a trip by ${senderEmail}. Click the link below to accept the invitation.`,
-            html: `<p>You have been invited to join a trip by ${senderEmail}. Click the link below to accept the invitation.</p><a href="https://sightsee.vercel.app/accept-invite?token=${token}">Accept Invitation</a>`
+            html: `<p>
+                    You have been invited to join a trip by ${senderEmail}. Click the link below to accept the invitation.
+                   </p>
+                   <a href="${process.env.NODE_ENV === 'production' ? `https://sightsee.vercel.app/invite?token=${token}` : `http://localhost:3000/invite?token=${token}`}">Accept Invitation</a>`
         });
 
         console.log('Email result:', emailResult)

@@ -16,7 +16,7 @@ const GuestSignInButton = ({isHidden}: IGuestSignInButton) => {
             : 
             (<SignInButton>
                 <button className={`${isHidden && 'hidden md:block'} text-xl`}><FaUserCircle size={30} color={'black'} className={`inline-block ml-2 cursor-pointer`}/></button>
-              </SignInButton>)
+             </SignInButton>)
         }
     </>
   )
