@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useUser } from '@clerk/nextjs';
+import { type GetServerSideProps } from 'next'
+import { prisma } from '../../server/db/client'
 
 function VerifyToken() {
     const router = useRouter()
@@ -10,9 +12,11 @@ function VerifyToken() {
     // If not, redirect to sign in page
     const { user, isLoaded } = useUser()
 
-    if (!user) {
-        localStorage.setItem('invite-token', 'token goes here')
-        router.push('https://willing-doberman-19.accounts.dev/sign-up')
+    if (window) {
+      if (!user) {
+          localStorage.setItem('invite-token', 'token goes here')
+          router.push('https://willing-doberman-19.accounts.dev/sign-up')
+      }
     }
 
     // Check if token is valid
@@ -28,3 +32,27 @@ function VerifyToken() {
 }
 
 export default VerifyToken
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const { token } = ctx.query;
+
+  if (token) {
+    return {
+      redirect: {
+        destination: '/trips',
+        permanent: false
+      }
+    }
+  }
+
+  // Check token is not invalid, expired, or already used
+  const invite = await prisma.invite.findUnique({
+    where: {
+      token: token
+    }
+  })
+
+  return {
+    props: {}
+  }
+}

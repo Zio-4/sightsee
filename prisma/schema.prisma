@@ -105,11 +105,13 @@ enum InviteStatus {
 model Invite {
   id           Int          @id @default(autoincrement())
   inviteeEmail String
-  token        String       @db.Uuid
+  token        String       @db.Uuid @unique
   expiration   DateTime
   itineraryId  Int
   senderEmail  String
   status       InviteStatus
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
+
+  @@index([token])
 }

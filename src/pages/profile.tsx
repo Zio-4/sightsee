@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import ProfilePlaceholder from '../assets/profile-placeholder.png'
 import Image from 'next/image'
 import axios from 'axios'
-import { GetServerSideProps } from 'next'
+import { type GetServerSideProps } from 'next'
 import LayoutWrapper from '../components/Layout-Navigation/LayoutWrapper'
 import { getAuth, buildClerkProps, } from "@clerk/nextjs/server";
 import { useUser } from "@clerk/nextjs";
