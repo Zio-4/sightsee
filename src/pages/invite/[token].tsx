@@ -38,7 +38,7 @@ export default VerifyToken
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { userId } = getAuth(ctx.req);
-  const { token } = ctx.query;
+  const { token }  = ctx.query;
 
   if (!token) {
     return {
@@ -49,10 +49,12 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     }
   }
 
+  console.log('token:', token)
+
   // Check token is not invalid, expired, or already used
   const invite = await prisma.invite.findUnique({
     where: {
-      token: token,
+      token: token as string,
     }
   })
 
@@ -60,6 +62,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   // invalid token
   if (!invite) {
+    console.log('----------------invalid token--------------')
     return {
       redirect: {
         destination: '/',
@@ -73,6 +76,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const inviteExpiration = new Date(invite.expiration)
 
   if (currentDate > inviteExpiration) {
+    console.log('----------------expired token--------------')
     return {
       redirect: {
         destination: '/',
@@ -94,7 +98,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   if (userId) {
     await prisma.invite.update({
       where: {
-        token: token
+        token: token as string
       },
       data: {
         status: 'ACCEPTED'
@@ -112,9 +116,10 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         }
       }
     })
+    console.log('collaboration created:', res)
 
     // update original users itinerary
-    await prisma.itinerary.update({
+    const itinUpdate = await prisma.itinerary.update({
       where: {
         id: invite.itineraryId
       },
@@ -122,9 +127,10 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         collaborationId: res.id
       }
     })
+    console.log('itinerary updated:', itinUpdate)
 
     // Add original user to collaboration
-    await prisma.collaboration.update({
+    const collabUpdate = await prisma.collaboration.update({
       where: {
         itineraryId: invite.itineraryId
       },
@@ -134,6 +140,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         }
       }
     })
+    console.log('collaboration updated:', collabUpdate)
 
     console.log('collaboration created:', res)
 
