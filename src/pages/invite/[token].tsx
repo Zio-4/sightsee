@@ -52,11 +52,24 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   console.log('token:', token)
 
   // Check token is not invalid, expired, or already used
-  const invite = await prisma.invite.findUnique({
-    where: {
-      token: token as string,
+  let invite: any
+  try {
+    invite = await prisma.invite.findUnique({
+      where: {
+        token: token as string,
+      }
+    })
+  } catch (error) {
+    // TODO: Let user know token is invalid or cannot be found
+    console.error(error)
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false
+      }
     }
-  })
+  }
+
 
   console.log('invite response:', invite)
 
@@ -73,6 +86,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   // Check if invite is expired
   const currentDate = new Date()
+  console.log('expiration type on invite:', typeof invite.expiration)
   const inviteExpiration = new Date(invite.expiration)
 
   if (currentDate > inviteExpiration) {
@@ -87,6 +101,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   
   // Invite already used
   if (invite.status === 'ACCEPTED') {
+    console.log('----------------invite already used--------------')
     return {
       redirect: {
         destination: '/',
@@ -96,53 +111,58 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   }
 
   if (userId) {
-    await prisma.invite.update({
-      where: {
-        token: token as string
-      },
-      data: {
-        status: 'ACCEPTED'
-      }
-    })
-
-    // create collaboration
-    const res = await prisma.collaboration.create({
-      data: {
-        itinerary: {
-          connect: { id: invite.itineraryId }
+    try {
+      const inviteUpdate = await prisma.invite.update({
+        where: {
+          token: token as string
         },
-        profile: {
-          connect: { clerkId: userId }
+        data: {
+          status: 'ACCEPTED'
         }
-      }
-    })
-    console.log('collaboration created:', res)
-
-    // update original users itinerary
-    const itinUpdate = await prisma.itinerary.update({
-      where: {
-        id: invite.itineraryId
-      },
-      data: {
-        collaborationId: res.id
-      }
-    })
-    console.log('itinerary updated:', itinUpdate)
-
-    // Add original user to collaboration
-    const collabUpdate = await prisma.collaboration.update({
-      where: {
-        itineraryId: invite.itineraryId
-      },
-      data: {
-        profile: {
-          connect: { clerkId: userId }
+      })
+      console.log('invite updated:', inviteUpdate)
+  
+      // create collaboration
+      const createdCollaboration = await prisma.collaboration.create({
+        data: {
+          itinerary: {
+            connect: { id: invite.itineraryId }
+          },
+          profile: {
+            connect: { clerkId: userId }
+          }
         }
-      }
-    })
-    console.log('collaboration updated:', collabUpdate)
+      })
+      console.log('collaboration created:', createdCollaboration)
+  
+      // update original users itinerary
+      const itinUpdate = await prisma.itinerary.update({
+        where: {
+          id: invite.itineraryId
+        },
+        data: {
+          collaborationId: createdCollaboration.id
+        }
+      })
+      console.log('itinerary updated:', itinUpdate)
+  
+      // Add original user to collaboration
+      const collabUpdate = await prisma.collaboration.update({
+        where: {
+          itineraryId: invite.itineraryId
+        },
+        data: {
+          profile: {
+            connect: { clerkId: userId }
+          }
+        }
+      })
+      console.log('collaboration updated:', collabUpdate)
 
-    console.log('collaboration created:', res)
+    } catch (error) {
+      console.error('Failed to create collaboration, update invite, or update itinerary:', error)
+    }
+    
 
     return {
       redirect: {

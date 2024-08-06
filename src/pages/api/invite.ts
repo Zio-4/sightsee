@@ -44,6 +44,10 @@ export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> 
                    <a href="${process.env.NODE_ENV === 'production' ? `https://sightsee.vercel.app/invite?token=${token}` : `http://localhost:3000/invite?token=${token}`}">Accept Invitation</a>`
         });
 
+        if (emailResult.error) { 
+            throw new Error(emailResult.error.message)
+        }
+
         console.log('Email result:', emailResult)
 
         res.status(201).json({ message: 'Invitation sent successfully.'})
