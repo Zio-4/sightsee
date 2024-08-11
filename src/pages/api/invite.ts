@@ -29,9 +29,11 @@ export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> 
                 expiration: new Date(Date.now() + 604800000), // Expire in 1 week
                 itineraryId: itineraryId,
                 senderEmail: senderEmail,
+                senderUserId: userId,
                 status: 'PENDING'
             }
         })
+        console.log('invite created:', inviteRes)
 
         const emailResult = await resend.emails.send({
             from: 'Sightsee <onboarding@resend.dev>',
@@ -41,7 +43,7 @@ export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> 
             html: `<p>
                     You have been invited to join a trip by ${senderEmail}. Click the link below to accept the invitation.
                    </p>
-                   <a href="${process.env.NODE_ENV === 'production' ? `https://sightsee.vercel.app/invite?token=${token}` : `http://localhost:3000/invite?token=${token}`}">Accept Invitation</a>`
+                   <a href="${process.env.NODE_ENV === 'production' ? `https://sightsee.vercel.app/invite/${token}` : `http://localhost:3000/invite/${token}`}">Accept Invitation</a>`
         });
 
         if (emailResult.error) { 

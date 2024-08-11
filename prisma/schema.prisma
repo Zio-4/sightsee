@@ -109,6 +109,7 @@ model Invite {
   expiration   DateTime
   itineraryId  Int
   senderEmail  String
+  senderUserId String       
   status       InviteStatus
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt

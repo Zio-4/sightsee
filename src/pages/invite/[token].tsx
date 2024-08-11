@@ -14,13 +14,13 @@ function VerifyToken({ itineraryId }: { itineraryId: number }) {
     // If not, redirect to sign in page
     const { user, isLoaded } = useUser()
 
-    if (window) {
+    useEffect(() => {
       if (!user) {
           localStorage.setItem('invite-token', JSON.stringify(router.query.token))
           // router.push('https://willing-doberman-19.accounts.dev/sign-up')
           RedirectToSignUp({redirectUrl: `/trips/${itineraryId}`})
       }
-    }
+    }, [])
 
     // Check if token is valid
     // If not, redirect to home page
@@ -37,6 +37,7 @@ function VerifyToken({ itineraryId }: { itineraryId: number }) {
 export default VerifyToken
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  console.log('ctx:', ctx)
   const { userId } = getAuth(ctx.req);
   const { token }  = ctx.query;
 
@@ -122,14 +123,14 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       })
       console.log('invite updated:', inviteUpdate)
   
-      // create collaboration
+      // create collaboration, add creator and tripmate to collaboration
       const createdCollaboration = await prisma.collaboration.create({
         data: {
           itinerary: {
             connect: { id: invite.itineraryId }
-          },
+          },  
           profile: {
-            connect: { clerkId: userId }
+            connect: [{ clerkId: userId }, { clerkId: invite.senderUserId }]
           }
         }
       })
@@ -146,30 +147,30 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       })
       console.log('itinerary updated:', itinUpdate)
   
-      // Add original user to collaboration
-      const collabUpdate = await prisma.collaboration.update({
-        where: {
-          itineraryId: invite.itineraryId
-        },
-        data: {
-          profile: {
-            connect: { clerkId: userId }
-          }
-        }
-      })
-      console.log('collaboration updated:', collabUpdate)
+      // // Add original user to collaboration
+      // const collabUpdate = await prisma.collaboration.update({
+      //   where: {
+      //     itineraryId: invite.itineraryId
+      //   },
+      //   data: {
+      //     profile: {
+      //       connect: { clerkId: invite.senderUserId }
+      //     }
+      //   }
+      // })
+      // console.log('collaboration updated:', collabUpdate)
 
     } catch (error) {
       console.error('Failed to create collaboration, update invite, or update itinerary:', error)
     }
     
 
-    return {
-      redirect: {
-        destination: `/trips/${invite.itineraryId}`,
-        permanent: false
-      }
-    }
+    // return {
+    //   redirect: {
+    //     destination: `/trips/${invite.itineraryId}`,
+    //     permanent: false
+    //   }
+    // }
   }
 
   return {
