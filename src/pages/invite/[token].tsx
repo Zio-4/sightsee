@@ -4,9 +4,9 @@ import { useUser } from '@clerk/nextjs';
 import { type GetServerSideProps } from 'next'
 import { prisma } from '../../server/db/client'
 import { getAuth, buildClerkProps, } from "@clerk/nextjs/server";
-import { RedirectToSignUp } from '@clerk/nextjs';
+import { RedirectToSignUp, useSignUp, useClerk } from '@clerk/nextjs';
 
-function VerifyToken({ itineraryId }: { itineraryId: number }) {
+function VerifyToken({token}: { token: string }) {
     const router = useRouter()
     console.log('router:', router)
 
@@ -18,7 +18,7 @@ function VerifyToken({ itineraryId }: { itineraryId: number }) {
       if (!user) {
           localStorage.setItem('invite-token', JSON.stringify(router.query.token))
           // router.push('https://willing-doberman-19.accounts.dev/sign-up')
-          RedirectToSignUp({redirectUrl: `/trips/${itineraryId}`})
+          // RedirectToSignUp({redirectUrl: `/trips/${itineraryId}`})
       }
     }, [])
 
@@ -29,7 +29,9 @@ function VerifyToken({ itineraryId }: { itineraryId: number }) {
 
   return (
     <div>
-        <p>You have been invited to join a trip!</p>
+        <h1>You have been invited to join a trip!</h1>
+
+        <RedirectToSignUp redirectUrl={`/invite/${token}`}/>
     </div>
   )
 }
@@ -46,6 +48,15 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       redirect: {
         destination: '/',
         permanent: false
+      }
+    }
+  }
+
+  if (!userId) {
+    return {
+      props: {
+        ...buildClerkProps(ctx.req),
+        token: token
       }
     }
   }
@@ -165,12 +176,12 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     }
     
 
-    // return {
-    //   redirect: {
-    //     destination: `/trips/${invite.itineraryId}`,
-    //     permanent: false
-    //   }
-    // }
+    return {
+      redirect: {
+        destination: `/trips/${invite.itineraryId}`,
+        permanent: false
+      }
+    }
   }
 
   return {
