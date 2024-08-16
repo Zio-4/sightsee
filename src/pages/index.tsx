@@ -6,6 +6,8 @@ import ExampleItinerary from '../assets/exampleItinerary.png'
 import BeachVacay from '../assets/beach_vacation.avif'
 import DiscoverItineraries from '../assets/search_example.png'
 import CollaborateExample from '../assets/trips.png'
+import useInviteStore from "../hooks/useInviteStore";
+import toast from "react-hot-toast";
 
 
   const displayStuff = [
@@ -29,7 +31,13 @@ import CollaborateExample from '../assets/trips.png'
 
 
 const Home: NextPage = () => {
-  // const hello = trpc.example.hello.useQuery({ text: "from tRPC" });
+  const inviteErrorMessage = useInviteStore(state => state.errorMessage)
+  console.log('inviteErrorMessage:', inviteErrorMessage)
+
+  if (inviteErrorMessage) {
+    console.log('inside if not found')
+    toast.error(inviteErrorMessage)
+  }
 
   return (
     <LayoutWrapper>

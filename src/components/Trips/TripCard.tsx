@@ -12,7 +12,7 @@ import { send } from 'micro'
 import mod from 'zod/lib'
 
 const TripCard = ({ title, startDate, endDate, collaborator, collaborators, id, destinations}: ITripCard) => {
-    const { user } = useUser();
+    const { user, isSignedIn } = useUser();
     const modalRef: any = useRef(null);
     const [email, setEmail] = useState('')
     const [isValid, setIsValid] = useState(true);
@@ -79,7 +79,7 @@ const TripCard = ({ title, startDate, endDate, collaborator, collaborators, id, 
                     <FaUserCircle size={30}/>
                 </div>
                 {/* <FaUserCircle size={30}/> */}
-                <BsPersonPlusFill size={30} className='text-blue-400 hover:text-blue-500 cursor-pointer' onClick={()=>modalRef.current?.showModal()}/>
+                {isSignedIn && <BsPersonPlusFill size={30} className='text-blue-400 hover:text-blue-500 cursor-pointer' onClick={()=>modalRef.current?.showModal()}/>}
             </div>
             {/* Open the modal using document.getElementById('ID').showModal() method */}
             {/* <button className="btn" onClick={()=>document.getElementById('my_modal_5').showModal()}>open modal</button> */}

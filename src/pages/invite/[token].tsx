@@ -5,33 +5,55 @@ import { type GetServerSideProps } from 'next'
 import { prisma } from '../../server/db/client'
 import { getAuth, buildClerkProps, } from "@clerk/nextjs/server";
 import { RedirectToSignUp, useSignUp, useClerk } from '@clerk/nextjs';
+import useInviteStore from '../../hooks/useInviteStore';
+import { set } from 'lodash';
 
-function VerifyToken({token}: { token: string }) {
+type Status = 'NO TOKEN PROVIDED' | 
+              'ERROR FETCHING INVITE' |
+              'USER NOT SIGNED IN' |
+              'NO INVITE FOUND' | 
+              'INVITE EXPIRED' | 
+              'INVITE ALREADY USED' | 
+              'JOINED TRIP'
+
+function VerifyToken({ token, status, itineraryId }: { token: string, status: Status, itineraryId: number }) {
     const router = useRouter()
-    console.log('router:', router)
+    const setInviteError = useInviteStore(state => state.setErrorMessage)
+    const setJoinedTrip = useInviteStore(state => state.setJoinedTrip)
 
-    // Check user if user is signed in
-    // If not, redirect to sign in page
     const { user, isLoaded } = useUser()
 
     useEffect(() => {
+      if (status === 'JOINED TRIP') {
+        setJoinedTrip(true)
+        router.push(`/trips/${itineraryId}`)
+      } else {
+        if (status === 'NO TOKEN PROVIDED') {
+          setInviteError('No invite token provided')
+        } else if (status === 'ERROR FETCHING INVITE') {
+          setInviteError('Error fetching the invite. Please try again.')
+        } else if (status === 'NO INVITE FOUND') {
+          setInviteError('Invitation not found. Please try again.')
+        } else if (status === 'INVITE EXPIRED') {
+          setInviteError('Invitation has expired.')
+        } else if (status === 'INVITE ALREADY USED') {
+          setInviteError('Invitation has already been accepted.')
+        }
+        router.push('/')
+      }
+
       if (!user) {
           localStorage.setItem('invite-token', JSON.stringify(router.query.token))
-          // router.push('https://willing-doberman-19.accounts.dev/sign-up')
-          // RedirectToSignUp({redirectUrl: `/trips/${itineraryId}`})
+      } else {
+        localStorage.removeItem('invite-token')
       }
     }, [])
-
-    // Check if token is valid
-    // If not, redirect to home page
-
-    // Redirect to trip page
 
   return (
     <div>
         <h1>You have been invited to join a trip!</h1>
 
-        <RedirectToSignUp redirectUrl={`/invite/${token}`}/>
+        {status === 'USER NOT SIGNED IN' && <RedirectToSignUp redirectUrl={`/invite/${token}`}/>}
     </div>
   )
 }
@@ -45,9 +67,10 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   if (!token) {
     return {
-      redirect: {
-        destination: '/',
-        permanent: false
+      props: {
+        ...buildClerkProps(ctx.req),
+        token: token,
+        status: 'NO TOKEN PROVIDED'
       }
     }
   }
@@ -56,7 +79,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     return {
       props: {
         ...buildClerkProps(ctx.req),
-        token: token
+        token: token,
+        status: 'USER NOT SIGNED IN'
       }
     }
   }
@@ -72,12 +96,12 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       }
     })
   } catch (error) {
-    // TODO: Let user know token is invalid or cannot be found
     console.error(error)
     return {
-      redirect: {
-        destination: '/',
-        permanent: false
+      props: {
+        ...buildClerkProps(ctx.req),
+        token: token,
+        status: 'ERROR FETCHING INVITE'
       }
     }
   }
@@ -89,9 +113,10 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   if (!invite) {
     console.log('----------------invalid token--------------')
     return {
-      redirect: {
-        destination: '/',
-        permanent: false
+      props: {
+        ...buildClerkProps(ctx.req),
+        token: token,
+        status: 'NO INVITE FOUND'
       }
     }
   }
@@ -104,9 +129,10 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   if (currentDate > inviteExpiration) {
     console.log('----------------expired token--------------')
     return {
-      redirect: {
-        destination: '/',
-        permanent: false
+      props: {
+        ...buildClerkProps(ctx.req),
+        token: token,
+        status: 'INVITE EXPIRED'
       }
     }
   }
@@ -115,9 +141,10 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   if (invite.status === 'ACCEPTED') {
     console.log('----------------invite already used--------------')
     return {
-      redirect: {
-        destination: '/',
-        permanent: false
+      props: {
+        ...buildClerkProps(ctx.req),
+        token: token,
+        status: 'INVITE ALREADY USED'
       }
     }
   }
@@ -157,29 +184,18 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         }
       })
       console.log('itinerary updated:', itinUpdate)
-  
-      // // Add original user to collaboration
-      // const collabUpdate = await prisma.collaboration.update({
-      //   where: {
-      //     itineraryId: invite.itineraryId
-      //   },
-      //   data: {
-      //     profile: {
-      //       connect: { clerkId: invite.senderUserId }
-      //     }
-      //   }
-      // })
-      // console.log('collaboration updated:', collabUpdate)
 
     } catch (error) {
       console.error('Failed to create collaboration, update invite, or update itinerary:', error)
+      throw error
     }
     
 
     return {
-      redirect: {
-        destination: `/trips/${invite.itineraryId}`,
-        permanent: false
+      props: {
+        ...buildClerkProps(ctx.req), 
+        itineraryId: invite.itineraryId,
+        status: 'JOINED TRIP'
       }
     }
   }
