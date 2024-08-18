@@ -6,7 +6,6 @@ import { prisma } from '../../server/db/client'
 import { getAuth, buildClerkProps, } from "@clerk/nextjs/server";
 import { RedirectToSignUp, useSignUp, useClerk } from '@clerk/nextjs';
 import useInviteStore from '../../hooks/useInviteStore';
-import { set } from 'lodash';
 
 type Status = 'NO TOKEN PROVIDED' | 
               'ERROR FETCHING INVITE' |
@@ -51,7 +50,7 @@ function VerifyToken({ token, status, itineraryId }: { token: string, status: St
 
   return (
     <div>
-        <h1>You have been invited to join a trip!</h1>
+        <h1 className='text-center text-4xl font-bold mt-20'>{status === 'USER NOT SIGNED IN' ? 'You have been invited to join a trip!' : status}</h1>
 
         {status === 'USER NOT SIGNED IN' && <RedirectToSignUp redirectUrl={`/invite/${token}`}/>}
     </div>
@@ -61,7 +60,7 @@ function VerifyToken({ token, status, itineraryId }: { token: string, status: St
 export default VerifyToken
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  console.log('ctx:', ctx)
+  // console.log('ctx:', ctx)
   const { userId } = getAuth(ctx.req);
   const { token }  = ctx.query;
 
@@ -162,15 +161,26 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       console.log('invite updated:', inviteUpdate)
   
       // create collaboration, add creator and tripmate to collaboration
-      const createdCollaboration = await prisma.collaboration.create({
-        data: {
+      const createdCollaboration = await prisma.collaboration.upsert({
+        where: {
+          itineraryId: invite.itineraryId
+        },
+        update: {
           itinerary: {
             connect: { id: invite.itineraryId }
           },  
           profile: {
             connect: [{ clerkId: userId }, { clerkId: invite.senderUserId }]
           }
-        }
+        },
+        create: {
+          itinerary: {
+            connect: { id: invite.itineraryId }
+          },  
+          profile: {
+            connect: [{ clerkId: userId }, { clerkId: invite.senderUserId }]
+          }
+        },
       })
       console.log('collaboration created:', createdCollaboration)
   

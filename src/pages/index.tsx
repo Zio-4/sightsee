@@ -8,6 +8,7 @@ import DiscoverItineraries from '../assets/search_example.png'
 import CollaborateExample from '../assets/trips.png'
 import useInviteStore from "../hooks/useInviteStore";
 import toast from "react-hot-toast";
+import { useEffect } from "react";
 
 
   const displayStuff = [
@@ -32,12 +33,24 @@ import toast from "react-hot-toast";
 
 const Home: NextPage = () => {
   const inviteErrorMessage = useInviteStore(state => state.errorMessage)
-  console.log('inviteErrorMessage:', inviteErrorMessage)
+  const setInviteErrorMessage = useInviteStore(state => state.setErrorMessage)
 
-  if (inviteErrorMessage) {
-    console.log('inside if not found')
-    toast.error(inviteErrorMessage)
-  }
+  useEffect(() => {
+    if (inviteErrorMessage) {
+      toast.error(inviteErrorMessage, {
+        duration: 3000,
+        position: 'top-right',
+        icon: '🚨',
+        id: 'inviteErrorMessage'
+      })
+    }
+
+    // Clear inviteErrorMessage state so it doesn't show up again when coming back to the page
+    return () => {
+      setInviteErrorMessage('')
+    }
+  }, [inviteErrorMessage])
+  
 
   return (
     <LayoutWrapper>
