@@ -1,10 +1,9 @@
 import React, { useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { useUser } from '@clerk/nextjs';
 import { type GetServerSideProps } from 'next'
 import { prisma } from '../../server/db/client'
 import { getAuth, buildClerkProps, } from "@clerk/nextjs/server";
-import { RedirectToSignUp, useSignUp, useClerk } from '@clerk/nextjs';
+import { RedirectToSignUp, } from '@clerk/nextjs';
 import useInviteStore from '../../hooks/useInviteStore';
 
 type Status = 'NO TOKEN PROVIDED' | 
@@ -19,8 +18,6 @@ function VerifyToken({ token, status, itineraryId }: { token: string, status: St
     const router = useRouter()
     const setInviteError = useInviteStore(state => state.setErrorMessage)
     const setJoinedTrip = useInviteStore(state => state.setJoinedTrip)
-
-    const { user, isLoaded } = useUser()
 
     useEffect(() => {
       if (status === 'JOINED TRIP') {
@@ -40,12 +37,6 @@ function VerifyToken({ token, status, itineraryId }: { token: string, status: St
         }
         router.push('/')
       }
-
-      if (!user) {
-          localStorage.setItem('invite-token', JSON.stringify(router.query.token))
-      } else {
-        localStorage.removeItem('invite-token')
-      }
     }, [])
 
   return (
@@ -60,7 +51,6 @@ function VerifyToken({ token, status, itineraryId }: { token: string, status: St
 export default VerifyToken
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  // console.log('ctx:', ctx)
   const { userId } = getAuth(ctx.req);
   const { token }  = ctx.query;
 
@@ -84,8 +74,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     }
   }
 
-  console.log('token:', token)
-
   // Check token is not invalid, expired, or already used
   let invite: any
   try {
@@ -105,9 +93,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     }
   }
 
-
-  console.log('invite response:', invite)
-
   // invalid token
   if (!invite) {
     console.log('----------------invalid token--------------')
@@ -122,11 +107,9 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   // Check if invite is expired
   const currentDate = new Date()
-  console.log('expiration type on invite:', typeof invite.expiration)
   const inviteExpiration = new Date(invite.expiration)
 
   if (currentDate > inviteExpiration) {
-    console.log('----------------expired token--------------')
     return {
       props: {
         ...buildClerkProps(ctx.req),
@@ -138,7 +121,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   
   // Invite already used
   if (invite.status === 'ACCEPTED') {
-    console.log('----------------invite already used--------------')
     return {
       props: {
         ...buildClerkProps(ctx.req),
@@ -158,7 +140,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
           status: 'ACCEPTED'
         }
       })
-      console.log('invite updated:', inviteUpdate)
   
       // create collaboration, add creator and tripmate to collaboration
       const createdCollaboration = await prisma.collaboration.upsert({
@@ -182,7 +163,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
           }
         },
       })
-      console.log('collaboration created:', createdCollaboration)
   
       // update original users itinerary
       const itinUpdate = await prisma.itinerary.update({
@@ -193,7 +173,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
           collaborationId: createdCollaboration.id
         }
       })
-      console.log('itinerary updated:', itinUpdate)
 
     } catch (error) {
       console.error('Failed to create collaboration, update invite, or update itinerary:', error)

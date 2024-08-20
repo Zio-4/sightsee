@@ -8,8 +8,7 @@ import { useUser } from "@clerk/nextjs";
 import { ITripCard } from '../../types/trips'
 import { BsPersonPlusFill } from "react-icons/bs"
 import axios from 'axios'
-import { send } from 'micro'
-import mod from 'zod/lib'
+import toast from 'react-hot-toast'
 
 const TripCard = ({ title, startDate, endDate, collaborator, collaborators, id, destinations}: ITripCard) => {
     const { user, isSignedIn } = useUser();
@@ -29,9 +28,13 @@ const TripCard = ({ title, startDate, endDate, collaborator, collaborators, id, 
     };
 
     const clearState = () => {
-        setEmail('')
-        setIsValid(true)
-        console.log('clear state')
+        setEmail('');
+        setIsValid(true);
+    }
+
+    const handleModalClose = () => {
+        clearState();
+        modalRef.current?.close();
     }
 
     const addTripMate = async () => {
@@ -42,11 +45,15 @@ const TripCard = ({ title, startDate, endDate, collaborator, collaborators, id, 
                     itineraryId: id,
                     senderEmail: user?.emailAddresses[0]?.emailAddress
                 })
-    
-                console.log('invite sent')
 
-                clearState()
-                modalRef.current?.close()
+                toast.success('Invite sent successfully!', {
+                    duration: 3000,
+                    position: 'top-right',
+                    icon: '📧',
+                });
+
+                clearState();
+                modalRef.current?.close();
             } catch (error) {
                 console.error('Error sending invite:', error);
             }
@@ -83,15 +90,16 @@ const TripCard = ({ title, startDate, endDate, collaborator, collaborators, id, 
             </div>
             {/* Open the modal using document.getElementById('ID').showModal() method */}
             {/* <button className="btn" onClick={()=>document.getElementById('my_modal_5').showModal()}>open modal</button> */}
-            <dialog className="modal modal-bottom sm:modal-middle" ref={modalRef}>
+            <dialog className="modal modal-bottom sm:modal-middle" ref={modalRef} onClose={handleModalClose}>
                 <div className="modal-box bg-slate-50">
                     <form method="dialog">
                         {/* if there is a button in form, it will close the modal */}
-                        <button onClick={clearState} className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                        <button onClick={handleModalClose} className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                     </form>
                     <h3 className="font-extrabold text-xl">Add Trip Mate</h3>
                     <p className="py-4">Enter the email address of the person you want to add to your trip.</p>
                     <input 
+                      value={email}
                       onChange={handleEmailChange}
                       type="email" 
                       name="email" 
