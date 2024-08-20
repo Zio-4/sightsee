@@ -33,17 +33,38 @@ export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> 
                 status: 'PENDING'
             }
         })
-        console.log('invite created:', inviteRes)
 
         const emailResult = await resend.emails.send({
             from: 'Sightsee <onboarding@resend.dev>',
             to: inviteeEmail,
             subject: 'You have been invited to join a trip!',
-            // text: `You have been invited to join a trip by ${senderEmail}. Click the link below to accept the invitation.`,
-            html: `<p>
-                    You have been invited to join a trip by ${senderEmail}. Click the link below to accept the invitation.
-                   </p>
-                   <a href="${process.env.NODE_ENV === 'production' ? `https://sightsee.vercel.app/invite/${token}` : `http://localhost:3000/invite/${token}`}">Accept Invitation</a>`
+            html: `
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Trip Invitation</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
+                        h1 { color: #2c3e50; }
+                        .button { display: inline-block; padding: 10px 20px; background-color: #3498db; color: #ffffff; text-decoration: none; border-radius: 5px; }
+                    </style>
+                </head>
+                <body>
+                    <h1>You've Been Invited to Join a Trip!</h1>
+                    <p>Hello,</p>
+                    <p>${senderEmail} has invited you to join their trip on Sightsee. Ready for an adventure?</p>
+                    <p>Click the button below to accept the invitation and start planning together:</p>
+                    <p>
+                        <a href="${process.env.NODE_ENV === 'production' ? `https://sightsee.vercel.app/invite/${token}` : `http://localhost:3000/invite/${token}`}" class="button">Accept Invitation</a>
+                    </p>
+                    <p>If you have any questions, please don't hesitate to contact us.</p>
+                    <p>Happy travels!</p>
+                    <p>The Sightsee Team</p>
+                </body>
+                </html>
+            `
         });
 
         if (emailResult.error) { 

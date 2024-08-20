@@ -54,7 +54,12 @@ const TripCard = ({ title, startDate, endDate, collaborator, collaborators, id, 
 
                 clearState();
                 modalRef.current?.close();
-            } catch (error) {
+            } catch (error: any) {
+                toast.error(`Error sending invite. Please try again.`, {
+                    duration: 3000,
+                    position: 'top-right',
+                    icon: '🚨',
+                });
                 console.error('Error sending invite:', error);
             }
 
