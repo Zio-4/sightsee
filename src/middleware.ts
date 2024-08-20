@@ -2,7 +2,23 @@ import { withClerkMiddleware, getAuth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const publicPaths = ["/", "/trips*", "/itinerary*", "/discover", "/api*"];
+const validPaths = [
+  "/",
+  "/trips",
+  "/itinerary",
+  "/discover",
+  "/invite",
+  "/profile",
+  "/settings",
+  // Add all other valid paths here
+];
+
+const isValidPath = (path: string) => {
+  return validPaths.includes(path) || validPaths.some(validPath => path.startsWith(validPath + '/'));
+};
+
+
+const publicPaths = ["/", "/trips*", "/itinerary*", "/discover", "/api*", "/invite*"];
 
 const isPublic = (path: string) => {
   return publicPaths.find((x) =>
@@ -13,6 +29,12 @@ const isPublic = (path: string) => {
 export default withClerkMiddleware((req: NextRequest) => {
   if (isPublic(req.nextUrl.pathname)) {
     return NextResponse.next();
+  }
+
+  // If the path is not valid, redirect to the homepage
+  if (!isValidPath(req.nextUrl.pathname)) {
+    const homeUrl = new URL("/", req.url);
+    return NextResponse.redirect(homeUrl);
   }
 
   // if the user is not signed in redirect them to the sign in page.

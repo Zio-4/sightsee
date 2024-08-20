@@ -14,6 +14,8 @@ import pusherInstance from '../../lib/pusher'
 import { handlePusherMessage } from '../../lib/handlePusherMessage'
 import useItineraryStore from '../../hooks/useItineraryStore'
 import { type Channel } from 'pusher-js'
+import useInviteStore from '../../hooks/useInviteStore'
+import toast from 'react-hot-toast'
 
 const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IItineraryPage) => {
   const [viewState, setViewState] = useState(false)
@@ -25,10 +27,27 @@ const TripPage = ({ itinerary, tripDays, activities, activityCoordinates }: IIti
   const addActivity = useItineraryStore(state => state.addActivity)
   const updateActivity = useItineraryStore(state => state.updateActivity)
   const deleteActivity = useItineraryStore(state => state.deleteActivity)
+  const joinedTrip = useInviteStore(state => state.joinedTrip)
+  const setJoinedTrip = useInviteStore(state => state.setJoinedTrip)
 
   setItinerary(itinerary)
   setTripDays(tripDays)
   setActivities(activities)
+
+  useEffect(() => {
+    if (joinedTrip) {
+      toast.success('You have joined the trip!', {
+        duration: 3000,
+        position: 'top-right',
+        icon: '🎉',
+        id: 'joinedTrip'
+      })
+    }
+
+    return () => {
+      setJoinedTrip(false)
+    }
+  }, [joinedTrip])
 
   useEffect(() => {
     const connectItineraryToProfile = async () => {

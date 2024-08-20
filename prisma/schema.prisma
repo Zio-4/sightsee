@@ -24,7 +24,7 @@ enum TimeFormat {
 }
 
 model Profile {
-  clerkId                        String     @id @unique
+  clerkId                        String          @id @unique
   bio                            String
   distanceUnits                  DistanceUnits
   dateFormat                     DateFormat
@@ -38,28 +38,28 @@ model Profile {
 }
 
 model Itinerary {
-  id           Int       @id @default(autoincrement())
-  creator      String?
-  name         String
-  startDate    DateTime
-  endDate      DateTime
-  profileId    String?
-  likes        Int
-  public       Boolean
-  destinations String
-  coverPhoto   String?
-  ipAddress    String?
-  comments     Comment[]
-  profile      Profile?  @relation(fields: [profileId], references: [clerkId], onDelete: Cascade)
-  tripDays     TripDay[]
+  id              Int            @id @default(autoincrement())
+  creator         String?
+  name            String
+  startDate       DateTime
+  endDate         DateTime
+  profileId       String?
+  likes           Int
+  public          Boolean
+  destinations    String
+  coverPhoto      String?
+  ipAddress       String?
+  comments        Comment[]
+  profile         Profile?       @relation(fields: [profileId], references: [clerkId], onDelete: Cascade)
+  tripDays        TripDay[]
   collaborationId Int?
-  collaboration Collaboration?
+  collaboration   Collaboration?
 }
 
 model Collaboration {
-  id          Int        @id @default(autoincrement())
-  itineraryId Int        @unique
-  itinerary   Itinerary  @relation(fields: [itineraryId], references: [id], onDelete: Cascade)
+  id          Int       @id @default(autoincrement())
+  itineraryId Int       @unique
+  itinerary   Itinerary @relation(fields: [itineraryId], references: [id], onDelete: Cascade)
   profile     Profile[]
 }
 
@@ -93,4 +93,26 @@ model Activity {
   tripDay     TripDay?  @relation(fields: [tripDayId], references: [id], onDelete: Cascade)
   longitude   Float?
   latitude    Float?
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  EXPIRED
+}
+
+model Invite {
+  id           Int          @id @default(autoincrement())
+  inviteeEmail String
+  token        String       @db.Uuid @unique
+  expiration   DateTime
+  itineraryId  Int
+  senderEmail  String
+  senderUserId String       
+  status       InviteStatus
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  @@index([token])
 }
