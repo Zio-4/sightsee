@@ -9,8 +9,8 @@ import { IModal } from '../../types/navigation'
 const Modal = ({isOpen, toggleModal, path}: IModal) => {
     const router = useRouter()
 
-    const routeAndDeleteItinerary = () => {
-        axios.delete(`/api/itinerary/${router.query.id}`)
+    const routeAndDeleteItinerary = async () => {
+        await axios.delete(`/api/itinerary/${router.query.id}`)
         toggleModal()
         router.push(path)
     }
