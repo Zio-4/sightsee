@@ -34,48 +34,40 @@ export default async function (
           }
           
           try {
-            let data
+            const baseData = {
+              name: req.body.itineraryName,
+              startDate: req.body.startDate,
+              endDate: req.body.endDate,
+              destinations: req.body.destinations,
+              likes: 0,
+              coverPhoto: unsplashPic,
+              tripDays: {
+                create: req.body.days.map((d: Date) => ({
+                  date: d
+                }))
+              },
+              public: req.body.isPublic,
+              collaborationId: null,
+            };
+
+            let data;
 
             if (userId) {
               data = await prisma.itinerary.create({
                 data: {
-                  name: req.body.itineraryName,
-                  startDate: req.body.startDate,
-                  endDate: req.body.endDate,
-                  destinations: req.body.destinations,
-                  likes: 0,
-                  coverPhoto: unsplashPic,
-                  tripDays: {
-                    create: req.body.days.map((d: Date) => ({
-                      date: d
-                    }))
-                  },
-                  public: req.body.isPublic,
-                  collaborationId: null,
+                  ...baseData,
                   profile: {
                     connect: { clerkId: userId },
                   }
                 }
-              })
+              });
             } else {
               data = await prisma.itinerary.create({
                 data: {
-                  name: req.body.itineraryName,
-                  startDate: req.body.startDate,
-                  endDate: req.body.endDate,
-                  destinations: req.body.destinations,
-                  likes: 0,
-                  coverPhoto: unsplashPic,
-                  tripDays: {
-                    create: req.body.days.map((d: Date) => ({
-                      date: d
-                    }))
-                  },
-                  public: req.body.isPublic,
+                  ...baseData,
                   ipAddress: requestIp.getClientIp(req),
-                  collaborationId: null,
                 }
-              })
+              });
             }
             
             res.status(201).json(data);

@@ -5,7 +5,8 @@ import { IActivityForm } from '../../types/itinerary';
 import { triggerPusherEvent } from '../../lib/pusherEvent';
 import useItineraryStore from '../../hooks/useItineraryStore';
 import useMapStore from '../../hooks/useMapStore';
-
+import { useUser } from '@clerk/nextjs';
+import { toast } from 'react-hot-toast';
 const searchBoxStyling = {
     variables: {
         borderRadius: '0.5rem',
@@ -28,13 +29,26 @@ const ActivityForm = React.memo(({ tripDayId, }: IActivityForm) => {
     const setSearchMarkerCoordinates = useMapStore(state => state.setSearchMarkerCoordinates)
     const itinerary = useItineraryStore(state => state.itinerary)
     const addActivity = useItineraryStore(state => state.addActivity)
-    const [showToast, setShowToast] = useState({
-        state: false,
-        message: ''
-    })
+    const { user } = useUser()
+
+
 
     const createAcitivity = async () => {
         if (activityDetails.name.length === 0) return
+        if (!user) {
+            const guestActivities = JSON.parse(localStorage.getItem('guestActivitiesCreated') || '0')
+
+            if (parseInt(guestActivities) === 4) {
+                toast.error('You have reached the maximum number of activities for a guest itinerary. Please sign in to continue.', {
+                    duration: 3000,
+                    position: 'top-right',
+                });
+                return  
+            } else {
+                localStorage.setItem('guestActivitiesCreated', JSON.stringify(parseInt(guestActivities) ?? 0 + 1))
+            }
+        }
+
 
         setSearchBoxValue('')
 
@@ -58,13 +72,17 @@ const ActivityForm = React.memo(({ tripDayId, }: IActivityForm) => {
         try {
             res = await axios.post('/api/activities', activityFormValues)
             console.log('activity creation response:', res)
-            setShowToast({state: true, message: 'Activity added'})        // Cannot update state before we have the activity id from the server
-            setTimeout(() => setShowToast({state: false, message: ''}), 2000)
+            toast.success('Activity added', {
+                duration: 3000,
+                position: 'top-right',
+            });
             addActivity(res.data.id, tripDayId, res.data)
         } catch (error) {
             console.error(error)
-            setShowToast({state: true, message: 'There was a problem adding the activity. Please try again'})  
-            setTimeout(() => setShowToast({state: false, message: ''}), 4000)
+            toast.error('There was a problem adding the activity. Please try again', {
+                duration: 3000,
+                position: 'top-right',
+            });
         }
 
 
@@ -91,14 +109,6 @@ const ActivityForm = React.memo(({ tripDayId, }: IActivityForm) => {
 
   return (
     <div className='text-black mt-3'>
-        {showToast.state && (
-            <div className="toast toast-top toast-start transition-transform duration-300 ease-in-out">
-                <div className="alert alert-info shadow-lg text-white">
-                    <span>{showToast.message}</span>
-                </div>
-            </div>)
-        }
-
         <div className='flex justify-between'>
             <div className='w-2/3'>
                 <SearchBox 
