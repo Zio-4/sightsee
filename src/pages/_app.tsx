@@ -24,7 +24,8 @@ const MyApp: AppType = ({
     <ClerkProvider {...pageProps}>
       <Toaster />
       <div className={cabin.className}>
-        <div className="bg-gradient-to-br from-green-300 via-blue-500 to-purple-600 text-white w-full min-h-screen">
+      {/* className="bg-gradient-to-br from-green-300 via-blue-500 to-purple-600 text-white w-full min-h-screen" */}
+        <div >
           <Navbar />
           <Component {...pageProps} />
           {/*@ts-ignore */}
