@@ -46,14 +46,21 @@ model Itinerary {
   profileId       String?
   likes           Int
   public          Boolean
-  destinations    String
   coverPhoto      String?
   ipAddress       String?
   comments        Comment[]
   profile         Profile?       @relation(fields: [profileId], references: [clerkId], onDelete: Cascade)
-  tripDays        TripDay[]
+  destinations    Destination[]
   collaborationId Int?
   collaboration   Collaboration?
+}
+
+model Destination {
+  id          Int       @id @default(autoincrement())
+  name        String
+  itineraryId Int
+  itinerary   Itinerary @relation(fields: [itineraryId], references: [id], onDelete: Cascade)
+  tripDays    TripDay[]
 }
 
 model Collaboration {
@@ -64,11 +71,11 @@ model Collaboration {
 }
 
 model TripDay {
-  id          Int        @id @default(autoincrement())
-  date        DateTime
-  itineraryId Int?
-  activities  Activity[]
-  itinerary   Itinerary? @relation(fields: [itineraryId], references: [id], onDelete: Cascade)
+  id            Int         @id @default(autoincrement())
+  date          DateTime
+  destinationId Int
+  destination   Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  activities    Activity[]
 }
 
 model Comment {
@@ -88,9 +95,9 @@ model Activity {
   contactInfo String?
   note        String?
   address     String?
-  tripDayId   Int?
+  tripDayId   Int
   photo       String?
-  tripDay     TripDay?  @relation(fields: [tripDayId], references: [id], onDelete: Cascade)
+  tripDay     TripDay   @relation(fields: [tripDayId], references: [id], onDelete: Cascade)
   longitude   Float?
   latitude    Float?
 }
