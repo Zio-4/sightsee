@@ -1,6 +1,6 @@
 import { type NextPage } from "next";
 import { trpc } from "../utils/trpc";
-import LayoutWrapper from "../components/Layout-Navigation/LayoutWrapper";
+import LayoutWrapper from "../components/Layout/LayoutWrapper";
 import Image from "next/image";
 import ExampleItinerary from '../assets/exampleItinerary.png'
 import BeachVacay from '../assets/beach_vacation.avif'
@@ -55,7 +55,12 @@ const Home: NextPage = () => {
   return (
     <LayoutWrapper>
       <div className="w-full pb-10">
-        <p className="text-5xl text-center mt-20 font-bold">Welcome to a stress-free vacation</p>
+        <p className="text-center text-md mt-16">
+          <span className="border-2 border-orange-500 bg-orange-200 rounded-3xl px-2 py-1 inline-block">
+            Undergoing development
+          </span>
+        </p>
+        <p className="text-5xl text-center mt-2 font-bold">Welcome to a stress-free vacation</p>
 
         <div className="w-full">
           <Image src={BeachVacay} alt='Woman lying on the beach' height={800} width={1200}  className='rounded-xl mt-10 mx-auto drop-shadow-lg'/>
@@ -68,7 +73,7 @@ const Home: NextPage = () => {
                 <div className='border-2 bg-white bg-opacity-10 rounded-xl p-4 w-2/3 h-fit col-span-1'>
                   {card.header === 'Plan trips with friends and family' && <p className="border-2 border-teal-200 bg-teal-400 rounded-lg w-fit px-1 mb-1">Coming soon</p>}
                   <p className="text-2xl font-bold">{card.header}</p>
-                  <p className="text-gray-300 mt-2">{card.details}</p>
+                  <p className="text-gray-500 mt-2">{card.details}</p>
                 </div>
               </div>
 
@@ -80,35 +85,35 @@ const Home: NextPage = () => {
         })}
 
 
-        {/* <div className="w-full mt-32 xl:mt-44">
+        <div className="w-full mt-32 xl:mt-44">
           <h1 className="text-4xl text-center"> And more to come, including...</h1>
         </div>
 
-        <div className="border-2 border-white bg-white bg-opacity-10 mt-10 rounded-xl p-2 text-2xl w-fit">
-          <div className="flex justify-between space-x-2">
-            <div className="w-fit xl:w-2/3 xl:h-32 p-2 rounded-xl bg-green-300 bg-opacity-80">
+        <div className="border-2 border-white bg-white bg-opacity-10 mt-10 rounded-xl p-4 text-2xl w-fit">
+          <div className="flex justify-between space-x-4">
+            <div className="w-fit xl:w-2/3 xl:h-32 p-4 rounded-xl bg-sky-300 bg-opacity-80">
+              <p>AI genenerated trips</p>
+              <p className="text-base">Doing research on points of interest is hard. Kick back and let us do the planning for you.</p>
+            </div>
+
+            <div className="w-fit xl:w-2/3 xl:h-32 p-4 rounded-xl bg-green-300 bg-opacity-80">
               <p>AI activity suggestions</p>
               <p className="text-base">Already have some places in mind but don't know where else? Let us suggest the most attracitve activities at any destination.</p>
             </div>
-
-            <div className="w-fit xl:w-2/3 xl:h-32 p-2 rounded-xl bg-sky-300 bg-opacity-80">
-              <p>AI genenerated trip templates</p>
-              <p className="text-base">Doing research on points of interest is hard. Kick back and let us do the planning for you.</p>
-            </div>
           </div>
 
-          <div className="flex justify-between mt-2 space-x-2">
-            <div className="w-fit xl:w-2/3 xl:h-32 p-2 rounded-xl bg-amber-300 bg-opacity-80">
+          <div className="flex justify-between mt-4 space-x-4">
+            <div className="w-fit xl:w-2/3 xl:h-32 p-4 rounded-xl bg-amber-300 bg-opacity-80">
               <p>Notifications</p>
               <p className="text-base">Get notified whenever something happens, whether thats a friend accepting your invite request or someone commenting on your trip.</p>
             </div>
 
-            <div className="w-fit xl:w-2/3 xl:h-32 p-2 rounded-xl bg-rose-300 bg-opacity-80">
-              <p>Routes to and between activities</p>
+            <div className="w-fit xl:w-2/3 xl:h-32 p-4 rounded-xl bg-rose-300 bg-opacity-80">
+              <p>Routing between activities</p>
               <p className="text-base">Never wonder how long getting to places will take. We'll let you know so you can plan accordingly.</p>
             </div>
           </div>
-        </div> */}
+        </div>
       </div>
     </LayoutWrapper>
   );

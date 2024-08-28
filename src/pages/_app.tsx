@@ -1,7 +1,7 @@
 import { type AppType } from "next/app";
 // import { type Session } from "next-auth";
-import Navbar from "../components/Layout-Navigation/Navbar";
-import Footer from "../components/Layout-Navigation/Footer";
+import Navbar from "../components/Layout/Navbar";
+import Footer from "../components/Layout/Footer";
 import { ClerkProvider } from "@clerk/nextjs";
 
 import { trpc } from "../utils/trpc";

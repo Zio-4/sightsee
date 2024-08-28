@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { FaPlane } from 'react-icons/fa'
 import { prisma } from '../../server/db/client'
 import { GetServerSideProps } from 'next'
-import LayoutWrapper from '../../components/Layout-Navigation/LayoutWrapper'
+import LayoutWrapper from '../../components/Layout/LayoutWrapper'
 import { Tab } from '@headlessui/react'
 import TabPanelContainer from '../../components/Trips/TabPanelContainer'
 import { getAuth, buildClerkProps } from "@clerk/nextjs/server";

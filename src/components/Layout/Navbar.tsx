@@ -4,7 +4,7 @@ import Image from 'next/image'
 import LayoutWrapper from './LayoutWrapper'
 import ProfilePlaceholder from '../../assets/profile-placeholder.png'
 import { CgMenu, CgClose } from 'react-icons/cg'
-import GuestSignInButton from './GuestSignInButton'
+import GuestSignInButton from '../ui/GuestSignInButton'
 import Modal from './Modal'
 import { useUser, SignOutButton } from "@clerk/nextjs";
 import sightseeIcon from '../../assets/sightsee-icon.svg'
@@ -54,10 +54,10 @@ const Navbar = () => {
             {/* Desktop menu */}
             <ul className='hidden md:flex space-x-8 items-center'>
                 <li>
-                  <button onClick={() => handleNav('/trips', false)} className={`${router.pathname === '/trips' && 'underline underline-offset-8 decoration-white'} hover:text-slate-300`}>Trips</button>
+                  <button onClick={() => handleNav('/trips', false)} className={`${router.pathname === '/trips' && 'underline underline-offset-8 decoration-white'} hover:text-slate-500`}>Trips</button>
                 </li>
                 <li>
-                  <button onClick={() => handleNav('/discover', false)} className={`${router.pathname === '/discover' && 'underline underline-offset-8 decoration-white'} hover:text-slate-300`}>Discover</button>
+                  <button onClick={() => handleNav('/discover', false)} className={`${router.pathname === '/discover' && 'underline underline-offset-8 decoration-white'} hover:text-slate-500`}>Discover</button>
                 </li>
                 {/* <li>
                   <button href={'/travelstats'} className={`${router.pathname === '/travelstats' && 'underline underline-offset-8 decoration-white'} hover:text-slate-300`}>Travel Stats</button>

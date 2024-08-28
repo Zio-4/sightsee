@@ -8,8 +8,8 @@ const Footer = () => {
         Engineered with ♡ by <Link href='https://x.com/Phil_Zio' 
                             rel="noopener noreferrer" 
                             target="_blank" 
-                            className='font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-rose-300 to-rose-500 text-lg'>
-                              Philip Ziolkowski
+                            className='font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-500 text-lg'>
+                              Phil Ziolkowski
                         </Link>
       </p>
     </footer>
