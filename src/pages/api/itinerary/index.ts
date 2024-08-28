@@ -117,7 +117,7 @@ export default async function (
 
           const { userId } = getAuth(req)
 
-          let completion: ChatCompletion | {} = {};
+          let completion: ChatCompletion | null = null;
           // Prompt for AI
           if (useAI) {
             try {
@@ -177,7 +177,6 @@ export default async function (
                 }
               });
             
-              console.log('GPT Response: ', (completion as ChatCompletion).choices[0].message);
             } catch (error) {
               console.error('Error generating AI itinerary:', error);
               // Handle the error appropriately, e.g., set a flag or return an error response
@@ -192,7 +191,9 @@ export default async function (
           }
           
           // parse the completion response
-          const parsedCompletion = JSON.parse((completion as ChatCompletion).choices[0].message.content || '{}')
+          const parsedCompletion = completion?.choices[0]?.message?.content
+            ? JSON.parse(completion.choices[0].message.content)
+            : {};
 
           console.log('Parsed Completion: ', parsedCompletion)
           try {
@@ -240,6 +241,9 @@ export default async function (
                       tripDays: {
                         create: Array.from({ length: d.days }, (_, i) => ({
                           date: new Date(new Date(startDate).getTime() + i * 24 * 60 * 60 * 1000),
+                          activities: {
+                            create: createActivities(d.location, parsedCompletion)
+                          }
                         })),
                       },
                     })),
