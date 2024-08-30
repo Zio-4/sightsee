@@ -10,6 +10,7 @@ const validPaths = [
   "/invite",
   "/profile",
   "/settings",
+  "/newIndex",
   // Add all other valid paths here
 ];
 

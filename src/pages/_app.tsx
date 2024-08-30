@@ -1,21 +1,25 @@
 import { type AppType } from "next/app";
 // import { type Session } from "next-auth";
-import Navbar from "../components/Layout-Navigation/Navbar";
-import Footer from "../components/Layout-Navigation/Footer";
+import Navbar from "../components/Layout/Navbar";
+import Footer from "../components/Layout/Footer";
 import { ClerkProvider } from "@clerk/nextjs";
 
 import { trpc } from "../utils/trpc";
 
 import "../styles/globals.css";
-import { Merriweather_Sans } from '@next/font/google'
+import { Montserrat, Roboto } from '@next/font/google'
 import { Toaster } from "react-hot-toast";
 
-const cabin = Merriweather_Sans({
-  weight: ['400','500','600', '700'],
-  style: ['normal','italic'],
+const montserrat = Montserrat({
+  weight: ['400', '700'],
   subsets: ['latin'],
 })
-// { session: Session | null }
+
+const roboto = Roboto({
+  weight: ['400', '700'],
+  subsets: ['latin'],
+})
+
 const MyApp: AppType = ({
   Component,
   pageProps: { ...pageProps },
@@ -23,14 +27,23 @@ const MyApp: AppType = ({
   return (
     <ClerkProvider {...pageProps}>
       <Toaster />
-      <div className={cabin.className}>
-        <div className="bg-gradient-to-br from-green-300 via-blue-500 to-purple-600 text-white w-full min-h-screen">
+      <div className={`${montserrat.className} ${roboto.className}`}>
+        <div className="bg-sandyBeige">
           <Navbar />
           <Component {...pageProps} />
           {/*@ts-ignore */}
           {!Component.tripPage && <Footer />}
         </div>
       </div>
+      <style jsx global>{`
+        h1, h2, h3 {
+          font-family: 'Montserrat', sans-serif;
+        }
+        
+        body {
+          font-family: 'Roboto', sans-serif;
+        }
+      `}</style>
     </ClerkProvider>
   );
 };

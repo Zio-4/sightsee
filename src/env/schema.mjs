@@ -34,6 +34,8 @@ export const serverSchema = z.object({
   PUSHER_APP_ID: z.string(),
   PUSHER_APP_SECRET: z.string(),
   RESEND_API_KEY: z.string(),
+  OPENAI_ORGANIZATION: z.string(),
+  OPENAI_API_KEY: z.string(),
 });
 
 /**

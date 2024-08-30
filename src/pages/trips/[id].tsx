@@ -114,6 +114,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
  
   let itineraryData;
 
+  // TODO: Rewrite this to use the new Destination model
   try {           
     const data = await prisma.itinerary.findUnique({
       where: {
@@ -240,6 +241,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
    *   }
    * }
    */
+
+  // TODO: Rethink how to group tripdays with their destinations
   const normalizeData = (data: any) => {
     const itinerary = data;
     const tripDays = {};

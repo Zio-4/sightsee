@@ -1,5 +1,5 @@
 import useDebounce from '../../hooks/useDebounce'
-import Loader from '../../components/Layout-Navigation/Loader'
+import Loader from '../../components/Layout/Loader'
 import React, { useEffect, useState } from 'react'
 import SearchCard from './SearchCard'
 import { BiSearch } from 'react-icons/bi'

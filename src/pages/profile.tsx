@@ -3,10 +3,10 @@ import ProfilePlaceholder from '../assets/profile-placeholder.png'
 import Image from 'next/image'
 import axios from 'axios'
 import { type GetServerSideProps } from 'next'
-import LayoutWrapper from '../components/Layout-Navigation/LayoutWrapper'
+import LayoutWrapper from '../components/Layout/LayoutWrapper'
 import { getAuth, buildClerkProps, } from "@clerk/nextjs/server";
 import { useUser } from "@clerk/nextjs";
-import Loader from '../components/Layout-Navigation/Loader'
+import Loader from '../components/Layout/Loader'
 import { prisma } from '../server/db/client'
 import { IProfileData } from '../types/profile'
 

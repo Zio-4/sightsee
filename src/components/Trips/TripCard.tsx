@@ -91,7 +91,7 @@ const TripCard = ({ title, startDate, endDate, collaborator, collaborators, id, 
                     <FaUserCircle size={30}/>
                 </div>
                 {/* <FaUserCircle size={30}/> */}
-                {isSignedIn && <BsPersonPlusFill size={30} className='text-blue-400 hover:text-blue-500 cursor-pointer' onClick={()=>modalRef.current?.showModal()}/>}
+                {isSignedIn && <BsPersonPlusFill size={30} className='text-turquoise hover:text-teal-500 cursor-pointer' onClick={()=>modalRef.current?.showModal()}/>}
             </div>
             {/* Open the modal using document.getElementById('ID').showModal() method */}
             {/* <button className="btn" onClick={()=>document.getElementById('my_modal_5').showModal()}>open modal</button> */}
