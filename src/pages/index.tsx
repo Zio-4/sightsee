@@ -1,152 +1,206 @@
-import { type NextPage } from "next";
-import { trpc } from "../utils/trpc";
-import LayoutWrapper from "../components/Layout/LayoutWrapper";
-import Image from "next/image";
-import ExampleItinerary from '../assets/exampleItinerary.png'
-import BeachVacay from '../assets/beach_vacation.avif'
-import DiscoverItineraries from '../assets/search_example.png'
-import CollaborateExample from '../assets/trips.png'
-import useInviteStore from "../hooks/useInviteStore";
-import toast from "react-hot-toast";
-import { useEffect } from "react";
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Select } from "@/components/ui/select"
+import { Palmtree, Users, Compass, Calendar, Share2, Search, Binoculars } from "lucide-react"
+import Link from "next/link"
+import BeachPlaceholder from '../assets/beach_vacation.avif'
+import Globe from "@/components/Globe"
+import CuteCatBeach from '../assets/Cute_Cat_Beach.png'
 
-
-  const displayStuff = [
-    {
-      header: 'All your trip details in one place',
-      details: 'Organize every day with ease. Add activities, the time at which they take place, and see routes between activites on the map.',
-      image: ExampleItinerary
-    },
-    {
-      header: 'Discover new attractions',
-      details: 'Get inspired by where others have traveled. View thier itineraries and create your own template from them.',
-      image: DiscoverItineraries
-    },
-    {
-      header: 'Plan trips with friends and family',
-      details: 'Invite people to work with you in real-time so everyone is always up to date on whats happening next.',
-      image: CollaborateExample,
-      commingSoon: true
-    },
-  ]
-
-
-const Home: NextPage = () => {
-  const inviteErrorMessage = useInviteStore(state => state.errorMessage)
-  const setInviteErrorMessage = useInviteStore(state => state.setErrorMessage)
-
-  useEffect(() => {
-    if (inviteErrorMessage) {
-      toast.error(inviteErrorMessage, {
-        duration: 3000,
-        position: 'top-right',
-        icon: '🚨',
-        id: 'inviteErrorMessage'
-      })
-    }
-
-    // Clear inviteErrorMessage state so it doesn't show up again when coming back to the page
-    return () => {
-      setInviteErrorMessage('')
-    }
-  }, [inviteErrorMessage])
-  
-
+export default function Component() {
   return (
-    <LayoutWrapper>
-      <div className="w-full pb-10">
-        <p className="text-center text-md mt-16">
-          <span className="border-2 border-orange-500 bg-orange-200 rounded-3xl px-2 py-1 inline-block">
-            Undergoing development
-          </span>
-        </p>
-        <p className="text-5xl text-center mt-2 font-bold">Welcome to a stress-free vacation</p>
+    <div className="flex flex-col min-h-screen bg-[#F5DEB3] font-sans">
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:wght@400;700&display=swap');
+        
+        h1, h2, h3 {
+          font-family: 'Montserrat', sans-serif;
+        }
+        
+        body {
+          font-family: 'Roboto', sans-serif;
+        }
+      `}</style>
 
-        <div className="w-full">
-          <Image src={BeachVacay} alt='Woman lying on the beach' height={800} width={1200}  className='rounded-xl mt-10 mx-auto drop-shadow-lg'/>
-        </div>
-
-        {displayStuff.map((card, i) => {
-          return (
-            <div key={card.header} className="grid grid-cols-1 grid-rows-2 mt-32 xl:mt-44 xl:grid-cols-3 xl:grid-rows-none gap-y-8 xl:gap-8">
-              <div className={`flex justify-center items-center ${i % 2 !== 0 && 'xl:order-last'}`}>
-                <div className='border-2 bg-white bg-opacity-10 rounded-xl p-4 w-2/3 h-fit col-span-1'>
-                  {card.header === 'Plan trips with friends and family' && <p className="border-2 border-teal-200 bg-teal-400 rounded-lg w-fit px-1 mb-1">Coming soon</p>}
-                  <p className="text-2xl font-bold">{card.header}</p>
-                  <p className="text-gray-500 mt-2">{card.details}</p>
+      <main className="flex-1">
+        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
+          <div className="container px-4 md:px-6">
+            <div className="flex flex-col items-center space-y-4 text-center">
+                {/* <Globe /> */}
+              <div className="space-y-2">
+                <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none text-[#00008B]">
+                  Plan Your Dream Vacation with AI
+                </h1>
+                <p className="mx-auto max-w-[700px] text-[#00008B] md:text-xl">
+                  Personalized itineraries tailored to your group and interests. Let our AI create the perfect tropical getaway for you.
+                </p>
+              </div>
+              <div className="w-full max-w-sm space-y-2">
+                <form className="flex space-x-2">
+                  <Input className="max-w-lg flex-1 bg-white text-[#00008B]" placeholder="Enter your destination" type="text" />
+                  <Button className="bg-[#FF7F50] text-white hover:bg-[#FF6347]">Plan Now</Button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section className="w-full py-12 md:py-24 lg:py-32 bg-[#40E0D0]">
+          <div className="container px-4 md:px-6">
+            <div className="grid items-center gap-6 lg:grid-cols-[1fr_500px] lg:gap-12 xl:grid-cols-[1fr_550px]">
+              <img
+                alt="Tropical beach scene"
+                className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full lg:order-last"
+                height="310"
+                src={BeachPlaceholder.src}
+                width="550"
+              />
+              <div className="flex flex-col justify-center space-y-4">
+                <div className="space-y-2">
+                  <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-white">
+                    AI-Powered Itineraries
+                  </h2>
+                  <p className="max-w-[600px] text-white md:text-xl">
+                    Our advanced AI considers your travel group, preferences, and interests to create the perfect itinerary for your tropical adventure.
+                  </p>
                 </div>
+                <ul className="grid gap-2 py-4">
+                  <li className="flex items-center gap-2">
+                    <Users className="h-5 w-5 text-white" />
+                    <span className="text-white">Tailored for solo, friends, or family trips</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Compass className="h-5 w-5 text-white" />
+                    <span className="text-white">Personalized based on your interests</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Calendar className="h-5 w-5 text-white" />
+                    <span className="text-white">Flexible schedules to fit your travel style</span>
+                  </li>
+                </ul>
               </div>
-
-              <div className="flex justify-center lg:justify-end col-span-2">
-                <Image src={card.image} alt='example itinerary' height={700} width={1100} className='rounded-xl drop-shadow-lg'/>
-              </div>
-            </div>
-          )
-        })}
-
-
-        <div className="w-full mt-32 xl:mt-44">
-          <h1 className="text-4xl text-center"> And more to come, including...</h1>
-        </div>
-
-        <div className="border-2 border-white bg-white bg-opacity-10 mt-10 rounded-xl p-4 text-2xl w-fit">
-          <div className="flex justify-between space-x-4">
-            <div className="w-fit xl:w-2/3 xl:h-32 p-4 rounded-xl bg-sky-300 bg-opacity-80">
-              <p>AI genenerated trips</p>
-              <p className="text-base">Doing research on points of interest is hard. Kick back and let us do the planning for you.</p>
-            </div>
-
-            <div className="w-fit xl:w-2/3 xl:h-32 p-4 rounded-xl bg-green-300 bg-opacity-80">
-              <p>AI activity suggestions</p>
-              <p className="text-base">Already have some places in mind but don't know where else? Let us suggest the most attracitve activities at any destination.</p>
             </div>
           </div>
-
-          <div className="flex justify-between mt-4 space-x-4">
-            <div className="w-fit xl:w-2/3 xl:h-32 p-4 rounded-xl bg-amber-300 bg-opacity-80">
-              <p>Notifications</p>
-              <p className="text-base">Get notified whenever something happens, whether thats a friend accepting your invite request or someone commenting on your trip.</p>
-            </div>
-
-            <div className="w-fit xl:w-2/3 xl:h-32 p-4 rounded-xl bg-rose-300 bg-opacity-80">
-              <p>Routing between activities</p>
-              <p className="text-base">Never wonder how long getting to places will take. We'll let you know so you can plan accordingly.</p>
+        </section>
+        <section className="w-full py-12 md:py-24 lg:py-32">
+          <div className="container px-4 md:px-6">
+            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-8 text-[#00008B]">
+              Sample Itineraries
+            </h2>
+            <div className="grid gap-6 lg:grid-cols-3">
+              {[
+                { title: "Solo Adventure", description: "Exciting activities for the lone traveler" },
+                { title: "Friends Getaway", description: "Fun-filled days with your best buddies" },
+                { title: "Family Fun", description: "Memorable experiences for all ages" },
+              ].map((item) => (
+                <div key={item.title} className="flex flex-col items-center space-y-2 border-2 border-[#40E0D0] p-4 rounded-lg">
+                  <h3 className="text-xl font-bold text-[#00008B]">{item.title}</h3>
+                  <p className="text-[#00008B] text-center">{item.description}</p>
+                  <Button className="mt-4 bg-[#FF7F50] text-white hover:bg-[#FF6347]">View Itinerary</Button>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-      </div>
-    </LayoutWrapper>
-  );
-};
-
-export default Home;
-
-// export async function getStaticProps() {
-//    Statically render page
-// }
-
-
-
-// const AuthShowcase: React.FC = () => {
-//   const { data: sessionData } = useSession();
-
-//   const { data: secretMessage } = trpc.auth.getSecretMessage.useQuery(
-//     undefined, // no input
-//     { enabled: sessionData?.user !== undefined },
-//   );
-
-//   return (
-//     <div className="flex flex-col items-center justify-center gap-4">
-//       <p className="text-center text-2xl text-white">
-//         {sessionData && <span>Logged in as {sessionData.user?.name}</span>}
-//         {secretMessage && <span> - {secretMessage}</span>}
-//       </p>
-//       <button
-//         className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
-//         onClick={sessionData ? () => signOut() : () => signIn()}
-//       >
-//         {sessionData ? "Sign out" : "Sign"}
-//       </button>
-//     </div>
-//   );
-// };
+        </section>
+        <section className="w-full py-12 md:py-24 lg:py-32 bg-[#40E0D0]">
+          <div className="container px-4 md:px-6">
+            <div className="grid items-center gap-6 lg:grid-cols-2 lg:gap-12">
+              <div className="flex flex-col justify-center space-y-4">
+                <div className="space-y-2">
+                  <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-white">
+                    Real-Time Collaboration
+                  </h2>
+                  <p className="max-w-[600px] text-white md:text-xl">
+                    Plan your trip together with friends and family in real-time. Share ideas, vote on activities, and create the perfect itinerary as a team.
+                  </p>
+                </div>
+                <ul className="grid gap-2 py-4">
+                  <li className="flex items-center gap-2">
+                    <Share2 className="h-5 w-5 text-white" />
+                    <span className="text-white">Invite friends to collaborate on your trip</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Users className="h-5 w-5 text-white" />
+                    <span className="text-white">Vote on activities and accommodations</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Calendar className="h-5 w-5 text-white" />
+                    <span className="text-white">Sync schedules and preferences in real-time</span>
+                  </li>
+                </ul>
+              </div>
+              <div className="flex justify-center">
+                <img
+                  alt="Real-time collaboration illustration"
+                  className="aspect-video overflow-hidden rounded-xl object-cover object-center"
+                  height="310"
+                  src={BeachPlaceholder.src}
+                  width="550"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+        <section className="w-full py-12 md:py-24 lg:py-32">
+          <div className="container px-4 md:px-6">
+            <div className="grid items-center gap-6 lg:grid-cols-2 lg:gap-12">
+              <div className="flex justify-center lg:order-last">
+                <img
+                  alt="Trip discovery illustration"
+                  className="aspect-video overflow-hidden rounded-xl object-cover object-center"
+                  height="310"
+                  src={BeachPlaceholder.src}
+                  width="550"
+                />
+              </div>
+              <div className="flex flex-col justify-center space-y-4">
+                <div className="space-y-2">
+                  <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-[#00008B]">
+                    Trip Discovery
+                  </h2>
+                  <p className="max-w-[600px] text-[#00008B] md:text-xl">
+                    Explore and get inspired by trips created by other travelers. Discover hidden gems and popular destinations tailored to your interests.
+                  </p>
+                </div>
+                <ul className="grid gap-2 py-4">
+                  <li className="flex items-center gap-2">
+                    <Search className="h-5 w-5 text-[#00008B]" />
+                    <span className="text-[#00008B]">Browse trips by destination, budget, or number of travelers </span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Users className="h-5 w-5 text-[#00008B]" />
+                    <span className="text-[#00008B]">Connect with like-minded travelers</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Compass className="h-5 w-5 text-[#00008B]" />
+                    <span className="text-[#00008B]">Save and customize discovered trips to make them your own</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section className="w-full py-12 md:py-24 lg:py-32 bg-[#40E0D0]">
+          <div className="container px-4 md:px-6">
+            <div className="flex flex-col items-center space-y-4 text-center">
+              <div className="space-y-2">
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none text-white">
+                  Ready for Your Tropical Escape?
+                </h2>
+                <p className="mx-auto max-w-[600px] text-white md:text-xl">
+                  Let our AI create the perfect itinerary for your dream vacation. Start planning now!
+                </p>
+              </div>
+              <div className="w-full max-w-sm space-y-2">
+                <form className="flex flex-col gap-2">
+  
+                  <Input className="max-w-lg flex-1 bg-white text-[#00008B]" placeholder="Enter your interests" type="text" />
+                  <Button className="w-full bg-[#FF7F50] text-white hover:bg-[#FF6347]">Generate Itinerary</Button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  )
+}

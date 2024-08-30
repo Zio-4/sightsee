@@ -132,10 +132,10 @@ export default function Component() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-4 space-y-8">
-      <h1 className="text-3xl font-bold text-center">Plan Your Trip</h1>
+    <div className="max-w-2xl mx-auto p-4 space-y-8 ">
+      <h1 className="text-3xl font-bold text-center text-oceanBlue">Plan Your Trip</h1>
       
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-lg">
         <div className="space-y-2">
           <Label htmlFor="tripName">Trip Name</Label>
           <Input 
@@ -311,7 +311,7 @@ export default function Component() {
             </p>
           </div>
         </div>
-        <Button type="submit" className="w-full" disabled={submitIsDisabled}>
+        <Button type="submit" className="w-full" disabled={true}>
           {isSubmitting ? (
             <>
               <Loader className="mr-2 h-4 w-4 animate-spin" />

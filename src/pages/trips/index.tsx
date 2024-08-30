@@ -27,7 +27,7 @@ const trips = (serverProps: IMappedItineraries | INoData) => {
   return (
     <LayoutWrapper>
       <div className='flex flex-col flex-grow min-:'>
-          <h2 className='text-center text-4xl mt-16 mb-8'>Your Trips</h2>
+          <h2 className='text-center text-4xl mt-16 mb-8 text-oceanBlue'>Your Trips</h2>
 
           <Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
             {({ selectedIndex }) => (
@@ -38,8 +38,8 @@ const trips = (serverProps: IMappedItineraries | INoData) => {
                       key={category}
                       className={({ selected }) =>
                         classNames(
-                          'w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700',
-                          'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
+                          'w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-black',
+                          'ring-white ring-opacity-60 ring-offset-2 ring-offset-black focus:outline-none focus:ring-2',
                           selected
                             ? 'bg-white shadow'
                             : 'text-blue-100 hover:bg-white/[0.12] hover:text-white'
@@ -51,7 +51,7 @@ const trips = (serverProps: IMappedItineraries | INoData) => {
                   ))}
                 </Tab.List>
                 <div className='flex justify-center'>
-                  <button onClick={() => router.push('/trips/plan')} className=' bg-indigo-300 text-slate-50 px-10 py-2 rounded-md mt-8 hover:bg-indigo-500'>Plan trip <span className='inline-block text-md'><FaPlane/></span></button>
+                  <button onClick={() => router.push('/trips/plan')} className=' bg-coral text-slate-50 px-10 py-2 rounded-md mt-8 hover:bg-orange-500'>Plan trip <span className='inline-block text-md'><FaPlane/></span></button>
                 </div>
                 <Tab.Panels className="mt-2 flex-grow">
                   {filters.map(filter => {
