@@ -100,6 +100,7 @@ model Activity {
   tripDay     TripDay   @relation(fields: [tripDayId], references: [id], onDelete: Cascade)
   longitude   Float?
   latitude    Float?
+  cost        Float?
 }
 
 enum InviteStatus {

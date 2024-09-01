@@ -113,12 +113,12 @@ export default function Component() {
         position: 'top-right',
       });
 
-      router.push({
-        pathname: '/trips/[id]',
-        query: { 
-          id: res.data.id
-        },
-      })
+      // router.push({
+      //   pathname: '/trips/[id]',
+      //   query: { 
+      //     id: res.data.id
+      //   },
+      // })
     } catch (error) {
       console.error('Error creating itinerary:', error);
       toast.error('Failed to create itinerary. Please try again.', {
@@ -275,8 +275,12 @@ export default function Component() {
             id="interests"
             placeholder="Enter activities you and/or your travel companions typically enjoy while traveling. Ex. Food, Hiking, Museums, etc."
             value={interests}
-            onChange={(e) => setInterests(e.target.value)}
+            onChange={(e) => setInterests(e.target.value.slice(0, 130))}
+            maxLength={130}
           />
+          <p className="text-xs text-muted-foreground">
+            {interests.length}/130 characters
+          </p>
         </div>
         
         <div className="bg-primary/10 p-6 rounded-lg space-y-4">

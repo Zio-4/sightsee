@@ -7,6 +7,7 @@ import OpenAI from "openai";
 import { type ChatCompletion } from "openai/resources/chat/completions";
 import { compareTwoStrings } from 'string-similarity'
 
+
 interface Destination {
   location: string;
   days: number;
@@ -87,12 +88,79 @@ const createActivities = (inputLocation: string, parsedCompletion: { locations: 
       note: activity.activityDescription,
       address: null, // We don't have address information from the AI response
       photo: null,
-      longitude: parseFloat(activity.long),
-      latitude: parseFloat(activity.lat),
+      // If lat or long are not present, set them to 0 (Null island). This is not a real location, so mark on client side.
+      longitude: parseFloat(activity.long) || 0,
+      latitude: parseFloat(activity.lat) || 0,
+      cost: parseFloat(activity.cost) || 0,
     }));
   }
 
   return [];
+};
+
+const callChatGPT = async (messages: any[], userId: string | null, clientIp: string | null): Promise<ChatCompletion> => {
+  const maxRetries = 3;
+  let retries = 0;
+  
+  while (retries < maxRetries) {
+    try {
+      const completion = await openai.chat.completions.create({
+        messages: messages,
+        model: "gpt-4o-mini",
+        response_format: {
+          type: "json_schema",
+          json_schema: {
+            name: "itinerary",
+            schema: {
+              type: "object",
+              properties: {
+                locations: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      name: { type: "string" },
+                      activities: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            time: { type: "string" },
+                            activityName: { type: "string" },
+                            activityDescription: { type: "string" },
+                            cost: { type: "number" },
+                            lat: { type: "number" },
+                            long: { type: "number" }
+                          },
+                          required: ["time", "activityName", "activityDescription", "lat", "long"],
+                          additionalProperties: false
+                        }
+                      }
+                    },
+                    required: ["name", "activities"],
+                    additionalProperties: false
+                  }
+                }
+              },
+              required: ["locations"],
+              additionalProperties: false
+            }
+          }
+        },
+        user: userId || clientIp || undefined
+      });
+      return completion;
+    } catch (error) {
+      console.error(`Error calling ChatGPT (attempt ${retries + 1}):`, error);
+      retries++;
+      if (retries === maxRetries) {
+        throw error;
+      }
+      // Wait for a short time before retrying
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+  }
+  throw new Error("Failed to call ChatGPT after maximum retries");
 };
 
 export default async function (
@@ -121,65 +189,26 @@ export default async function (
           // Prompt for AI
           if (useAI) {
             try {
-              completion = await openai.chat.completions.create({
-                messages: [
-                    {"role": "system", "content": "You are an experienced travel planner who has traveled all around the world. You know all the best spots and where the hottest trends are. Provide recommendations for activities based on the given locations, amount of days, how many people are traveling, and who is traveling (Ex. solo, family, friends). Provide activities for every time of day: Morning, noon, and evening/night. Each activity should include the name, time, and latitude and longitude of the location if possible. Time should be in 24 hour format: HH:MM."},
-                    {"role": "user", "content": 
-                      `${destinations.map(d => `I am traveling to ${d.location} for ${d.days} days. `).join(' ')} 
-                      I am traveling with ${numTravelers} people.
-                      ${travelCompanion ? `I am traveling with ${travelCompanion}.` : ''}
-                      ${interests ? `My interests are ${interests}.` : ''}
-                      Provide a detailed itinerary for my trip. 
-                      Provide activities for every time of day: Morning, noon, and evening/night.
-                      All activities should include the name, time, and lattitude and longitude of the location.
-                      `
-                    }
-                  ],
-                model: "gpt-4o-mini",
-                response_format: {
-                  type: "json_schema",
-                  json_schema: {
-                    name: "itinerary",
-                    schema: {
-                      type: "object",
-                      properties: {
-                        locations: {
-                          type: "array",
-                          items: {
-                            type: "object",
-                            properties: {
-                              name: { type: "string" },
-                              activities: {
-                                type: "array",
-                                items: {
-                                  type: "object",
-                                  properties: {
-                                    time: { type: "string" },
-                                    activityName: { type: "string" },
-                                    activityDescription: { type: "string" },
-                                    lat: { type: "number" },
-                                    long: { type: "number" }
-                                  },
-                                  required: ["time", "activityName", "activityDescription", "lat", "long"],
-                                  additionalProperties: false
-                                }
-                              }
-                            },
-                            required: ["name", "activities"],
-                            additionalProperties: false
-                          }
-                        }
-                      },
-                      required: ["locations"],
-                      additionalProperties: false
-                    }
-                  }
+              const messages = [
+                {"role": "system", "content": "You are an experienced travel planner who has traveled all around the world. You know all the best spots and where the hottest trends are. Provide recommendations for activities based on the given locations, amount of days, how many people are traveling, and who is traveling (Ex. solo, family, friends). Provide activities for every time of day: Morning, noon, and evening/night. Each activity should include the name, time, estimated cost in USD, and latitude and longitude of the location if possible. Time should be in 24 hour format: HH:MM. Cost should be in decimal format, without the dollar sign like so: 10.00."},
+                {"role": "user", "content": 
+                  `${destinations.map(d => `I am traveling to ${d.location} for ${d.days} days. `).join(' ')} 
+                  I am traveling with ${numTravelers} people.
+                  ${travelCompanion ? `I am traveling with ${travelCompanion}.` : ''}
+                  ${interests ? `My interests are ${interests}.` : ''}
+                  Provide a detailed itinerary for my trip. 
+                  Provide activities for every time of day: Morning, noon, and evening/night.
+                  All activities should include the name, time, and lattitude and longitude of the location.
+                  `
                 }
-              });
+              ];
+              
+              completion = await callChatGPT(messages, userId, requestIp.getClientIp(req));
+              // log total amount of tokens used
+              console.log('Total tokens used: ', completion?.usage);
             
             } catch (error) {
               console.error('Error generating AI itinerary:', error);
-              // Handle the error appropriately, e.g., set a flag or return an error response
               res.status(500).json({
                 error: {
                   code: 'server_error',
@@ -189,13 +218,18 @@ export default async function (
               return;
             }
           }
+
+          
           
           // parse the completion response
           const parsedCompletion = completion?.choices[0]?.message?.content
             ? JSON.parse(completion.choices[0].message.content)
             : {};
 
-          console.log('Parsed Completion: ', parsedCompletion)
+          console.log('Parsed Completion:', parsedCompletion);
+          console.log('Parsed activities:', parsedCompletion.locations[0].activities);
+
+
           try {
             const baseData = {
               name: itineraryName,
