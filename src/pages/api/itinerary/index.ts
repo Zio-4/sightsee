@@ -88,9 +88,10 @@ const createActivities = (inputLocation: string, parsedCompletion: { locations: 
       note: activity.activityDescription,
       address: null, // We don't have address information from the AI response
       photo: null,
-      longitude: parseFloat(activity.long),
-      latitude: parseFloat(activity.lat),
-      cost: parseFloat(activity.cost),
+      // If lat or long are not present, set them to 0 (Null island). This is not a real location, so mark on client side.
+      longitude: parseFloat(activity.long) || 0,
+      latitude: parseFloat(activity.lat) || 0,
+      cost: parseFloat(activity.cost) || 0,
     }));
   }
 
