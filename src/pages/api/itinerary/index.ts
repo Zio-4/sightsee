@@ -46,6 +46,8 @@ interface Activity {
   time: string;
   lat: string;
   long: string;
+  address: string;
+  cost: string;
 }
 
 // Helper function to find the best matching location
@@ -83,10 +85,10 @@ const createActivities = (inputLocation: string, parsedCompletion: { locations: 
     return matchingLocation.activities.map((activity: Activity) => ({
       name: activity.activityName,
       startTime: new Date(`1970-01-01T${activity.time}:00`),
-      endTime: null, // We don't have end time information from the AI response
+      endTime: null, 
       contactInfo: null,
       note: activity.activityDescription,
-      address: null, // We don't have address information from the AI response
+      address: activity.address,
       photo: null,
       // If lat or long are not present, set them to 0 (Null island). This is not a real location, so mark on client side.
       longitude: parseFloat(activity.long) || 0,
@@ -128,6 +130,7 @@ const callChatGPT = async (messages: any[], userId: string | null, clientIp: str
                             time: { type: "string" },
                             activityName: { type: "string" },
                             activityDescription: { type: "string" },
+                            address: { type: "string" },
                             cost: { type: "number" },
                             lat: { type: "number" },
                             long: { type: "number" }

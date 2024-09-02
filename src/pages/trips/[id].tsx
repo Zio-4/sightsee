@@ -115,6 +115,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   let itineraryData;
 
   // TODO: Rewrite this to use the new Destination model
+  // Check if the current user created the itinerary or is a collaborator. If not, then use guest view.
   try {           
     const data = await prisma.itinerary.findUnique({
       where: {
