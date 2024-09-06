@@ -74,18 +74,18 @@ export default function TripPage(
     }
   }, [joinedTrip])
 
-  useEffect(() => {
-    const connectItineraryToProfile = async () => {
-      await axios.put('/api/itinerary/connect', {
-        itineraryId: itinerary.id
-      })
-    }
+  // useEffect(() => {
+  //   const connectItineraryToProfile = async () => {
+  //     await axios.put('/api/itinerary/connect', {
+  //       itineraryId: itinerary.id
+  //     })
+  //   }
 
-    if (!itinerary.profileId && isSignedIn) {
-      connectItineraryToProfile()
-    }
+  //   if (!itinerary.profileId && isSignedIn) {
+  //     connectItineraryToProfile()
+  //   }
 
-  }, [isSignedIn])
+  // }, [isSignedIn])
 
 
   useEffect(() => {
@@ -115,8 +115,12 @@ export default function TripPage(
     };
   }, [])
 
-
-  const allDays = itinerary.flatMap(dest => dest.days)
+  console.log('tripDays', tripDays)
+  const allDays = Object.values(tripDays).map((day: TripDay) => ({
+    id: day.id,
+    date: day.date,
+    destinationId: day.destinationId
+  }));
 
   const onDragEnd = (result) => {
     if (!result.destination) return
@@ -137,7 +141,7 @@ export default function TripPage(
   return (
     <div className="container mx-auto p-4 min-h-screen border-2 border-white rounded-2xl">
       <header className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-white">Trip to Thailand</h1>
+        <h1 className="text-2xl font-bold text-white">{itinerary.name}</h1>
         <div className="text-sm text-white">Aug 22, 2024 - Aug 24, 2024</div>
       </header>
 
@@ -157,9 +161,9 @@ export default function TripPage(
           <CardContent>
             <DragDropContext onDragEnd={onDragEnd}>
               {viewMode === 'daily' ? (
-                <ItineraryTabs allDays={allDays} activeDay={activeDay} setActiveDay={setActiveDay} itinerary={itinerary} />
+                <ItineraryTabs allDays={allDays} activeDay={activeDay} setActiveDay={setActiveDay} destinations={destinations}/>
               ) : (
-                <ItineraryList itinerary={itinerary} />
+                <ItineraryList destinations={destinations} />
               )}
             </DragDropContext>
           </CardContent>
@@ -192,7 +196,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   try {           
     const data = await prisma.itinerary.findUnique({
       where: {
-        id: Number(ctx.query.id),
+        id: 1, //Number(ctx.query.id)
       },
       include: {
         destinations: {
@@ -217,26 +221,25 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     console.error(e);
   }
 
-  let activityCoordinates: ActivityCoordinates[] = []
+  const activityCoordinates: ActivityCoordinates = []
 
   /**
    * Normalizes nested itinerary data into separate entities.
    * 
    * This function takes the nested data structure fetched from the server,
    * containing the itinerary, destinations, trip days, and activities, and normalizes it into
-   * separate objects. This normalization is useful for state management in React,
+   * separate Map objects. This normalization is useful for state management in React,
    * where updating nested state is difficult.
    * 
-   * The function creates four separate objects: itinerary, destinations, tripDays, and activities.
-   * Each of these objects is a map, where the key is the entity's ID, and the value
-   * is the entity's data.
+   * The function creates four separate Map objects: itinerary, destinations, tripDays, and activities.
+   * Each of these Maps uses the entity's ID as the key, and the entity's data as the value.
    * 
    * @param {Object} data - The nested data structure to normalize. It is expected to
    * have a specific format, with an itinerary object that contains destinations, each of
    * which contains tripDays, each of which contains activities.
    * 
    * @returns {Object} An object containing four properties: itinerary, destinations, tripDays,
-   * and activities. Each is a normalized map of its respective entities.
+   * and activities. Each is a normalized Map of its respective entities.
    * 
    * @example
    * Input:
@@ -265,33 +268,35 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
    * 
    * Output:
    * {
-   *   itinerary: {
+   *   itinerary: Map(1) {
+   *     1 => {
    *       id: 1,
    *       name: 'Sample Itinerary',
    *       destinations: [ 101 ],
+   *     }
    *   },
-   *   destinations: {
-   *     101: {
+   *   destinations: Map(1) {
+   *     101 => {
    *       id: 101,
    *       name: 'Destination 1',
    *       tripDays: [ 201 ]
    *     }
    *   },
-   *   tripDays: {
-   *     201: {
+   *   tripDays: Map(1) {
+   *     201 => {
    *       id: 201,
    *       date: '2021-01-01',
    *       activities: [ 301, 302 ]
    *     }
    *   },
-   *   activities: {
-   *     301: {
+   *   activities: Map(2) {
+   *     301 => {
    *       id: 301,
    *       name: 'Activity 1',
    *       longitude: 100.0,
    *       latitude: 13.0
    *     },
-   *     302: {
+   *     302 => {
    *       id: 302,
    *       name: 'Activity 2',
    *       longitude: 101.0,
@@ -300,11 +305,13 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
    *   }
    * }
    */
+
+  // TODO: Turn this back into objects instead of maps
   function normalizeData(data: any) {
-    const itinerary = data;
-    const destinations: { [key: number]: any } = {};
-    const tripDays: { [key: number]: any } = {};
-    const activities: { [key: number]: any } = {};
+    const itinerary = new Map();
+    const destinations = new Map();
+    const tripDays = new Map();
+    const activities = new Map();
 
     data.destinations.forEach((destination: any) => {
       destination.tripDays.forEach((day: TripDay) => {
@@ -312,14 +319,17 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
           if (activity.longitude) {
             activityCoordinates.push([activity.longitude, activity.latitude] as [number, number]);
           }
-          activities[activity.id] = { ...activity };
+          activities.set(activity.id, { ...activity });
         });
-        tripDays[day.id] = { ...day, activities: day.activities.map(activity => activity.id) };
+        tripDays.set(day.id, { ...day, activities: day.activities.map(activity => activity.id) });
       });
-      destinations[destination.id] = { ...destination, tripDays: destination.tripDays.map((day: TripDay) => day.id) };
+      destinations.set(destination.id, { ...destination, tripDays: destination.tripDays.map((day: TripDay) => day.id) });
     });
 
-    itinerary.destinations = data.destinations.map((destination: any) => destination.id);
+    itinerary.set(data.id, {
+      ...data,
+      destinations: data.destinations.map((destination: any) => destination.id)
+    });
 
     return { itinerary, destinations, tripDays, activities };
   }
@@ -338,10 +348,10 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   return {  
     props: { 
       ...buildClerkProps(ctx.req), 
-      itinerary: JSON.parse(JSON.stringify(normalizedData.itinerary)),
-      destinations: JSON.parse(JSON.stringify(normalizedData.destinations)),
-      tripDays: JSON.parse(JSON.stringify(normalizedData.tripDays)),
-      activities: JSON.parse(JSON.stringify(normalizedData.activities)),
+      itinerary: JSON.parse(JSON.stringify(Object.fromEntries(normalizedData.itinerary))),
+      destinations: JSON.parse(JSON.stringify(Object.fromEntries(normalizedData.destinations))),
+      tripDays: JSON.parse(JSON.stringify(Object.fromEntries(normalizedData.tripDays))),
+      activities: JSON.parse(JSON.stringify(Object.fromEntries(normalizedData.activities))),
       activityCoordinates: activityCoordinates
     }
   }

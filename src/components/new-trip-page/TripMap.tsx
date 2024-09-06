@@ -1,4 +1,5 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+import EDCPlaceHolder from '../../assets/EDC_Placeholder.jpeg'
 
 interface TripMapProps {
   isVisible: boolean
@@ -13,7 +14,7 @@ export default function TripMap({ isVisible }: TripMapProps) {
       <CardContent>
         <div className="aspect-square rounded-md overflow-hidden">
           <img 
-            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/bangkok-map-8Ks4Aw0Uy9Ue9Hy5Hy5Hy5Hy5.png" 
+            src={EDCPlaceHolder.src} 
             alt="Map of Bangkok" 
             className="w-full h-full object-cover"
           />
