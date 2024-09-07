@@ -7,6 +7,7 @@ import ItineraryTabs from '@/components/new-trip-page/ItineraryTabs'
 import ItineraryList from '@/components/new-trip-page/ItineraryList'
 import TripMap from '@/components/new-trip-page/TripMap'
 import MobileViewToggle from '@/components/new-trip-page/MobileViewToggle'
+import { format } from 'date-fns'
 
 import React, { useState, useEffect, useContext } from 'react'
 import Itinerary from '../../components/Itinerary/Itinerary'
@@ -41,8 +42,14 @@ export default function TripPage(
     activities: any, 
     activityCoordinates: any 
   }) {
-  const [activeDay, setActiveDay] = useState('Aug 22nd')
+  // Get the first day of the trip
+  // const sortedTripDays = Object.values(tripDays).sort((a: TripDay, b: TripDay) => new Date(a.date).getTime() - new Date(b.date).getTime())
+  // const firstDayDate = sortedTripDays[0].date
+
+  const [activeDay, setActiveDay] = useState('')
+  console.log('activeDay', activeDay)
   const [viewMode, setViewMode] = useState('daily')
+  // console.log('itinerary: ', itinerary)
 
   const { isSignedIn, userId } = useAuth()
 
@@ -115,7 +122,6 @@ export default function TripPage(
     };
   }, [])
 
-  console.log('tripDays', tripDays)
   const allDays = Object.values(tripDays).map((day: TripDay) => ({
     id: day.id,
     date: day.date,
@@ -196,7 +202,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   try {           
     const data = await prisma.itinerary.findUnique({
       where: {
-        id: 1, //Number(ctx.query.id)
+        id: 6, //Number(ctx.query.id)
       },
       include: {
         destinations: {
@@ -228,18 +234,18 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
    * 
    * This function takes the nested data structure fetched from the server,
    * containing the itinerary, destinations, trip days, and activities, and normalizes it into
-   * separate Map objects. This normalization is useful for state management in React,
+   * separate object literals. This normalization is useful for state management in React,
    * where updating nested state is difficult.
    * 
-   * The function creates four separate Map objects: itinerary, destinations, tripDays, and activities.
-   * Each of these Maps uses the entity's ID as the key, and the entity's data as the value.
+   * The function creates four separate object literals: itinerary, destinations, tripDays, and activities.
+   * Each of these objects uses the entity's ID as the key, and the entity's data as the value.
    * 
    * @param {Object} data - The nested data structure to normalize. It is expected to
    * have a specific format, with an itinerary object that contains destinations, each of
    * which contains tripDays, each of which contains activities.
    * 
    * @returns {Object} An object containing four properties: itinerary, destinations, tripDays,
-   * and activities. Each is a normalized Map of its respective entities.
+   * and activities. Each is a normalized object of its respective entities.
    * 
    * @example
    * Input:
@@ -268,35 +274,35 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
    * 
    * Output:
    * {
-   *   itinerary: Map(1) {
-   *     1 => {
+   *   itinerary: {
+   *     1: {
    *       id: 1,
    *       name: 'Sample Itinerary',
    *       destinations: [ 101 ],
    *     }
    *   },
-   *   destinations: Map(1) {
-   *     101 => {
+   *   destinations: {
+   *     101: {
    *       id: 101,
    *       name: 'Destination 1',
    *       tripDays: [ 201 ]
    *     }
    *   },
-   *   tripDays: Map(1) {
-   *     201 => {
+   *   tripDays: {
+   *     201: {
    *       id: 201,
    *       date: '2021-01-01',
    *       activities: [ 301, 302 ]
    *     }
    *   },
-   *   activities: Map(2) {
-   *     301 => {
+   *   activities: {
+   *     301: {
    *       id: 301,
    *       name: 'Activity 1',
    *       longitude: 100.0,
    *       latitude: 13.0
    *     },
-   *     302 => {
+   *     302: {
    *       id: 302,
    *       name: 'Activity 2',
    *       longitude: 101.0,
@@ -306,12 +312,11 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
    * }
    */
 
-  // TODO: Turn this back into objects instead of maps
   function normalizeData(data: any) {
-    const itinerary = new Map();
-    const destinations = new Map();
-    const tripDays = new Map();
-    const activities = new Map();
+    let itinerary: Record<number, any> = {};
+    const destinations: Record<number, any> = {};
+    const tripDays: Record<number, any> = {};
+    const activities: Record<number, any> = {};
 
     data.destinations.forEach((destination: any) => {
       destination.tripDays.forEach((day: TripDay) => {
@@ -319,17 +324,17 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
           if (activity.longitude) {
             activityCoordinates.push([activity.longitude, activity.latitude] as [number, number]);
           }
-          activities.set(activity.id, { ...activity });
+          activities[activity.id] = { ...activity };
         });
-        tripDays.set(day.id, { ...day, activities: day.activities.map(activity => activity.id) });
+        tripDays[day.id] = { ...day, activities: day.activities.map(activity => activity.id) };
       });
-      destinations.set(destination.id, { ...destination, tripDays: destination.tripDays.map((day: TripDay) => day.id) });
+      destinations[destination.id] = { ...destination, tripDays: destination.tripDays.map((day: TripDay) => day.id) };
     });
 
-    itinerary.set(data.id, {
+    itinerary = {
       ...data,
       destinations: data.destinations.map((destination: any) => destination.id)
-    });
+    };
 
     return { itinerary, destinations, tripDays, activities };
   }
@@ -348,10 +353,10 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   return {  
     props: { 
       ...buildClerkProps(ctx.req), 
-      itinerary: JSON.parse(JSON.stringify(Object.fromEntries(normalizedData.itinerary))),
-      destinations: JSON.parse(JSON.stringify(Object.fromEntries(normalizedData.destinations))),
-      tripDays: JSON.parse(JSON.stringify(Object.fromEntries(normalizedData.tripDays))),
-      activities: JSON.parse(JSON.stringify(Object.fromEntries(normalizedData.activities))),
+      itinerary: JSON.parse(JSON.stringify(normalizedData.itinerary)),
+      destinations: JSON.parse(JSON.stringify(normalizedData.destinations)),
+      tripDays: JSON.parse(JSON.stringify(normalizedData.tripDays)),
+      activities: JSON.parse(JSON.stringify(normalizedData.activities)),
       activityCoordinates: activityCoordinates
     }
   }

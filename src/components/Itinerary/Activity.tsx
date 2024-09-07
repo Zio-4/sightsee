@@ -132,17 +132,11 @@ const Activity = React.memo(({ activityId, tripDayId }: { activityId: number, tr
   return (
     <Card className="border-pastel-purple">
       <CardHeader className="bg-pastel-purple bg-opacity-10">
-        <div className="flex justify-between items-start">
+        <div className="flex justify-between w-full">
           <CardTitle>{inputActivityState.name}</CardTitle>
-          {inputActivityState.note && (
-            <Badge variant="secondary" className="bg-pastel-blue text-white">
-              <StickyNote className="h-3 w-3 mr-1" />
-              Note
-            </Badge>
-          )}
           <BsTrashFill
             onClick={() => removeActivity(activity.id, tripDayId)}
-            className="bg-red-400 p-1 m-auto cursor-pointer rounded-md text-white hover:bg-red-500"
+            className="bg-red-400 p-1 cursor-pointer rounded-md text-white hover:bg-red-500"
             size={38}
           />
         </div>
@@ -160,7 +154,7 @@ const Activity = React.memo(({ activityId, tripDayId }: { activityId: number, tr
           <DollarSign className="h-4 w-4 mr-2 text-muted-foreground" />
           <Input
             type="number"
-            value={activity.cost}
+            value={activity.cost || 0}
             onChange={(e) => updateActivity({ target: { name: 'cost', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
             className="w-24 h-8 text-sm"
           />
@@ -175,7 +169,7 @@ const Activity = React.memo(({ activityId, tripDayId }: { activityId: number, tr
       <CardFooter>
         <Dialog>
           <DialogTrigger asChild>
-            <Button variant="outline" size="sm" className="text-pastel-purple border-pastel-purple hover:bg-pastel-purple hover:text-white">
+            <Button variant="outline" size="sm" className="text-pastel-purple border-pastel-purple hover:border-black">
               <StickyNote className="h-4 w-4 mr-2" />
               {inputActivityState.note ? 'Edit Note' : 'Add Note'}
             </Button>

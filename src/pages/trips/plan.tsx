@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import axios from 'axios';
-import { eachDayOfInterval } from 'date-fns'
+import { eachDayOfInterval, differenceInDays } from 'date-fns'
 import { useRouter } from 'next/router';
 import { useUser } from '@clerk/nextjs';
 import { toast } from 'react-hot-toast';
@@ -78,6 +78,17 @@ export default function Component() {
 
     if (!tripName || !startDate || !endDate || destinations.some(d => !d.location)) return
 
+    const totalDays = differenceInDays(endDate, startDate) + 1;
+    const destinationDays = destinations.reduce((sum, dest) => sum + dest.days, 0);
+
+    if (totalDays !== destinationDays) {
+      toast.error(`The total number of days for all destinations (${destinationDays}) must equal the number of days between start and end dates (${totalDays}).`, {
+        duration: 5000,
+        position: 'top-right',
+      });
+      return;
+    }
+
     setSubmitIsDisabled(true)
     setIsSubmitting(true)
 
@@ -106,6 +117,8 @@ export default function Component() {
       interests: interests
     };
 
+    console.log('itineraryData:', itineraryData)
+
     try {
       const res = await axios.post('/api/itinerary', itineraryData);
       toast.success('Itinerary created successfully!', {
@@ -113,12 +126,12 @@ export default function Component() {
         position: 'top-right',
       });
 
-      // router.push({
-      //   pathname: '/trips/[id]',
-      //   query: { 
-      //     id: res.data.id
-      //   },
-      // })
+      router.push({
+        pathname: '/trips/[id]',
+        query: { 
+          id: res.data.id
+        },
+      })
     } catch (error) {
       console.error('Error creating itinerary:', error);
       toast.error('Failed to create itinerary. Please try again.', {
@@ -315,7 +328,7 @@ export default function Component() {
             </p>
           </div>
         </div>
-        <Button type="submit" className="w-full" disabled={true}>
+        <Button type="submit" className="w-full" disabled={submitIsDisabled}>
           {isSubmitting ? (
             <>
               <Loader className="mr-2 h-4 w-4 animate-spin" />

@@ -193,14 +193,13 @@ export default async function (
           if (useAI) {
             try {
               const messages = [
-                {"role": "system", "content": "You are an experienced travel planner who has traveled all around the world. You know all the best spots and where the hottest trends are. Provide recommendations for activities based on the given locations, amount of days, how many people are traveling, and who is traveling (Ex. solo, family, friends). Provide activities for every time of day: Morning, noon, and evening/night. Each activity should include the name, time, estimated cost in USD, and latitude and longitude of the location if possible. Time should be in 24 hour format: HH:MM. Cost should be in decimal format, without the dollar sign like so: 10.00."},
+                {"role": "system", "content": "You are an experienced travel planner who has traveled all around the world. You know all the best spots and where the hottest trends are. Provide recommendations for activities based on the given locations, amount of days, how many people are traveling, and who is traveling (Ex. solo, family, friends). Provide activities for every time of day: Morning, noon, and evening/night. Each day should have different activities. Each activity should include the name, time, estimated cost in USD, and latitude and longitude of the location if possible. Time should be in 24 hour format: HH:MM. Cost should be in decimal format, without the dollar sign like so: 10.00."},
                 {"role": "user", "content": 
                   `${destinations.map(d => `I am traveling to ${d.location} for ${d.days} days. `).join(' ')} 
                   I am traveling with ${numTravelers} people.
                   ${travelCompanion ? `I am traveling with ${travelCompanion}.` : ''}
                   ${interests ? `My interests are ${interests}.` : ''}
                   Provide a detailed itinerary for my trip. 
-                  Provide activities for every time of day: Morning, noon, and evening/night.
                   All activities should include the name, time, and lattitude and longitude of the location.
                   `
                 }

@@ -5,6 +5,7 @@ import { Plane } from 'lucide-react'
 import Activity from "../Itinerary/Activity"
 import useItineraryStore from '../../hooks/useItineraryStore'
 import { format } from "date-fns"
+import { useEffect } from 'react'
 
 interface ItineraryTabsProps {
   allDays: any[]
@@ -16,11 +17,17 @@ interface ItineraryTabsProps {
 export default function ItineraryTabs({ allDays, activeDay, setActiveDay, destinations }: ItineraryTabsProps) {
   const tripDays = useItineraryStore(state => state.tripDays)
 
-  console.log('tripDays', tripDays)
-  console.log('destinations', destinations)
+  // console.log('tripDays:', tripDays)
+  // console.log('destinations:', destinations)
+
+  useEffect(() => {
+    if (allDays.length > 0) {
+      setActiveDay(allDays[0].date)
+    }
+  }, [])
 
   return (
-    <Tabs defaultValue={activeDay} onValueChange={setActiveDay}>
+    <Tabs value={activeDay} onValueChange={setActiveDay}>
       <TabsList className="grid w-full grid-cols-3">
         {allDays.map((day) => (
           <TabsTrigger key={day.id} value={day.date} className="data-[state=active]:bg-gray-300 data-[state=active]:text-black">
@@ -39,7 +46,7 @@ export default function ItineraryTabs({ allDays, activeDay, setActiveDay, destin
           <Droppable droppableId={`${day.destinationId}-${day.id}`}>
             {(provided) => (
               <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-4">
-                {tripDays[day.id]?.activities.map((activityId, index) => (
+                {tripDays[day.id]?.activities.map((activityId: string, index: number) => (
                   <Draggable key={activityId} draggableId={activityId.toString()} index={index}>
                     {(provided) => (
                       <div
