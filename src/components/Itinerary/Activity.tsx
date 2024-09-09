@@ -137,7 +137,7 @@ const Activity = React.memo(({ activityId, tripDayId }: { activityId: number, tr
           <BsTrashFill
             onClick={() => removeActivity(activity.id, tripDayId)}
             className="bg-red-400 p-1 cursor-pointer rounded-md text-white hover:bg-red-500"
-            size={38}
+            size={32}
           />
         </div>
       </CardHeader>
@@ -149,7 +149,9 @@ const Activity = React.memo(({ activityId, tripDayId }: { activityId: number, tr
             onChange={(newTime) => updateActivity({ target: { name: 'startTime', value: newTime.toISOString() } } as unknown as React.ChangeEvent<HTMLInputElement>)}
           />
         </div>
-        <p className="text-sm text-muted-foreground mb-2"><MapPin className="inline mr-2" size={16} />{activity.location}</p>
+        <p className="text-sm text-muted-foreground mb-2">
+          <MapPin className="inline mr-2" size={16} />{activity.address}
+        </p>
         <div className="flex items-center">
           <DollarSign className="h-4 w-4 mr-2 text-muted-foreground" />
           <Input
@@ -160,8 +162,8 @@ const Activity = React.memo(({ activityId, tripDayId }: { activityId: number, tr
           />
         </div>
         {inputActivityState.note && (
-          <p className="text-sm mt-2 text-pastel-purple italic">
-            "{inputActivityState.note.substring(0, 50)}
+          <p className="text-sm mt-2 italic">
+            "{inputActivityState.note.substring(0, 200)}
             {inputActivityState.note.length > 50 ? '...' : ''}"
           </p>
         )}

@@ -202,7 +202,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   try {           
     const data = await prisma.itinerary.findUnique({
       where: {
-        id: 6, //Number(ctx.query.id)
+        id: 13, //Number(ctx.query.id)
       },
       include: {
         destinations: {
