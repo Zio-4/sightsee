@@ -148,7 +148,7 @@ export default function TripPage(
     <div className="container mx-auto p-4 min-h-screen border-2 border-white rounded-2xl">
       <header className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-white">{itinerary.name}</h1>
-        <div className="text-sm text-white">Aug 22, 2024 - Aug 24, 2024</div>
+        <div className="text-sm text-white">{format(new Date(itinerary.startDate), 'MMM dd, yyyy')} - {format(new Date(itinerary.endDate), 'MMM dd, yyyy')}</div>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -209,11 +209,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
           include: {
             tripDays: {
               include: {
-                activities: {
-                  orderBy: {
-                    startTime: 'asc'
-                  }
-                }
+                // For now, should fetch in creation order. Will want to fetch by order later.
+                activities: true
               }
             }
           }

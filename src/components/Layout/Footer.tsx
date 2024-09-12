@@ -1,21 +1,15 @@
-import Link from 'next/link'
 import React from 'react'
-import { HeartIcon } from 'lucide-react'
 
 const Footer = () => {
   return (
-    <footer className='sticky top-[100vh] bg-turquoise'>
-      <p className='pb-4 text-center text-white'>
-        Engineered with <HeartIcon className='inline-block h-4 w-4 text-red-500' /> by <Link href='https://x.com/Phil_Zio' 
-                            rel="noopener noreferrer" 
-                            target="_blank" 
-                            className='font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-500 text-lg'>
-                              Phil Ziolkowski
-                        </Link>
-      </p>
+    <footer 
+      className="fixed bottom-0 right-0 z-50 bg-background/80 text-muted-foreground text-xs p-0.5 rounded-tl-md border-l border-t border-muted text-black"
+      style={{ borderTopLeftRadius: '0.5rem' }}
+      aria-label="Website created by Phil Ziolkowski"
+    >
+      by <a href="https://x.com/Phil_Zio" target="_blank" rel="noopener noreferrer">Phil Ziolkowski</a>
     </footer>
   )
 }
 
 export default Footer
-

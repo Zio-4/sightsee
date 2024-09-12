@@ -6,6 +6,7 @@ import Link from "next/link"
 import BeachPlaceholder from '../assets/beach_vacation.avif'
 import Globe from "@/components/Globe"
 import CuteCatBeach from '../assets/Cute_Cat_Beach.png'
+import Footer from '@/components/Layout/Footer'
 
 export default function Component() {
   return (
@@ -204,6 +205,7 @@ export default function Component() {
           </div>
         </section>
       </main>
+      <Footer />
     </div>
   )
 }

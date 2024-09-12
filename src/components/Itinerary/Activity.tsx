@@ -54,20 +54,28 @@ const Activity = React.memo(({ activityId, tripDayId }: { activityId: number, tr
     startTime: activity!.startTime || null,
     endTime: activity!.endTime || null,
     note: activity!.note || '',
+    cost: activity!.cost || 0,
   })
   const debouncedInput = useDebounce(inputActivityState, 500)
   const updateActivityRef = useRef(false)
 
   useDeepCompareEffect(() => {
+    console.log('deep compare')
     async function sendUpdateReq() {
       try {
+        console.log('input state COST:', inputActivityState.cost)
+
         const res = await axios.put('/api/activities', {
           name: inputActivityState.name,
           startTime: inputActivityState.startTime,
           endTime: inputActivityState.endTime,
           note: inputActivityState.note,
+          cost: inputActivityState.cost,
           activityId: activity.id
         })
+
+        console.log('activity udpate res:', res)
+
         updateActivityRef.current = false
 
         updateActivityInStore(activityId, res.data)
@@ -82,10 +90,11 @@ const Activity = React.memo(({ activityId, tripDayId }: { activityId: number, tr
       } catch (error) {
         console.error(error)
         toast.error(`There was a problem updating the activity: ${inputActivityState.name}`)
-      }
+      } 
     }
 
     if (updateActivityRef.current) {
+      console.log('update req sent')
       sendUpdateReq()
     }
   }, [debouncedInput])
@@ -97,6 +106,7 @@ const Activity = React.memo(({ activityId, tripDayId }: { activityId: number, tr
       startTime: activity.startTime || null,
       endTime: activity.endTime || null,
       note: activity.note || '',
+      cost: activity.cost || 0,
     })
   }, [activity])
 
@@ -104,7 +114,7 @@ const Activity = React.memo(({ activityId, tripDayId }: { activityId: number, tr
     const { name, value } = e.target
     setInputActivityState(prevState => ({
       ...prevState,
-      [name]: value
+      [name]: name === 'cost' ? parseFloat(value) || 0 : value
     }))
     updateActivityRef.current = true
   }
@@ -156,17 +166,15 @@ const Activity = React.memo(({ activityId, tripDayId }: { activityId: number, tr
           <DollarSign className="h-4 w-4 mr-2 text-muted-foreground" />
           <Input
             type="number"
-            value={activity.cost || 0}
-            onChange={(e) => updateActivity({ target: { name: 'cost', value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)}
+            name="cost"
+            value={inputActivityState.cost}
+            onChange={updateActivity}
             className="w-24 h-8 text-sm"
           />
         </div>
-        {inputActivityState.note && (
-          <p className="text-sm mt-2 italic">
-            "{inputActivityState.note.substring(0, 200)}
-            {inputActivityState.note.length > 50 ? '...' : ''}"
-          </p>
-        )}
+        <p className='mt-2'>
+          {inputActivityState.note}
+        </p>
       </CardContent>
       <CardFooter>
         <Dialog>

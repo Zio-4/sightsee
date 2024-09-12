@@ -6,6 +6,8 @@ import Activity from "../Itinerary/Activity"
 import useItineraryStore from '../../hooks/useItineraryStore'
 import { format } from "date-fns"
 import { useEffect } from 'react'
+import dynamic from 'next/dynamic'
+const ActivityForm = dynamic(() => import('../Itinerary/ActivityForm'), { ssr: false })
 
 interface ItineraryTabsProps {
   allDays: any[]
@@ -66,6 +68,8 @@ export default function ItineraryTabs({ allDays, activeDay, setActiveDay, destin
               </div>
             )}
           </Droppable>
+
+          <ActivityForm tripDayId={day.id} />
         </TabsContent>
       ))}
     </Tabs>

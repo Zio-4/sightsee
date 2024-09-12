@@ -20,7 +20,8 @@ export default async function (
                     latitude: req.body.latitude,
                     tripDay: {
                         connect: { id: req.body.tripDayId }
-                    }
+                    },
+                    cost: req.body.cost
                 },
             })
 
@@ -43,6 +44,7 @@ export default async function (
                     address: req.body.address,
                     longitude: req.body.longitude,
                     latitude: req.body.latitude,
+                    cost: req.body.cost
                  },
             })
 
