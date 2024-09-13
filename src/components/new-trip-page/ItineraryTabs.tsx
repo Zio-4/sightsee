@@ -5,8 +5,9 @@ import { Plane } from 'lucide-react'
 import Activity from "../Itinerary/Activity"
 import useItineraryStore from '../../hooks/useItineraryStore'
 import { format } from "date-fns"
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import dynamic from 'next/dynamic'
+
 const ActivityForm = dynamic(() => import('../Itinerary/ActivityForm'), { ssr: false })
 
 interface ItineraryTabsProps {
@@ -18,6 +19,7 @@ interface ItineraryTabsProps {
 
 export default function ItineraryTabs({ allDays, activeDay, setActiveDay, destinations }: ItineraryTabsProps) {
   const tripDays = useItineraryStore(state => state.tripDays)
+  const activities = useItineraryStore(state => state.activities)
 
   // console.log('tripDays:', tripDays)
   // console.log('destinations:', destinations)
@@ -27,6 +29,15 @@ export default function ItineraryTabs({ allDays, activeDay, setActiveDay, destin
       setActiveDay(allDays[0].date)
     }
   }, [])
+
+  // const daySpend = useMemo((dayId: number) => {
+  //   const activitiesForDay = Object.values(activities).filter((activity) => tripDays[dayId]?.date === activeDay)
+  //   console.log('activitiesForDay:', activitiesForDay)
+  //   const cost = activitiesForDay.reduce((acc, activity) => {
+  //     return acc + activity.cost
+  //   }, 0)
+  //   return cost
+  // }, [allDays, tripDays])
 
   return (
     <Tabs value={activeDay} onValueChange={setActiveDay}>
@@ -44,6 +55,7 @@ export default function ItineraryTabs({ allDays, activeDay, setActiveDay, destin
               <Plane className="h-4 w-4 mr-2" />
               {destinations[day.destinationId]?.name}
             </Badge>
+            {/* <span className="text-sm text-gray-500">Day Total: ${daySpend(day.id)}</span> */}
           </div>
           <Droppable droppableId={`${day.destinationId}-${day.id}`}>
             {(provided) => (

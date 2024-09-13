@@ -122,25 +122,63 @@ export default function TripPage(
     };
   }, [])
 
-  const allDays = Object.values(tripDays).map((day: TripDay) => ({
-    id: day.id,
+  const allDays = Object.entries(tripDays).map(([id, day]) => ({
+    id: parseInt(id),
     date: day.date,
     destinationId: day.destinationId
   }));
 
-  const onDragEnd = (result) => {
-    if (!result.destination) return
+  const onDragEnd = (result: any) => {
+    if (!result.destination) return;
 
-    const [destIndex, dayIndex] = result.source.droppableId.split('-').map(Number)
-    
-    const newItinerary = [...itinerary]
-    const [reorderedItem] = newItinerary[destIndex].days[dayIndex].activities.splice(result.source.index, 1)
-    newItinerary[destIndex].days[dayIndex].activities.splice(result.destination.index, 0, reorderedItem)
+    console.log('result:', result);
 
-    setItinerary(newItinerary)
+    const sourceDroppableId = result.source.droppableId;
+    const destinationDroppableId = result.destination.droppableId;
+
+    // Extract destinationId and dayId from the droppableId
+    const [sourceDestinationId, sourceDayId] = sourceDroppableId.split('-');
+    const [destDestinationId, destDayId] = destinationDroppableId.split('-');
+
+    console.log('Source:', { destinationId: sourceDestinationId, dayId: sourceDayId });
+    console.log('Destination:', { destinationId: destDestinationId, dayId: destDayId });
+
+    // Create a deep copy of the tripDays state
+    const newTripDays = JSON.parse(JSON.stringify(tripDays));
+
+    // Get the current activities for the source and destination days
+    const sourceActivities = newTripDays[sourceDayId].activities;
+    const destActivities = sourceDroppableId === destinationDroppableId
+      ? sourceActivities
+      : newTripDays[destDayId].activities;
+
+    // Get the activity that was moved
+    const [movedActivityId] = sourceActivities.splice(result.source.index, 1);
+
+    // Add the activity to the destination
+    destActivities.splice(result.destination.index, 0, movedActivityId);
+
+    // Update the tripDays state
+    if (sourceDroppableId !== destinationDroppableId) {
+      newTripDays[destDayId].activities = destActivities;
+    }
+    newTripDays[sourceDayId].activities = sourceActivities;
+
+    // Create a deep copy of the activities state
+    const newActivities = JSON.parse(JSON.stringify(activities));
+
+    // Update the activity's tripDayId if it was moved to a different day
+    if (sourceDroppableId !== destinationDroppableId) {
+      newActivities[movedActivityId].tripDayId = parseInt(destDayId);
+    }
+
+    // Update the states
+    setTripDays(newTripDays);
+    setActivities(newActivities);
+
     // Here you would typically call an API to update the database
-    // updateActivitiesOrderInDatabase(dayId, newItinerary[destIndex].days[dayIndex].activities.map(a => a.id))
-  }
+    // updateActivitiesOrderInDatabase(sourceDayId, destDayId, newTripDays, newActivities);
+  };
 
   const [isMapVisible, setIsMapVisible] = useState(false)
 
@@ -151,7 +189,7 @@ export default function TripPage(
         <div className="text-sm text-white">{format(new Date(itinerary.startDate), 'MMM dd, yyyy')} - {format(new Date(itinerary.endDate), 'MMM dd, yyyy')}</div>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <Card className="md:col-span-2 bg-white">
           <CardHeader className="flex flex-row items-center justify-between bg-pastel-blue bg-opacity-10">
             <CardTitle className="text-pastel-blue">Itinerary</CardTitle>

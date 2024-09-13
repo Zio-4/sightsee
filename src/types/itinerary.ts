@@ -29,10 +29,11 @@ export type NormalizedTripDay = {
 }
 
 export type TripDay = {
-    activities: Activity[]
-    date: Date
-    id: number
-    itineraryId: number
+    id: number;
+    date: Date;
+    destinationId: number;
+    activities: number[];
+    // ... other properties
 }
 
 export interface TripDays {

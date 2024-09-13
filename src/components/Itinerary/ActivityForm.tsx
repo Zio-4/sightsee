@@ -12,14 +12,27 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 
 const searchBoxStyling = {
-    variables: {
-        borderRadius: '0.5rem',
-        // border: '3px solid #eee',
-        opacity: '40%',
-        outlineStyle: 'none',
-    }
+  variables: {
+    fontFamily: 'inherit',
+    fontSize: '0.875rem',
+    lineHeight: '1.25rem',
+    borderRadius: '0.375rem',
+    border: '1px solid hsl(var(--input))',
+    backgroundColor: 'hsl(var(--background))',
+    color: 'hsl(var(--foreground))',
+    padding: '0.5rem 0.75rem',
+    boxShadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+    '::placeholder': {
+      color: 'hsl(var(--muted-foreground))',
+    },
+    ':focus': {
+      outline: 'none',
+      ring: '2px',
+      ringColor: 'hsl(var(--ring))',
+      ringOffset: '2px',
+    },
+  },
 }
-// 'bg-white bg-opacity-40 rounded-md p-1 outline-none w-full h-fit mr-2'
 
 
 const ActivityForm = React.memo(({ tripDayId, }: IActivityForm) => {
@@ -114,22 +127,15 @@ const ActivityForm = React.memo(({ tripDayId, }: IActivityForm) => {
             <CardContent>
                 <div className='flex flex-col space-y-4'>
                     <div className='flex-grow'>
-                        {/* <SearchBox 
+                        <SearchBox 
                             accessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!}
                             map={map} 
                             value={searchBoxValue} 
                             onChange={(text) => setSearchBoxValue(text)}
                             onRetrieve={handleRetrieve}
                             theme={searchBoxStyling}
-                        /> */}
+                        />
                     </div>
-                    <Input 
-                        type="text" 
-                        value={activityDetails.name}
-                        aria-label='activity-name-input' 
-                        onChange={(e) => setActivityDetails({...activityDetails, name: e.target.value})} 
-                        placeholder='Ex. Eiffel Tower' 
-                    />
                     <Button 
                         onClick={createActivity} 
                         name='activityButton' 

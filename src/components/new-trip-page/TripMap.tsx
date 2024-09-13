@@ -1,9 +1,11 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import EDCPlaceHolder from '../../assets/EDC_Placeholder.jpeg'
+import dynamic from "next/dynamic"
 
 interface TripMapProps {
   isVisible: boolean
 }
+
+const MapGL = dynamic(() => import('@/components/MapGL'), { ssr: false })
 
 export default function TripMap({ isVisible }: TripMapProps) {
   return (
@@ -11,13 +13,9 @@ export default function TripMap({ isVisible }: TripMapProps) {
       <CardHeader className="bg-pastel-purple bg-opacity-10">
         <CardTitle className="text-pastel-purple">Trip Map</CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="aspect-square rounded-md overflow-hidden">
-          <img 
-            src={EDCPlaceHolder.src} 
-            alt="Map of Bangkok" 
-            className="w-full h-full object-cover"
-          />
+      <CardContent className="p-0">
+        <div>
+          <MapGL />
         </div>
       </CardContent>
     </Card>
