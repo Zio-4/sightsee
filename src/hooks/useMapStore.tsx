@@ -10,9 +10,9 @@ interface MapStore {
 }
 
 const useMapStore = create<MapStore>()((set) => ({
-    map: {},
+    map: null,
     searchMarkerCoordinates: [undefined, undefined],
-    setMap: (map: any) => set({ map }),
+    setMap: (map: any) => set({ map: map }),
     setSearchMarkerCoordinates: (coordinates: SearchMarkerCoordinates) => set(() => ({ searchMarkerCoordinates: coordinates })),
 }));
 

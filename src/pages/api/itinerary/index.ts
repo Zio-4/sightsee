@@ -36,8 +36,8 @@ const normalizeString = (str: string) => {
 };
 
 interface Location {
-  name: string;
-  activities: Activity[];
+  location: string;
+  activitiesByDay: Activity[][];
 }
 
 interface Activity {
@@ -46,6 +46,8 @@ interface Activity {
   time: string;
   lat: string;
   long: string;
+  address: string;
+  cost: string;
 }
 
 // Helper function to find the best matching location
@@ -56,7 +58,7 @@ const findBestMatchingLocation = (inputLocation: string, availableLocations: Loc
   let highestSimilarity = 0;
 
   availableLocations.forEach(location => {
-    const normalizedLocation = normalizeString(location.name);
+    const normalizedLocation = normalizeString(location.location);
     
     // Compare both the full string and individual parts
     const fullStringSimilarity = compareTwoStrings(normalizedInput, normalizedLocation);
@@ -80,19 +82,20 @@ const createActivities = (inputLocation: string, parsedCompletion: { locations: 
   const matchingLocation = findBestMatchingLocation(inputLocation, parsedCompletion.locations);
 
   if (matchingLocation) {
-    return matchingLocation.activities.map((activity: Activity) => ({
-      name: activity.activityName,
-      startTime: new Date(`1970-01-01T${activity.time}:00`),
-      endTime: null, // We don't have end time information from the AI response
-      contactInfo: null,
-      note: activity.activityDescription,
-      address: null, // We don't have address information from the AI response
-      photo: null,
-      // If lat or long are not present, set them to 0 (Null island). This is not a real location, so mark on client side.
-      longitude: parseFloat(activity.long) || 0,
-      latitude: parseFloat(activity.lat) || 0,
-      cost: parseFloat(activity.cost) || 0,
-    }));
+    return matchingLocation.activitiesByDay.map(day => 
+      day.map((activity: Activity) => ({
+        name: activity.activityName,
+        startTime: new Date(`1970-01-01T${activity.time}:00`),
+        endTime: null, 
+        contactInfo: null,
+        note: activity.activityDescription,
+        address: activity.address,
+        photo: null,
+        longitude: parseFloat(activity.long) || 0,
+        latitude: parseFloat(activity.lat) || 0,
+        cost: parseFloat(activity.cost) || 0,
+      }))
+    );
   }
 
   return [];
@@ -119,25 +122,29 @@ const callChatGPT = async (messages: any[], userId: string | null, clientIp: str
                   items: {
                     type: "object",
                     properties: {
-                      name: { type: "string" },
-                      activities: {
+                      location: { type: "string" },
+                      activitiesByDay: {
                         type: "array",
                         items: {
-                          type: "object",
-                          properties: {
-                            time: { type: "string" },
-                            activityName: { type: "string" },
-                            activityDescription: { type: "string" },
-                            cost: { type: "number" },
-                            lat: { type: "number" },
-                            long: { type: "number" }
-                          },
-                          required: ["time", "activityName", "activityDescription", "lat", "long"],
-                          additionalProperties: false
+                          type: "array",
+                          items: {
+                            type: "object",
+                            properties: {
+                              time: { type: "string" },
+                              activityName: { type: "string" },
+                              activityDescription: { type: "string" },
+                              address: { type: "string" },
+                              cost: { type: "number" },
+                              lat: { type: "number" },
+                              long: { type: "number" }
+                            },
+                            required: ["time", "activityName", "activityDescription", "lat", "long"],
+                            additionalProperties: false
+                          }
                         }
                       }
                     },
-                    required: ["name", "activities"],
+                    required: ["location", "activitiesByDay"],
                     additionalProperties: false
                   }
                 }
@@ -190,18 +197,22 @@ export default async function (
           if (useAI) {
             try {
               const messages = [
-                {"role": "system", "content": "You are an experienced travel planner who has traveled all around the world. You know all the best spots and where the hottest trends are. Provide recommendations for activities based on the given locations, amount of days, how many people are traveling, and who is traveling (Ex. solo, family, friends). Provide activities for every time of day: Morning, noon, and evening/night. Each activity should include the name, time, estimated cost in USD, and latitude and longitude of the location if possible. Time should be in 24 hour format: HH:MM. Cost should be in decimal format, without the dollar sign like so: 10.00."},
-                {"role": "user", "content": 
-                  `${destinations.map(d => `I am traveling to ${d.location} for ${d.days} days. `).join(' ')} 
-                  I am traveling with ${numTravelers} people.
-                  ${travelCompanion ? `I am traveling with ${travelCompanion}.` : ''}
-                  ${interests ? `My interests are ${interests}.` : ''}
-                  Provide a detailed itinerary for my trip. 
-                  Provide activities for every time of day: Morning, noon, and evening/night.
-                  All activities should include the name, time, and lattitude and longitude of the location.
+                {"role": "system", "content": "You are an experienced travel planner who has traveled all around the world. You know all the best spots and where the hottest trends are. Provide recommendations for activities based on the given locations, amount of days, how many people are traveling, and who is traveling (Ex. solo, family, friends). Provide activities for every time of day: Morning, noon, and evening/night. Each day should have different activities. Each activity should include the name, time, estimated cost in USD, and latitude and longitude of the location if possible. Time should be in 24 hour format: HH:MM. Cost should be in decimal format, without the dollar sign like so: 10.00."},
+                { "role": "user", 
+                  "content": `${destinations.map(d => `I am traveling to ${d.location} for ${d.days} days. `).join(' ')} 
+                    I am traveling with ${numTravelers} people.
+                    ${travelCompanion === 'Solo' ? `I am traveling solo.` : `I am traveling with ${travelCompanion}.`}
+                    ${interests ? `My interests are ${interests}.` : ''}
+                    Provide a detailed itinerary for my trip. 
+                    All activities should include the name, time, and latitude and longitude of the location.
+                    Group activities by day for each location.
+                    If there are not enough activities to fill the itinerary, add more activities to the days that have less than 3 activities.
+                    If that still doesn't fill the itinerary, add activites that are near the surrounding locations.
                   `
                 }
               ];
+
+              console.log('User prompt:', messages[1]?.content);
               
               completion = await callChatGPT(messages, userId, requestIp.getClientIp(req));
               // log total amount of tokens used
@@ -227,7 +238,13 @@ export default async function (
             : {};
 
           console.log('Parsed Completion:', parsedCompletion);
-          console.log('Parsed activities:', parsedCompletion.locations[0].activities);
+          console.log('Parsed Locations:', parsedCompletion.locations);
+          if (parsedCompletion.locations && parsedCompletion.locations.length > 0) {
+            console.log('Parsed Activities:', parsedCompletion.locations[0].activitiesByDay);
+            parsedCompletion.locations[0].activitiesByDay.forEach((day: Activity[], index: number) => {
+              console.log(`Parsed activities for day ${index + 1}:`, day);
+            });
+          }
 
 
           try {
@@ -253,10 +270,10 @@ export default async function (
                     create: destinations.map((d: Destination) => ({
                       name: d.location,
                       tripDays: {
-                        create: Array.from({ length: d.days }, (_, i) => ({
-                          date: new Date(new Date(startDate).getTime() + i * 24 * 60 * 60 * 1000),
+                        create: createActivities(d.location, parsedCompletion).map((activities, index) => ({
+                          date: new Date(new Date(startDate).getTime() + index * 24 * 60 * 60 * 1000),
                           activities: {
-                            create: createActivities(d.location, parsedCompletion)
+                            create: activities
                           }
                         })),
                       },
@@ -273,10 +290,10 @@ export default async function (
                     create: destinations.map((d: Destination) => ({
                       name: d.location,
                       tripDays: {
-                        create: Array.from({ length: d.days }, (_, i) => ({
-                          date: new Date(new Date(startDate).getTime() + i * 24 * 60 * 60 * 1000),
+                        create: createActivities(d.location, parsedCompletion).map((activities, index) => ({
+                          date: new Date(new Date(startDate).getTime() + index * 24 * 60 * 60 * 1000),
                           activities: {
-                            create: createActivities(d.location, parsedCompletion)
+                            create: activities
                           }
                         })),
                       },

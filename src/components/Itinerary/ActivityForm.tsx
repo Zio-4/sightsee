@@ -7,15 +7,32 @@ import useItineraryStore from '../../hooks/useItineraryStore';
 import useMapStore from '../../hooks/useMapStore';
 import { useUser } from '@clerk/nextjs';
 import { toast } from 'react-hot-toast';
+import { Button } from '@/components/ui/button'
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+
 const searchBoxStyling = {
-    variables: {
-        borderRadius: '0.5rem',
-        // border: '3px solid #eee',
-        opacity: '40%',
-        outlineStyle: 'none',
-    }
+  variables: {
+    fontFamily: 'inherit',
+    fontSize: '0.875rem',
+    lineHeight: '1.25rem',
+    borderRadius: '0.375rem',
+    border: '1px solid hsl(var(--input))',
+    backgroundColor: 'hsl(var(--background))',
+    color: 'hsl(var(--foreground))',
+    padding: '0.5rem 0.75rem',
+    boxShadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+    '::placeholder': {
+      color: 'hsl(var(--muted-foreground))',
+    },
+    ':focus': {
+      outline: 'none',
+      ring: '2px',
+      ringColor: 'hsl(var(--ring))',
+      ringOffset: '2px',
+    },
+  },
 }
-// 'bg-white bg-opacity-40 rounded-md p-1 outline-none w-full h-fit mr-2'
 
 
 const ActivityForm = React.memo(({ tripDayId, }: IActivityForm) => {
@@ -32,8 +49,9 @@ const ActivityForm = React.memo(({ tripDayId, }: IActivityForm) => {
     const { user } = useUser()
 
 
+    console.log('map in activity form:', map)
 
-    const createAcitivity = async () => {
+    const createActivity = async () => {
         if (activityDetails.name.length === 0) return
         if (!user) {
             const guestActivities = JSON.parse(localStorage.getItem('guestActivitiesCreated') || '0')
@@ -48,7 +66,6 @@ const ActivityForm = React.memo(({ tripDayId, }: IActivityForm) => {
                 localStorage.setItem('guestActivitiesCreated', JSON.stringify(parseInt(guestActivities) ?? 0 + 1))
             }
         }
-
 
         setSearchBoxValue('')
 
@@ -99,50 +116,40 @@ const ActivityForm = React.memo(({ tripDayId, }: IActivityForm) => {
     const handleRetrieve = (res: any) => {
         setSearchMarkerCoordinates([res.features[0]?.properties.coordinates.longitude, res.features[0]?.properties.coordinates.latitude])
         
-        
         setActivityDetails({
             name: res.features[0].properties?.name_preferred || res.features[0].properties.name,
             address: res.features[0].properties?.full_address || ''
         })
     }
 
-
-  return (
-    <div className='text-black mt-3'>
-        <div className='flex justify-between'>
-            <div className='w-2/3'>
-                <SearchBox 
-                    accessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!}
-                    // @ts-ignore
-                    map={map} 
-                    value={searchBoxValue} 
-                    onChange={(text) => setSearchBoxValue(text)}
-                    onRetrieve={handleRetrieve}
-                    theme={searchBoxStyling}
-                />
-            </div>
-            {/* <input 
-                type={'text'} 
-                value={activityName}
-                aria-label='activity-name-input' 
-                onChange={(e) => setActivityName(e.target.value)} 
-                placeholder='Ex. Eiffel Tower' 
-                className='rounded-md p-1 w-1/2 focus:ring-0 focus:ring-offset-0 text-black border-0'
-            /> */}
-            <button 
-                onClick={createAcitivity} 
-                name='activityButton' 
-                aria-label='add-activity-button' 
-                className='btn btn-accent btn-xs sm:btn-sm'
-            >
-                Add activity
-            </button>
-        </div>
-
-        {/* <p className='mt-2'>Notes:</p>
-        <textarea className='text-black outline-none rounded-md w-1/2'/> */}
-    </div>
-  )
+    return (
+        <Card className="mt-3">
+            <CardHeader>
+                <CardTitle>Add Activity</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <div className='flex flex-col space-y-4'>
+                    {map && <div className='flex-grow'>
+                        <SearchBox 
+                            accessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!}
+                            map={map} 
+                            value={searchBoxValue} 
+                            onChange={(text) => setSearchBoxValue(text)}
+                            onRetrieve={handleRetrieve}
+                            theme={searchBoxStyling}
+                        />
+                    </div>}
+                    <Button 
+                        onClick={createActivity} 
+                        name='activityButton' 
+                        aria-label='add-activity-button' 
+                    >
+                        Add activity
+                    </Button>
+                </div>
+            </CardContent>
+        </Card>
+    )
 })
 
 export default ActivityForm

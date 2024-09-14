@@ -31,8 +31,6 @@ const MyApp: AppType = ({
         <div className="bg-sandyBeige">
           <Navbar />
           <Component {...pageProps} />
-          {/*@ts-ignore */}
-          {!Component.tripPage && <Footer />}
         </div>
       </div>
       <style jsx global>{`

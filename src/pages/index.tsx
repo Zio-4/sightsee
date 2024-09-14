@@ -6,6 +6,7 @@ import Link from "next/link"
 import BeachPlaceholder from '../assets/beach_vacation.avif'
 import Globe from "@/components/Globe"
 import CuteCatBeach from '../assets/Cute_Cat_Beach.png'
+import Footer from '@/components/Layout/Footer'
 
 export default function Component() {
   return (
@@ -123,11 +124,7 @@ export default function Component() {
                   </li>
                   <li className="flex items-center gap-2">
                     <Users className="h-5 w-5 text-white" />
-                    <span className="text-white">Vote on activities and accommodations</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Calendar className="h-5 w-5 text-white" />
-                    <span className="text-white">Sync schedules and preferences in real-time</span>
+                    <span className="text-white">Vote on activities</span>
                   </li>
                 </ul>
               </div>
@@ -204,6 +201,7 @@ export default function Component() {
           </div>
         </section>
       </main>
+      <Footer />
     </div>
   )
 }
