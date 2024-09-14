@@ -60,7 +60,6 @@ const Activity = React.memo(({ activityId, tripDayId }: { activityId: number, tr
   const updateActivityRef = useRef(false)
 
   useDeepCompareEffect(() => {
-    console.log('deep compare')
     async function sendUpdateReq() {
       try {
         console.log('input state COST:', inputActivityState.cost)

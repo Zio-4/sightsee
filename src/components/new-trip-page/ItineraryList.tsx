@@ -1,8 +1,11 @@
 import { Droppable, Draggable } from 'react-beautiful-dnd'
 import { Plane } from 'lucide-react'
 import Activity from '../Itinerary/Activity'
+import dynamic from 'next/dynamic'
 import useItineraryStore from '../../hooks/useItineraryStore'
 import { format } from "date-fns"
+
+const ActivityForm = dynamic(() => import('../Itinerary/ActivityForm'), { ssr: false })
 
 interface ItineraryListProps {
   destinations: any
@@ -49,6 +52,7 @@ export default function ItineraryList({ destinations }: ItineraryListProps) {
                     </div>
                   )}
                 </Droppable>
+                <ActivityForm tripDayId={day.id} />
               </div>
             );
           })}

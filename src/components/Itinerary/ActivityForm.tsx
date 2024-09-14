@@ -48,6 +48,9 @@ const ActivityForm = React.memo(({ tripDayId, }: IActivityForm) => {
     const addActivity = useItineraryStore(state => state.addActivity)
     const { user } = useUser()
 
+
+    console.log('map in activity form:', map)
+
     const createActivity = async () => {
         if (activityDetails.name.length === 0) return
         if (!user) {
@@ -126,7 +129,7 @@ const ActivityForm = React.memo(({ tripDayId, }: IActivityForm) => {
             </CardHeader>
             <CardContent>
                 <div className='flex flex-col space-y-4'>
-                    <div className='flex-grow'>
+                    {map && <div className='flex-grow'>
                         <SearchBox 
                             accessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!}
                             map={map} 
@@ -135,7 +138,7 @@ const ActivityForm = React.memo(({ tripDayId, }: IActivityForm) => {
                             onRetrieve={handleRetrieve}
                             theme={searchBoxStyling}
                         />
-                    </div>
+                    </div>}
                     <Button 
                         onClick={createActivity} 
                         name='activityButton' 
