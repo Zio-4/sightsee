@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { Clock, DollarSign, StickyNote, MapPin } from 'lucide-react'
+import { Clock, DollarSign, StickyNote, MapPin, Trash2 } from 'lucide-react'
 
 interface TimeInputProps {
   value: Date
@@ -38,7 +38,7 @@ const TimeInput: React.FC<TimeInputProps> = ({ value, onChange }) => {
       type="time"
       value={inputValue}
       onChange={handleChange}
-      className="w-24 h-8 text-sm"
+      className="w-26 h-8 text-sm"
     />
   )
 }
@@ -143,10 +143,10 @@ const Activity = React.memo(({ activityId, tripDayId }: { activityId: number, tr
       <CardHeader className="bg-pastel-purple bg-opacity-10">
         <div className="flex justify-between w-full">
           <CardTitle>{inputActivityState.name}</CardTitle>
-          <BsTrashFill
+          <Trash2
             onClick={() => removeActivity(activity.id, tripDayId)}
-            className="bg-red-400 p-1 cursor-pointer rounded-md text-white hover:bg-red-500"
-            size={32}
+            className="bg-white p-1 rounded-md text-black hover:bg-gray-300 hover:text-black"
+            size={36}
           />
         </div>
       </CardHeader>

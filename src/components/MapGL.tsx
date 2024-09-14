@@ -10,17 +10,34 @@ const MapGL = React.memo(() => {
   const searchMarkerCoordinates = useMapStore(state => state.searchMarkerCoordinates);
   const setMap = useMapStore(state => state.setMap);
 
+  const [mapInitialized, setMapInitialized] = useState(false);
+
   const firstKeyReturned = Object.keys(activities)[0];
   const someActivityCoords = [activities[firstKeyReturned]?.longitude, activities[firstKeyReturned]?.latitude];
   const [mapCoords, setMapCoords] = useState({
     longitude: someActivityCoords[0] || 0,
     latitude: someActivityCoords[1] || 0,
-    zoom: 3.5
+    zoom: 8
   });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !mapInitialized) {
+      // Delay the map initialization
+      const timer = setTimeout(() => {
+        setMapInitialized(true);
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }
+  }, [mapInitialized]);
 
   const onMapLoad = React.useCallback((event: { target: mapboxgl.Map }) => {
     setMap(event.target);
   }, [setMap]);
+
+  if (!mapInitialized) {
+    return <div>Loading map...</div>;
+  }
 
   return (
     <div className="h-screen w-full sticky top-0 right-0">

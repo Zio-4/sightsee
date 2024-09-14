@@ -8,17 +8,11 @@ import ItineraryList from '@/components/new-trip-page/ItineraryList'
 import TripMap from '@/components/new-trip-page/TripMap'
 import MobileViewToggle from '@/components/new-trip-page/MobileViewToggle'
 import { format } from 'date-fns'
-
 import React, { useState, useEffect, useContext } from 'react'
-import Itinerary from '../../components/Itinerary/Itinerary'
 import { prisma } from '../../server/db/client'
 import { type GetServerSideProps } from 'next'
-import axios from 'axios'
 import { useAuth } from '@clerk/nextjs'
 import { getAuth, buildClerkProps } from "@clerk/nextjs/server";
-import MapGL from '../../components/MapGL'
-import { IItineraryPage } from '../../types/itinerary'
-import TripLayout from '../../components/Trips/TripLayout'
 import { Activity, TripDay } from '../../types/itinerary'
 import { ActivityCoordinates } from '../../types/map'
 import pusherInstance from '../../lib/pusher'
@@ -43,15 +37,13 @@ export default function TripPage(
     activities: any, 
     activityCoordinates: any 
   }) {
-  // Get the first day of the trip
-  // const sortedTripDays = Object.values(tripDays).sort((a: TripDay, b: TripDay) => new Date(a.date).getTime() - new Date(b.date).getTime())
-  // const firstDayDate = sortedTripDays[0].date
+
 
   const [activeDay, setActiveDay] = useState('')
   const [viewMode, setViewMode] = useState('daily')
-  // console.log('itinerary: ', itinerary)
-
   const { isSignedIn, userId } = useAuth()
+  const [isMapVisible, setIsMapVisible] = useState(false)
+  const [isMobile, setIsMobile] = useState(true)
 
   const setItinerary = useItineraryStore(state => state.setItinerary)
   const setTripDays = useItineraryStore(state => state.setTripDays)
@@ -122,6 +114,13 @@ export default function TripPage(
     };
   }, [])
 
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768)
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
   const allDays = Object.entries(tripDays).map(([id, day]) => ({
     id: parseInt(id),
     date: day.date,
@@ -180,7 +179,6 @@ export default function TripPage(
     // updateActivitiesOrderInDatabase(sourceDayId, destDayId, newTripDays, newActivities);
   };
 
-  const [isMapVisible, setIsMapVisible] = useState(false)
 
   return (
     <div className="container mx-auto p-4 min-h-screen border-2 border-white rounded-2xl">
@@ -190,30 +188,37 @@ export default function TripPage(
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <Card className="md:col-span-2 bg-white">
-          <CardHeader className="flex flex-row items-center justify-between bg-pastel-blue bg-opacity-10">
-            <CardTitle className="text-pastel-blue">Itinerary</CardTitle>
-            <ToggleGroup type="single" value={viewMode} onValueChange={(value) => value && setViewMode(value)}>
-              <ToggleGroupItem value="daily" aria-label="Daily view" className="data-[state=on]:bg-gray-200 data-[state=on]:text-black">
-                <Grid className="h-4 w-4" />
-              </ToggleGroupItem>
-              <ToggleGroupItem value="list" aria-label="List view" className="data-[state=on]:bg-gray-200 data-[state=on]:text-black">
-                <List className="h-4 w-4" />
-              </ToggleGroupItem>
-            </ToggleGroup>
-          </CardHeader>
-          <CardContent>
-            <DragDropContext onDragEnd={onDragEnd}>
-              {viewMode === 'daily' ? (
-                <ItineraryTabs allDays={allDays} activeDay={activeDay} setActiveDay={setActiveDay} destinations={destinations}/>
-              ) : (
-                <ItineraryList destinations={destinations} />
-              )}
-            </DragDropContext>
-          </CardContent>
-        </Card>
+        {!isMapVisible && (
+          <Card className="md:col-span-2 bg-white">
+            <CardHeader className="flex flex-row items-center justify-between bg-pastel-blue bg-opacity-10">
+              <CardTitle className="text-pastel-blue">Itinerary</CardTitle>
+              <ToggleGroup type="single" value={viewMode} onValueChange={(value) => value && setViewMode(value)}>
+                <ToggleGroupItem value="daily" aria-label="Daily view" className="data-[state=on]:bg-gray-200 data-[state=on]:text-black">
+                  <Grid className="h-4 w-4" />
+                </ToggleGroupItem>
+                <ToggleGroupItem value="list" aria-label="List view" className="data-[state=on]:bg-gray-200 data-[state=on]:text-black">
+                  <List className="h-4 w-4" />
+                </ToggleGroupItem>
+              </ToggleGroup>
+            </CardHeader>
+            <CardContent>
+              <DragDropContext onDragEnd={onDragEnd}>
+                {viewMode === 'daily' ? (
+                  <ItineraryTabs allDays={allDays} activeDay={activeDay} setActiveDay={setActiveDay} destinations={destinations}/>
+                ) : (
+                  <ItineraryList destinations={destinations} />
+                )}
+              </DragDropContext>
+            </CardContent>
+          </Card>
+        )}
 
-        <TripMap isVisible={isMapVisible} />
+        {/* Show the map when isMapVisible is true or on larger screens */}
+        {(isMapVisible || !isMobile) && Object.keys(activities).length > 0 && (
+          <div className={`${isMapVisible ? 'col-span-3' : 'md:col-span-1'}`}>
+            <TripMap isVisible={true} />
+          </div>
+        )}
       </div>
 
       {viewMode === 'daily' && (
@@ -248,7 +253,11 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
             tripDays: {
               include: {
                 // For now, should fetch in creation order. Will want to fetch by order later.
-                activities: true
+                activities: {
+                  orderBy: {
+                    startTime: 'asc'
+                  }
+                }
               }
             }
           }

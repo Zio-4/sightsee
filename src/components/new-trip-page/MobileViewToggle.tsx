@@ -8,10 +8,10 @@ interface MobileViewToggleProps {
 
 export default function MobileViewToggle({ isMapVisible, setIsMapVisible }: MobileViewToggleProps) {
   return (
-    <div className="fixed bottom-4 right-4 md:hidden">
+    <div className="fixed bottom-3 right-3 md:hidden">
       <Button 
         variant="outline" 
-        className="bg-white text-pastel-purple border-pastel-purple hover:bg-pastel-purple hover:text-white"
+        className="bg-white text-pastel-purple border-pastel-purple hover:bg-pastel-purple"
         onClick={() => setIsMapVisible(!isMapVisible)}
       >
         {isMapVisible ? <List className="mr-2" size={16} /> : <Map className="mr-2" size={16} />}
