@@ -63,6 +63,9 @@ const Navbar = () => {
                 <li>
                   <button onClick={() => handleNav('/discover', false)} className={`${router.pathname === '/discover' && 'underline underline-offset-8 decoration-turquoise'} hover:underline hover:underline-offset-8`}>Discover</button>
                 </li>
+                <li>
+                  <button onClick={() => handleNav('/pricing', false)} className={`${router.pathname === '/pricing' && 'underline underline-offset-8 decoration-turquoise'} hover:underline hover:underline-offset-8`}>Pricing</button>
+                </li>
             </ul>
 
             {/* Mobile menu */}
@@ -78,6 +81,9 @@ const Navbar = () => {
                       </li>
                       <li>
                         <button onClick={() => handleNav('/discover', true)} className={`${router.pathname === '/discover' && 'underline underline-offset-8 decoration-sandyBeige'} hover:text-coral`}>Discover</button>
+                      </li>
+                      <li>
+                        <button onClick={() => handleNav('/pricing', true)} className={`${router.pathname === '/pricing' && 'underline underline-offset-8 decoration-sandyBeige'} hover:text-coral`}>Pricing</button>
                       </li>
                     </ul>
                 </div>
