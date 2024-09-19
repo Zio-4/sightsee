@@ -10,7 +10,7 @@ const validPaths = [
   "/invite",
   "/profile",
   "/settings",
-  "/pricing",
+  "/credits",
   // Add all other valid paths here
 ];
 

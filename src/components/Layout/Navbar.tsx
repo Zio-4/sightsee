@@ -64,7 +64,7 @@ const Navbar = () => {
                   <button onClick={() => handleNav('/discover', false)} className={`${router.pathname === '/discover' && 'underline underline-offset-8 decoration-turquoise'} hover:underline hover:underline-offset-8`}>Discover</button>
                 </li>
                 <li>
-                  <button onClick={() => handleNav('/pricing', false)} className={`${router.pathname === '/pricing' && 'underline underline-offset-8 decoration-turquoise'} hover:underline hover:underline-offset-8`}>Pricing</button>
+                  <button onClick={() => handleNav('/credits', false)} className={`${router.pathname === '/credits' && 'underline underline-offset-8 decoration-turquoise'} hover:underline hover:underline-offset-8`}>Credits</button>
                 </li>
             </ul>
 
@@ -83,7 +83,7 @@ const Navbar = () => {
                         <button onClick={() => handleNav('/discover', true)} className={`${router.pathname === '/discover' && 'underline underline-offset-8 decoration-sandyBeige'} hover:text-coral`}>Discover</button>
                       </li>
                       <li>
-                        <button onClick={() => handleNav('/pricing', true)} className={`${router.pathname === '/pricing' && 'underline underline-offset-8 decoration-sandyBeige'} hover:text-coral`}>Pricing</button>
+                        <button onClick={() => handleNav('/credits', true)} className={`${router.pathname === '/credits' && 'underline underline-offset-8 decoration-sandyBeige'} hover:text-coral`}>Credits</button>
                       </li>
                     </ul>
                 </div>

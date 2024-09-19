@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/accordion"
 import { useEffect } from "react"
 import axios from "axios"
+import { toast } from "react-hot-toast"
 
 const creditPackages = [
   {
@@ -60,24 +61,33 @@ const creditPackages = [
   },
 ]
 
-export default function PricingPage() {
+export default function CreditsPage() {
   useEffect(() => {
     // Check to see if this is a redirect back from Checkout
     const query = new URLSearchParams(window.location.search);
 
-    // TODO: Add toast notification for success and cancel
+    // TODO: Make this toast stay until the credits are added to the user's account
     if (query.get('success')) {
       console.log('Order placed! You will receive an email confirmation.');
+      toast.success('Order placed! You will receive an email confirmation. Your credits will be added to your account shortly.', {
+        duration: 5000,
+        position: 'top-center',
+      });
     }
 
     if (query.get('canceled')) {
       console.log('Order canceled -- continue to shop around and checkout when you’re ready.');
+      toast.error('Order canceled -- continue to shop around and checkout when you’re ready.', {
+        duration: 5000,
+        position: 'top-center',
+      });
     }
   }, []);
 
-  const handleBuyCredits = (creditSelection: string) => {
+  const handleBuyCredits = async (creditSelection: string) => {
     console.log({ creditSelection });
-    axios.post('/api/stripe/checkoutSessions', { creditSelection });
+    const response = await axios.post('/api/stripe/checkoutSessions', { creditSelection });
+    window.location.href = response.data.url;
   }
 
 
