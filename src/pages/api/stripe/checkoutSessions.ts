@@ -7,7 +7,7 @@ console.log('STRIPE_SECRET_KEY:', process.env.STRIPE_SECRET_KEY)
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
 
-    const { creditSelection } = req.body;
+    const { creditSelection, profileId } = req.body;
 
     const priceId = process.env[`${creditSelection}_CREDITS_ID`] as string
 
@@ -24,6 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         mode: 'payment',
         success_url: `${req.headers.origin}/credits/?success=true`,
         cancel_url: `${req.headers.origin}/credits/?canceled=true`,
+        client_reference_id: profileId,
       });
 
       res.json({ url: session.url });

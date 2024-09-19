@@ -19,7 +19,7 @@ const isValidPath = (path: string) => {
 };
 
 
-const publicPaths = ["/", "/trips*", "/itinerary*", "/discover", "/api*", "/invite*"];
+const publicPaths = ["/", "/trips*", "/itinerary*", "/discover", "/api*", "/invite*", "/credits"];
 
 const isPublic = (path: string) => {
   return publicPaths.find((x) =>

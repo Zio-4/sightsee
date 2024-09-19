@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL_PROD")
+  url      = env("DATABASE_URL_DEV")
 }
 
 enum DistanceUnits {
@@ -53,9 +53,9 @@ model Payment {
   profileId       String
   profile         Profile          @relation(fields: [profileId], references: [clerkId], onDelete: Cascade)
   amount          Float
-  currency        String
+  currency        String?
   status          PaymentStatus
-  stripePaymentId String?
+  stripePaymentId String           @unique
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   CreditPurchase  CreditPurchase[]

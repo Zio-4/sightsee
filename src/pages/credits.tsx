@@ -17,6 +17,7 @@ import {
 import { useEffect } from "react"
 import axios from "axios"
 import { toast } from "react-hot-toast"
+import { useUser } from "@clerk/nextjs"
 
 const creditPackages = [
   {
@@ -62,6 +63,8 @@ const creditPackages = [
 ]
 
 export default function CreditsPage() {
+  const { user, isSignedIn } = useUser()
+
   useEffect(() => {
     // Check to see if this is a redirect back from Checkout
     const query = new URLSearchParams(window.location.search);
@@ -85,8 +88,16 @@ export default function CreditsPage() {
   }, []);
 
   const handleBuyCredits = async (creditSelection: string) => {
+    if (!isSignedIn) {
+      toast.error('You must be signed in to buy credits', {
+        duration: 3000,
+        position: 'top-center',
+      });
+      return;
+    }
+
     console.log({ creditSelection });
-    const response = await axios.post('/api/stripe/checkoutSessions', { creditSelection });
+    const response = await axios.post('/api/stripe/checkoutSessions', { creditSelection, profileId: user.id });
     window.location.href = response.data.url;
   }
 
