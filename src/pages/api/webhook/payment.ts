@@ -15,10 +15,6 @@ export const config = {
 };
 
 // Correctly handle being called multiple times with the same Checkout Session ID.
-// ✅ Accept a Checkout Session ID as an argument.
-// ✅ Retrieve the Checkout Session from the API with the line_items property expanded.
-// ✅ Check the payment_status property to determine if it requires fulfillment.
-// Perform fulfillment of the line items.
 // Record fulfillment status for the provided Checkout Session.
 
 export default async function handler(
@@ -53,9 +49,7 @@ export default async function handler(
   }
 }
 
-// Add credits to users profile.
-// Save a copy of the payment details and line items in database.
-// Update payment status, create credit purchase record.
+
 const tempPriceToProductMap = {
   '20': 1200,
   '10': 400,
@@ -66,76 +60,86 @@ const tempPriceToProductMap = {
 async function fulfillCheckout(sessionId: string) {
   console.log('Fulfilling Checkout Session:', sessionId);
 
-  // Use a transaction to ensure all operations are atomic (all must complete or none).
-  const result = await prisma.$transaction(async (tx) => {
-    // Check if fulfillment has already been performed
-    const existingPayment = await tx.payment.findUnique({
-      where: { stripePaymentId: sessionId },
-    });
+  try {
+    // Use a transaction to ensure all operations are atomic (all must complete or none).
+    const result = await prisma.$transaction(async (tx) => {
+      // Check if fulfillment has already been performed
+      const existingPayment = await tx.payment.findUnique({
+        where: { stripePaymentId: sessionId },
+      });
 
-    if (existingPayment) {
-      console.warn('Payment already processed for session:', sessionId);
-      return null;
-    }
-
-    // Retrieve the Checkout Session from the API with line_items expanded
-    const checkoutSession = await stripe.checkout.sessions.retrieve(sessionId, {
-      expand: ['line_items'],
-    });
-
-    if (checkoutSession.payment_status === 'paid') {
-      const profileId = checkoutSession.client_reference_id;
-      if (!profileId) {
-        throw new Error('No profile ID found in the session');
+      if (existingPayment) {
+        console.warn('Payment already processed for session:', sessionId);
+        return null;
       }
 
-      // Create Payment record
-      const payment = await tx.payment.create({
-        data: {
-          profileId,
-          amount: checkoutSession.amount_total! / 100, // Convert cents to dollars
-          currency: checkoutSession.currency,
-          status: 'COMPLETED',
-          stripePaymentId: sessionId,
-        },
+      // Retrieve the Checkout Session from the API with line_items expanded
+      const checkoutSession = await stripe.checkout.sessions.retrieve(sessionId, {
+        expand: ['line_items'],
       });
 
-      console.log('Payment amount:', payment.amount);
+      console.log('products:', checkoutSession.line_items);
 
-      // Calculate credits based on the payment amount
-      // This is a placeholder calculation, adjust as needed
-      const creditsToAdd = tempPriceToProductMap[payment.amount.toString() as keyof typeof tempPriceToProductMap] || 0;
+      if (checkoutSession.payment_status === 'paid') {
+        const profileId = checkoutSession.client_reference_id;
+        if (!profileId) {
+          throw new Error('No profile ID found in the session');
+        }
 
-      console.log('Credits to add:', creditsToAdd);
-
-      // Create CreditPurchase record
-      await tx.creditPurchase.create({
-        data: {
-          profileId,
-          amount: creditsToAdd,
-          paymentId: payment.id,
-        },
-      });
-
-      // Update user's credits
-      await tx.profile.update({
-        where: { clerkId: profileId },
-        data: {
-          credits: {
-            increment: creditsToAdd,
+        // Create Payment record
+        const payment = await tx.payment.create({
+          data: {
+            profileId,
+            amount: checkoutSession.amount_total! / 100, // Convert cents to dollars
+            currency: checkoutSession.currency,
+            status: 'COMPLETED',
+            stripePaymentId: sessionId,
           },
-        },
-      });
+        });
 
-      console.log('Fulfillment completed for session:', sessionId);
-      return payment;
+        console.log('Payment amount:', payment.amount);
+
+        // Calculate credits based on the payment amount
+        const creditsToAdd = tempPriceToProductMap[payment.amount.toString() as keyof typeof tempPriceToProductMap];
+        if (!creditsToAdd) {
+          throw new Error(`Invalid payment amount: ${payment.amount}`);
+        }
+
+        console.log('Credits to add:', creditsToAdd);
+
+        // Create CreditPurchase record
+        await tx.creditPurchase.create({
+          data: {
+            profileId,
+            amount: creditsToAdd,
+            paymentId: payment.id,
+          },
+        });
+
+        // Update user's credits
+        await tx.profile.update({
+          where: { clerkId: profileId },
+          data: {
+            credits: {
+              increment: creditsToAdd,
+            },
+          },
+        });
+
+        console.log('Fulfillment completed for session:', sessionId);
+        return payment;
+      }
+
+      console.log('Payment not completed for session:', sessionId);
+      return null;
+    });
+
+    if (result) {
+      console.log('Fulfillment processed successfully:', result);
     }
-
-    console.log('Payment not completed for session:', sessionId);
-    return null;
-  });
-
-  if (result) {
-    console.log('Fulfillment processed successfully:', result);
+  } catch (error) {
+    console.error('Error fulfilling checkout:', error);
+    // Add some retry logic here 
+    throw error; // Re-throw the error to be handled by the caller
   }
 }

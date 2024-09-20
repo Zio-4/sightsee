@@ -23,7 +23,8 @@ const creditPackages = [
   {
     name: "Starter Pack",
     credits: '150',
-    price: "$9.99",
+    displayPrice: "$5.00",
+    price: 5,
     description: "Perfect for a single trip",
     features: [
       "1 AI-generated itinerary",
@@ -35,7 +36,8 @@ const creditPackages = [
   {
     name: "Traveler Pack",
     credits: '400',
-    price: "$24.99",
+    displayPrice: "$10.00",
+    price: 10,
     description: "Ideal for multiple trips or longer journeys",
     features: [
       "3 AI-generated itineraries",
@@ -48,7 +50,8 @@ const creditPackages = [
   {
     name: "Explorer Pack",
     credits: '1200',
-    price: "$69.99",
+    displayPrice: "$20.00",
+    price: 20,
     description: "Best value for frequent travelers",
     features: [
       "10 AI-generated itineraries",
@@ -116,7 +119,7 @@ export default function CreditsPage() {
               <CardDescription>{pack.description}</CardDescription>
             </CardHeader>
             <CardContent className="flex-grow">
-              <p className="text-4xl font-bold mb-4">{pack.price}</p>
+              <p className="text-4xl font-bold mb-4">{pack.displayPrice}</p>
               <p className="text-lg font-semibold mb-4">{pack.credits.toLocaleString()} Credits</p>
               <ul className="space-y-2">
                 {pack.features.map((feature) => (
