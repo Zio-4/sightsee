@@ -6,7 +6,7 @@ import { prisma } from '../../../server/db/client';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
-const endpointSecret = "whsec_e4f8adf048e2d9f76518bf16c6d5fbb057b69cb2ef337712d111817998dc70c7";
+const endpointSecret = "whsec_cEBvel1IhwhuhI8W22HW1O0kbCKcL268";
 
 export const config = {
   api: {
