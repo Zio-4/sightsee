@@ -9,7 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const { creditSelection, profileId } = req.body;
 
-    const priceId = process.env[`${creditSelection}_CREDITS_ID`] as string
+    const priceId = process.env[`CREDITS_${creditSelection}_ID`] as string
 
     try {
       // Create Checkout Sessions from body params.
