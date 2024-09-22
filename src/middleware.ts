@@ -32,11 +32,11 @@ export default withClerkMiddleware((req: NextRequest) => {
     return NextResponse.next();
   }
 
-  // If the path is not valid, redirect to the homepage
-  if (!isValidPath(req.nextUrl.pathname)) {
-    const homeUrl = new URL("/", req.url);
-    return NextResponse.redirect(homeUrl);
-  }
+  // // If the path is not valid, redirect to the homepage
+  // if (!isValidPath(req.nextUrl.pathname)) {
+  //   const homeUrl = new URL("/", req.url);
+  //   return NextResponse.redirect(homeUrl);
+  // }
 
   // if the user is not signed in redirect them to the sign in page.
   const { userId } = getAuth(req);
