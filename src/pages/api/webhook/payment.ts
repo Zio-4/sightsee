@@ -2,13 +2,14 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { buffer } from 'micro';
 import Stripe from 'stripe';
 import { prisma } from '../../../server/db/client';
+import { STRIPE_SECRET_KEY, STRIPE_PAYMENT_WEBHOOK_SECRET } from '../../../server/constants';
 
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+const stripe = new Stripe(STRIPE_SECRET_KEY as string, {
   apiVersion: '2024-06-20',
 });
 
-const endpointSecret = "whsec_cEBvel1IhwhuhI8W22HW1O0kbCKcL268";
+const endpointSecret = STRIPE_PAYMENT_WEBHOOK_SECRET;
 
 export const config = {
   api: {
@@ -31,7 +32,7 @@ export default async function handler(
     let event: Stripe.Event;
 
     try {
-      event = stripe.webhooks.constructEvent(buf, sig, endpointSecret);
+      event = stripe.webhooks.constructEvent(buf, sig, endpointSecret as string);
     } catch (err: any) {
       console.error(`Webhook Error: ${err.message}`);
       return res.status(400).send(`Webhook Error: ${err.message}`);

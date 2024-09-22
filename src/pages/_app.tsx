@@ -3,6 +3,7 @@ import { type AppType } from "next/app";
 import Navbar from "../components/Layout/Navbar";
 import Footer from "../components/Layout/Footer";
 import { ClerkProvider } from "@clerk/nextjs";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { trpc } from "../utils/trpc";
 
@@ -20,6 +21,8 @@ const roboto = Roboto({
   subsets: ['latin'],
 })
 
+const queryClient = new QueryClient()
+
 const MyApp: AppType = ({
   Component,
   pageProps: { ...pageProps },
@@ -29,8 +32,10 @@ const MyApp: AppType = ({
       <Toaster />
       <div className={`${montserrat.className} ${roboto.className}`}>
         <div className="bg-sandyBeige">
-          <Navbar />
-          <Component {...pageProps} />
+          <QueryClientProvider client={queryClient}>
+            <Navbar />
+            <Component {...pageProps} />
+          </QueryClientProvider>
         </div>
       </div>
       <style jsx global>{`

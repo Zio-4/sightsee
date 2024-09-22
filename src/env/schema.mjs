@@ -23,7 +23,6 @@ export const serverSchema = z.object({
   // DISCORD_CLIENT_SECRET: z.string(),
   DATABASE_URL_PROD: z.string(),
   DATABASE_URL_DEV: z.string(),
-  DATABASE_URL_TEST: z.string(),
   UNSPLASH_ACCESS_KEY: z.string(),
   UNSPLASH_SECRET_KEY: z.string(),
   CLERK_SECRET_KEY: z.string(),
@@ -34,9 +33,17 @@ export const serverSchema = z.object({
   PUSHER_APP_ID: z.string(),
   PUSHER_APP_SECRET: z.string(),
   RESEND_API_KEY: z.string(),
-  OPENAI_ORGANIZATION: z.string(),
   OPENAI_API_KEY: z.string(),
-  STRIPE_SECRET_KEY: z.string(),
+  STRIPE_SECRET_KEY_TEST: z.string(),
+  STRIPE_SECRET_KEY_PROD: z.string(),
+  CREDITS_150_ID_TEST: z.string(),
+  CREDITS_400_ID_TEST: z.string(),
+  CREDITS_1200_ID_TEST: z.string(),
+  CREDITS_150_ID_PROD: z.string(),
+  CREDITS_400_ID_PROD: z.string(),
+  CREDITS_1200_ID_PROD: z.string(),
+  STRIPE_WEBHOOK_SECRET_PROD: z.string(),
+  STRIPE_WEBHOOK_SECRET_TEST: z.string(),
 });
 
 /**
@@ -50,7 +57,6 @@ export const clientSchema = z.object({
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string(),
   NEXT_PUBLIC_PUSHER_APP_KEY: z.string(),
   NEXT_PUBLIC_PUSHER_APP_CLUSTER: z.string(),
-  NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string(),
 });
 
 /**
@@ -65,5 +71,4 @@ export const clientEnv = {
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
   NEXT_PUBLIC_PUSHER_APP_KEY: process.env.NEXT_PUBLIC_PUSHER_APP_KEY,
   NEXT_PUBLIC_PUSHER_APP_CLUSTER: process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER,
-  NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
 };

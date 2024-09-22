@@ -1,15 +1,17 @@
 import Stripe from 'stripe';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { STRIPE_SECRET_KEY } from '../../../server/constants';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
-console.log('STRIPE_SECRET_KEY:', process.env.STRIPE_SECRET_KEY)
+const stripe = new Stripe(STRIPE_SECRET_KEY as string);
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
 
     const { creditSelection, profileId } = req.body;
 
-    const priceId = process.env[`CREDITS_${creditSelection}_ID`] as string
+    const ENV = process.env.NODE_ENV === 'production' && process.env.VERCEL_ENV === 'production' ? 'PROD' : 'TEST';
+
+    const priceId = process.env[`CREDITS_${creditSelection}_ID_${ENV}`] as string
 
     try {
       // Create Checkout Sessions from body params.
