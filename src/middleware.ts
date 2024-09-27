@@ -10,6 +10,7 @@ const validPaths = [
   "/invite",
   "/profile",
   "/settings",
+  "/credits",
   // Add all other valid paths here
 ];
 
@@ -18,7 +19,7 @@ const isValidPath = (path: string) => {
 };
 
 
-const publicPaths = ["/", "/trips*", "/itinerary*", "/discover", "/api*", "/invite*"];
+const publicPaths = ["/", "/trips*", "/itinerary*", "/discover", "/api*", "/invite*", "/credits"];
 
 const isPublic = (path: string) => {
   return publicPaths.find((x) =>
@@ -31,11 +32,11 @@ export default withClerkMiddleware((req: NextRequest) => {
     return NextResponse.next();
   }
 
-  // If the path is not valid, redirect to the homepage
-  if (!isValidPath(req.nextUrl.pathname)) {
-    const homeUrl = new URL("/", req.url);
-    return NextResponse.redirect(homeUrl);
-  }
+  // // If the path is not valid, redirect to the homepage
+  // if (!isValidPath(req.nextUrl.pathname)) {
+  //   const homeUrl = new URL("/", req.url);
+  //   return NextResponse.redirect(homeUrl);
+  // }
 
   // if the user is not signed in redirect them to the sign in page.
   const { userId } = getAuth(req);

@@ -8,6 +8,9 @@ import GuestSignInButton from '../ui/GuestSignInButton'
 import Modal from './Modal'
 import { useUser, SignOutButton } from "@clerk/nextjs";
 import { Palmtree } from "lucide-react"
+import { useQuery } from "@tanstack/react-query"
+import axios from "axios"
+import { Coins } from "lucide-react"
 
 const Navbar = () => {
   const router = useRouter()
@@ -15,8 +18,25 @@ const Navbar = () => {
   const [mobileMenuState, setMobileMenuState] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const [path, setPath] = useState('')
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
 
   const { user, isSignedIn } = useUser()
+
+  const { data: credits } = useQuery({
+    queryKey: ['credits'],
+    queryFn: async () => {
+      try {
+        const { data } = await axios.get('/api/profile')
+        return data.credits
+      } catch (error) {
+        console.error('Error fetching profile data:', error)
+        return 0
+      }
+    },
+    enabled: isSignedIn ?? false
+  })
+
+  console.log('isSignedIn', isSignedIn)
 
 
   const toggleModal = () => {
@@ -39,7 +59,6 @@ const Navbar = () => {
 
 
   return (
-    // <LayoutWrapper>
     <div className='bg-sandyBeige px-4'>
         <nav className='flex justify-between py-4 bg-sandyBeige text-oceanBlue'>
             <button onClick={() => handleNav('/', false)} className='font-bold text-2xl flex items-center'>
@@ -63,6 +82,9 @@ const Navbar = () => {
                 <li>
                   <button onClick={() => handleNav('/discover', false)} className={`${router.pathname === '/discover' && 'underline underline-offset-8 decoration-turquoise'} hover:underline hover:underline-offset-8`}>Discover</button>
                 </li>
+                <li>
+                  <button onClick={() => handleNav('/credits', false)} className={`${router.pathname === '/credits' && 'underline underline-offset-8 decoration-turquoise'} hover:underline hover:underline-offset-8`}>Credits</button>
+                </li>
             </ul>
 
             {/* Mobile menu */}
@@ -78,6 +100,9 @@ const Navbar = () => {
                       </li>
                       <li>
                         <button onClick={() => handleNav('/discover', true)} className={`${router.pathname === '/discover' && 'underline underline-offset-8 decoration-sandyBeige'} hover:text-coral`}>Discover</button>
+                      </li>
+                      <li>
+                        <button onClick={() => handleNav('/credits', true)} className={`${router.pathname === '/credits' && 'underline underline-offset-8 decoration-sandyBeige'} hover:text-coral`}>Credits</button>
                       </li>
                     </ul>
                 </div>
@@ -103,19 +128,52 @@ const Navbar = () => {
             </div>
 
             {isSignedIn ? (
-                <div className='relative w-1.5/12 hidden md:flex justify-end' onMouseEnter={() => setToolTipHideState(!toolTipHideState)} onMouseLeave={() => setToolTipHideState(!toolTipHideState)} >
-                    <div className='rounded-full'>
-                      <Image  src={user.profileImageUrl || ProfilePlaceholder} alt='profile avatar' width={32} height={32} className='rounded-full cursor-pointer'/>
-                    </div>
-
-                    <div className='absolute z-10 right-0 top-8 w-[7rem]'>
-                      <div className={`bg-white text-oceanBlue rounded-md p-3 ${toolTipHideState && 'hidden'}`}>
-                          <div className='flex flex-col'>
-                            <button onClick={() => router.push('/profile')} className='cursor-pointer hover:bg-turquoise hover:bg-opacity-10 text-center'>Profile</button>
-                            <SignOutButton>
-                              <button className='cursor-pointer hover:bg-turquoise hover:bg-opacity-10'>Sign Out</button>
-                            </SignOutButton>
+                <div className='relative w-1.5/12 hidden md:flex justify-end'>
+                    <div className='flex items-center space-x-2'>
+                      <div className='flex items-center relative group'>
+                        <Coins className='h-5 w-5'/>
+                        <p> {credits || 0} </p>
+                        <div className='absolute z-10 top-full left-1/2 transform -translate-x-1/2 mt-2 hidden group-hover:block'>
+                          <div className='bg-white text-oceanBlue rounded-md p-2 text-sm'>
+                            Credits
                           </div>
+                        </div>
+                      </div>
+                      
+                      <div className='rounded-full relative'>
+                        <Image 
+                          src={user.profileImageUrl || ProfilePlaceholder} 
+                          alt='profile avatar' 
+                          width={32} 
+                          height={32} 
+                          className='rounded-full cursor-pointer'
+                          onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                        />
+                        {isProfileMenuOpen && (
+                          <div className='absolute z-10 right-0 top-full mt-2 w-[7rem]'>
+                            <div className='bg-white text-oceanBlue rounded-md p-3'>
+                              <div className='flex flex-col'>
+                                <button 
+                                  onClick={() => {
+                                    router.push('/profile');
+                                    setIsProfileMenuOpen(false);
+                                  }} 
+                                  className='cursor-pointer hover:bg-turquoise hover:bg-opacity-10 text-center'
+                                >
+                                  Profile
+                                </button>
+                                <SignOutButton>
+                                  <button 
+                                    onClick={() => setIsProfileMenuOpen(false)}
+                                    className='cursor-pointer hover:bg-turquoise hover:bg-opacity-10'
+                                  >
+                                    Sign Out
+                                  </button>
+                                </SignOutButton>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                 </div>
@@ -126,7 +184,6 @@ const Navbar = () => {
 
       <Modal isOpen={isOpen} toggleModal={toggleModal} path={path}/>
     </div>
-    // </LayoutWrapper>
   )
 }
 

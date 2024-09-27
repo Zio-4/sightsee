@@ -10,6 +10,20 @@ export default validateRoute(async function (
   ): Promise<void> {
   
     switch (req.method) {
+      case 'GET':
+        try {
+          const profile = await prisma.profile.findUnique({
+            where: { clerkId: userId },
+          });
+          if (!profile) {
+            return res.status(404).json({ error: 'Profile not found' });
+          }
+          res.status(200).json(profile);
+        } catch (e) {
+          console.log('Error fetching profile:', e);
+          res.status(500).json({ error: 'An error occurred while fetching the profile.' });
+        }
+        break;
       case 'PUT':
         try {
             const data = await prisma.profile.update({
@@ -26,8 +40,8 @@ export default validateRoute(async function (
             })
             res.status(200).json(data)
         } catch(e) {
-            console.log(e)
-            res.status(500).json({ error: 'An error occured while updating the data.'})
+            console.log('Error updating profile:', e);
+            res.status(500).json({ error: 'An error occurred while updating the data.'})
         }
         break
       case 'DELETE':
@@ -39,15 +53,15 @@ export default validateRoute(async function (
 
             res.status(204).json({ message: "Resource successfully deleted" })
         } catch (e) {
-            console.log(e)
-            res.status(500).json({ error: 'An error occured trying to delete the account'})
+            console.log('Error deleting profile:', e);
+            res.status(500).json({ error: 'An error occurred trying to delete the account'})
         }
         break
       default:
         return res.status(501).json({
             error: {
             code: 'method_unknown',
-            message: 'This endpoint only responds to PUT, and DELETE',
+            message: 'This endpoint only responds to GET, PUT, and DELETE',
             },
         });
     }

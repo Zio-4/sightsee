@@ -9,13 +9,20 @@ declare global {
 export const prisma =
   global.prisma ||
   new PrismaClient({
-    log: env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
-    // datasources: {
-    //   db: {
-    //     url: `${env.NODE_ENV === 'production' ? env.DATABASE_URL_PROD : env.DATABASE_URL_DEV}?slaccept=strict&connect_timeout=300`,
-    //   }
-    // }
+    log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+    datasources: {
+      db: {
+        url: isDevelopmentOrPreview() ? env.DATABASE_URL_DEV : env.DATABASE_URL_PROD,
+      }
+    }
   });
+
+function isDevelopmentOrPreview() {
+  return (
+    process.env.NODE_ENV === 'development' ||
+    process.env.VERCEL_ENV === 'preview'
+  );
+}
 
 if (env.NODE_ENV !== "production") {
   global.prisma = prisma;

@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL_PROD")
+  url      = env("DATABASE_URL_DEV")
 }
 
 enum DistanceUnits {
@@ -23,8 +23,9 @@ enum TimeFormat {
   TWENTYFOUR
 }
 
+
 model Profile {
-  clerkId                        String          @id @unique
+  clerkId                        String           @id @unique
   bio                            String
   distanceUnits                  DistanceUnits
   dateFormat                     DateFormat
@@ -35,6 +36,49 @@ model Profile {
   itineraries                    Itinerary[]
   comments                       Comment[]
   collaborations                 Collaboration[]
+  credits                        Int              @default(0)
+  payments                       Payment[]
+  CreditPurchase                 CreditPurchase[]
+  CreditUsage                    CreditUsage[]
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+model Payment {
+  id              String           @id @default(uuid())
+  profileId       String
+  profile         Profile          @relation(fields: [profileId], references: [clerkId], onDelete: Cascade)
+  amount          Float
+  currency        String?
+  status          PaymentStatus
+  stripePaymentId String           @unique
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  CreditPurchase  CreditPurchase[]
+}
+
+model CreditPurchase {
+  id        String   @id @default(uuid())
+  profileId String
+  profile   Profile  @relation(fields: [profileId], references: [clerkId], onDelete: Cascade)
+  amount    Int
+  paymentId String
+  payment   Payment  @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model CreditUsage {
+  id         String   @id @default(uuid())
+  profileId  String
+  profile    Profile  @relation(fields: [profileId], references: [clerkId], onDelete: Cascade)
+  amount     Int
+  activityId Int
+  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
 }
 
 model Itinerary {
@@ -88,19 +132,21 @@ model Comment {
 }
 
 model Activity {
-  id          Int       @id @default(autoincrement())
-  name        String
-  startTime   DateTime?
-  endTime     DateTime?
-  contactInfo String?
-  note        String?
-  address     String?
-  tripDayId   Int
-  photo       String?
-  tripDay     TripDay   @relation(fields: [tripDayId], references: [id], onDelete: Cascade)
-  longitude   Float?
-  latitude    Float?
-  cost        Float?
+  id            Int           @id @default(autoincrement())
+  name          String
+  startTime     DateTime?
+  endTime       DateTime?
+  contactInfo   String?
+  note          String?
+  address       String?
+  tripDayId     Int
+  photo         String?
+  tripDay       TripDay       @relation(fields: [tripDayId], references: [id], onDelete: Cascade)
+  longitude     Float?
+  latitude      Float?
+  cost          Float?
+  isAiGenerated Boolean       @default(false)
+  creditUsages  CreditUsage[]
 }
 
 enum InviteStatus {
@@ -113,11 +159,11 @@ enum InviteStatus {
 model Invite {
   id           Int          @id @default(autoincrement())
   inviteeEmail String
-  token        String       @db.Uuid @unique
+  token        String       @unique @db.Uuid
   expiration   DateTime
   itineraryId  Int
   senderEmail  String
-  senderUserId String       
+  senderUserId String
   status       InviteStatus
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
