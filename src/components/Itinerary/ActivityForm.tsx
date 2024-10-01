@@ -1,6 +1,6 @@
-import React, { useState, } from 'react'
+import React, { useState } from 'react'
 import axios from 'axios';
-import { SearchBox,  } from '@mapbox/search-js-react';
+import { SearchBox } from '@mapbox/search-js-react';
 import { IActivityForm } from '../../types/itinerary';
 import { triggerPusherEvent } from '../../lib/pusherEvent';
 import useItineraryStore from '../../hooks/useItineraryStore';
@@ -10,6 +10,10 @@ import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Textarea } from "@/components/ui/textarea"
+import { MapPin, PlusCircle, Sparkles } from 'lucide-react'
+import useCreditsStore from '@/hooks/useCreditsStore'
 
 const searchBoxStyling = {
   variables: {
@@ -31,25 +35,25 @@ const searchBoxStyling = {
       ringColor: 'hsl(var(--ring))',
       ringOffset: '2px',
     },
+    'width': '100%'
   },
 }
 
-
-const ActivityForm = React.memo(({ tripDayId, }: IActivityForm) => {
+const ActivityForm = React.memo(({ tripDayId }: IActivityForm) => {
     const [activityDetails, setActivityDetails] = useState({
         name: '',
         address: ''
     })
     const [searchBoxValue, setSearchBoxValue] = useState('');
+    const [aiDescription, setAIDescription] = useState('');
     const map = useMapStore(state => state.map)
     const searchMarkerCoordinates = useMapStore(state => state.searchMarkerCoordinates)
     const setSearchMarkerCoordinates = useMapStore(state => state.setSearchMarkerCoordinates)
     const itinerary = useItineraryStore(state => state.itinerary)
     const addActivity = useItineraryStore(state => state.addActivity)
     const { user } = useUser()
-
-
-    console.log('map in activity form:', map)
+    const { credits } = useCreditsStore()
+    const hasEnoughCredits = credits > 6
 
     const createActivity = async () => {
         if (activityDetails.name.length === 0) return
@@ -68,9 +72,6 @@ const ActivityForm = React.memo(({ tripDayId, }: IActivityForm) => {
         }
 
         setSearchBoxValue('')
-
-        // Does this make sense?
-        // Map coordinates don't need to change unless you search for a new location
     
         const activityFormValues = {
             name: activityDetails.name,
@@ -88,7 +89,6 @@ const ActivityForm = React.memo(({ tripDayId, }: IActivityForm) => {
 
         try {
             res = await axios.post('/api/activities', activityFormValues)
-            console.log('activity creation response:', res)
             toast.success('Activity added', {
                 duration: 3000,
                 position: 'top-right',
@@ -102,8 +102,6 @@ const ActivityForm = React.memo(({ tripDayId, }: IActivityForm) => {
             });
         }
 
-
-        // trigger pusher event if collaboration
         if (res && itinerary.collaborationId) {
             await triggerPusherEvent(`itinerary-${itinerary.id}`, 'itinerary-event-name', {
                 ...res.data,
@@ -122,33 +120,69 @@ const ActivityForm = React.memo(({ tripDayId, }: IActivityForm) => {
         })
     }
 
+    const handleCreateAIActivity = () => {
+        if (!hasEnoughCredits) {
+            toast.error('Not enough credits to generate AI activity', {
+                duration: 3000,
+                position: 'top-right',
+            });
+            return;
+        }
+        // Implement AI activity generation logic here
+        console.log("Generating AI activity with description:", aiDescription);
+        // After generating, you might want to set the activity details and create the activity
+    }
+
     return (
-        <Card className="mt-3">
-            <CardHeader>
-                <CardTitle>Add Activity</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <div className='flex flex-col space-y-4'>
-                    {map && <div className='flex-grow'>
-                        <SearchBox 
-                            accessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!}
-                            map={map} 
-                            value={searchBoxValue} 
-                            onChange={(text) => setSearchBoxValue(text)}
-                            onRetrieve={handleRetrieve}
-                            theme={searchBoxStyling}
+        <div className="bg-white p-4 rounded-lg shadow-md">
+            <h3 className="text-lg font-semibold mb-4">Add Activity</h3>
+            <Tabs defaultValue="location">
+                <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="ai"><Sparkles className="h-4 w-4 mr-1" />Generate</TabsTrigger>
+                    <TabsTrigger value="location">Location</TabsTrigger>
+                </TabsList>
+                <TabsContent value="location">
+                    <div className="flex items-center space-x-2">
+                        <MapPin className="text-gray-400" />
+                        {map && (
+                            <SearchBox 
+                                accessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!}
+                                map={map} 
+                                value={searchBoxValue} 
+                                onChange={(text) => setSearchBoxValue(text)}
+                                onRetrieve={handleRetrieve}
+                                theme={searchBoxStyling}
+                            />
+                        )}
+                        <Button onClick={createActivity}>
+                            <PlusCircle className="mr-2 h-4 w-4" /> Add
+                        </Button>
+                    </div>
+                </TabsContent>
+                <TabsContent value="ai">
+                    <div className="space-y-2">
+                        <Textarea
+                            placeholder="Describe the activity you want..."
+                            value={aiDescription}
+                            onChange={(e) => setAIDescription(e.target.value)}
+                            rows={3}
                         />
-                    </div>}
-                    <Button 
-                        onClick={createActivity} 
-                        name='activityButton' 
-                        aria-label='add-activity-button' 
-                    >
-                        Add activity
-                    </Button>
-                </div>
-            </CardContent>
-        </Card>
+                        <Button 
+                            onClick={handleCreateAIActivity} 
+                            className={`w-full `}
+                            disabled={!hasEnoughCredits}
+                        >
+                            <Sparkles className="mr-2 h-4 w-4" /> <span className={`${hasEnoughCredits ? 'text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-400' : ''}`}>Generate AI Activity</span>
+                        </Button>
+                        {!hasEnoughCredits && (
+                            <p className="text-xs text-slate-500 mt-1 text-center">
+                                Not enough credits to generate AI activity
+                            </p>
+                        )}
+                    </div>
+                </TabsContent>
+            </Tabs>
+        </div>
     )
 })
 

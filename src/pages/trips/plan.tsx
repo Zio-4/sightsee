@@ -328,7 +328,7 @@ export default function Component() {
             </p>
           </div>
         </div>
-        <Button type="submit" className="w-full" disabled={true}>
+        <Button type="submit" className="w-full" disabled={submitIsDisabled}>
           {isSubmitting ? (
             <>
               <Loader className="mr-2 h-4 w-4 animate-spin" />

@@ -11,6 +11,7 @@ export default validateRoute(async function (
   
     switch (req.method) {
       case 'GET':
+         console.log('userId: ', userId)
         try {
           const profile = await prisma.profile.findUnique({
             where: { clerkId: userId },
