@@ -34,7 +34,7 @@ const TripDay = React.memo(({ tripDayId }: {tripDayId: number}) => {
         }
         </div>
     
-        <ActivityForm tripDayId={tripDayId} />
+        <ActivityForm tripDayId={tripDayId} destination={tripDay.destination} />
     </div>
   )
 })

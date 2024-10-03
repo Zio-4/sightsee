@@ -83,6 +83,7 @@ export interface IItineraryData {
 
 export interface IActivityForm {
     tripDayId: number,
+    destination: string
 }
 
 // Activity

@@ -52,7 +52,7 @@ export default function ItineraryList({ destinations }: ItineraryListProps) {
                     </div>
                   )}
                 </Droppable>
-                <ActivityForm tripDayId={day.id} />
+                <ActivityForm tripDayId={day.id} destination={destination.name} />
               </div>
             );
           })}

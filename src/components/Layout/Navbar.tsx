@@ -23,7 +23,7 @@ const Navbar = () => {
   const { credits, setCredits } = useCreditsStore()
   const { user, isSignedIn } = useUser()
 
-  const creditsQuery = useQuery({
+  useQuery({
     queryKey: ['credits'],
     queryFn: async () => {
       try {

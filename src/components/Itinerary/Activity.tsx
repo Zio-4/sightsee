@@ -43,7 +43,7 @@ const TimeInput: React.FC<TimeInputProps> = ({ value, onChange }) => {
   )
 }
 
-const Activity = React.memo(({ activityId, tripDayId }: { activityId: number, tripDayId: number }) => {
+const Activity = React.memo(({ activityId, tripDayId, }: { activityId: number, tripDayId: number, }) => {
   const activities = useItineraryStore(state => state.activities)
   const activity = activities[activityId]
   const updateActivityInStore = useItineraryStore(state => state.updateActivity)

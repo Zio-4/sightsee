@@ -8,12 +8,11 @@ import useMapStore from '../../hooks/useMapStore';
 import { useUser } from '@clerk/nextjs';
 import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui/button'
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
-import { MapPin, PlusCircle, Sparkles } from 'lucide-react'
+import { MapPin, PlusCircle, Sparkles, Loader2 } from 'lucide-react'
 import useCreditsStore from '@/hooks/useCreditsStore'
+import { useQueryClient } from '@tanstack/react-query'
 
 const searchBoxStyling = {
   variables: {
@@ -39,14 +38,13 @@ const searchBoxStyling = {
   },
 }
 
-const ActivityForm = React.memo(({ tripDayId }: IActivityForm) => {
+const ActivityForm = React.memo(({ tripDayId, destination }: IActivityForm) => {
     const [activityDetails, setActivityDetails] = useState({
         name: '',
         address: ''
     })
     const [searchBoxValue, setSearchBoxValue] = useState('');
     const [aiDescription, setAIDescription] = useState('');
-    const [useAI, setUseAI] = useState(false)
     const map = useMapStore(state => state.map)
     const searchMarkerCoordinates = useMapStore(state => state.searchMarkerCoordinates)
     const setSearchMarkerCoordinates = useMapStore(state => state.setSearchMarkerCoordinates)
@@ -54,6 +52,8 @@ const ActivityForm = React.memo(({ tripDayId }: IActivityForm) => {
     const addActivity = useItineraryStore(state => state.addActivity)
     const { user } = useUser()
     const { credits } = useCreditsStore()
+    const [isAddingActivity, setIsAddingActivity] = useState(false)
+    const queryClient = useQueryClient()
     const hasEnoughCredits = credits >= 1
 
     const createActivity = async () => {
@@ -84,19 +84,19 @@ const ActivityForm = React.memo(({ tripDayId }: IActivityForm) => {
             tripDayId: tripDayId,
             longitude: searchMarkerCoordinates[0],
             latitude: searchMarkerCoordinates[1],
-            useAI: useAI
+            useAI: false
         }
 
         let res = null
 
         try {
+            setIsAddingActivity(true)
             res = await axios.post('/api/activities', activityFormValues)
             toast.success('Activity added', {
                 duration: 3000,
                 position: 'top-right',
             });
             addActivity(res.data.id, tripDayId, res.data)
-            setUseAI(false)
         } catch (error) {
             console.error(error)
             toast.error('There was a problem adding the activity. Please try again', {
@@ -104,6 +104,8 @@ const ActivityForm = React.memo(({ tripDayId }: IActivityForm) => {
                 position: 'top-right',
             });
         }
+
+        setIsAddingActivity(false)
 
         if (res && itinerary.collaborationId) {
             await triggerPusherEvent(`itinerary-${itinerary.id}`, 'itinerary-event-name', {
@@ -132,31 +134,37 @@ const ActivityForm = React.memo(({ tripDayId }: IActivityForm) => {
             return;
         }
 
-        setUseAI(true)
-
         const activityFormValues = {
             aiDescription: aiDescription,
             tripDayId: tripDayId,
-            useAI: useAI
+            useAI: true,
+            destination: destination,
+            userCredits: credits
         }
 
         let res = null
 
         try {
+            setIsAddingActivity(true)
             res = await axios.post('/api/activities', activityFormValues)
+
             toast.success('Activity added', {
                 duration: 3000,
                 position: 'top-right',
             });
+
             addActivity(res.data.id, tripDayId, res.data)
-            setUseAI(false)
+            setAIDescription('')
+            queryClient.invalidateQueries({ queryKey: ['credits'] })
         } catch (error) {
             console.error(error)
-            toast.error('There was a problem adding the activity. Please try again', {
+            toast.error('There was a problem generating the activity. Please try again', {
                 duration: 3000,
                 position: 'top-right',
             });
         }
+
+        setIsAddingActivity(false)
 
         if (res && itinerary.collaborationId) {
             await triggerPusherEvent(`itinerary-${itinerary.id}`, 'itinerary-event-name', {
@@ -192,8 +200,13 @@ const ActivityForm = React.memo(({ tripDayId }: IActivityForm) => {
                                 theme={searchBoxStyling}
                             />
                         )}
-                        <Button onClick={createActivity}>
-                            <PlusCircle className="mr-2 h-4 w-4" /> Add
+                        <Button onClick={createActivity} disabled={isAddingActivity}>
+                            {isAddingActivity ? (
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            ) : (
+                                <PlusCircle className="mr-2 h-4 w-4" />
+                            )}
+                            Add
                         </Button>
                     </div>
                 </TabsContent>
@@ -208,9 +221,16 @@ const ActivityForm = React.memo(({ tripDayId }: IActivityForm) => {
                         <Button 
                             onClick={handleCreateAIActivity} 
                             className={`w-full `}
-                            disabled={!hasEnoughCredits}
+                            disabled={!hasEnoughCredits || isAddingActivity}
                         >
-                            <Sparkles className="mr-2 h-4 w-4" /> <span className={`${hasEnoughCredits ? 'text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-400' : ''}`}>Generate Activity</span>
+                            {isAddingActivity ? (
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            ) : (
+                                <Sparkles className="mr-2 h-4 w-4" />
+                            )}
+                            <span className={`${hasEnoughCredits ? 'text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-400' : ''}`}>
+                                Generate Activity
+                            </span>
                         </Button>
                         {!hasEnoughCredits && (
                             <p className="text-xs text-slate-500 mt-1 text-center">
