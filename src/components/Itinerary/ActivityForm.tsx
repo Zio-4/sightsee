@@ -46,6 +46,7 @@ const ActivityForm = React.memo(({ tripDayId }: IActivityForm) => {
     })
     const [searchBoxValue, setSearchBoxValue] = useState('');
     const [aiDescription, setAIDescription] = useState('');
+    const [useAI, setUseAI] = useState(false)
     const map = useMapStore(state => state.map)
     const searchMarkerCoordinates = useMapStore(state => state.searchMarkerCoordinates)
     const setSearchMarkerCoordinates = useMapStore(state => state.setSearchMarkerCoordinates)
@@ -53,7 +54,7 @@ const ActivityForm = React.memo(({ tripDayId }: IActivityForm) => {
     const addActivity = useItineraryStore(state => state.addActivity)
     const { user } = useUser()
     const { credits } = useCreditsStore()
-    const hasEnoughCredits = credits > 6
+    const hasEnoughCredits = credits >= 1
 
     const createActivity = async () => {
         if (activityDetails.name.length === 0) return
@@ -82,7 +83,8 @@ const ActivityForm = React.memo(({ tripDayId }: IActivityForm) => {
             address: activityDetails.address,
             tripDayId: tripDayId,
             longitude: searchMarkerCoordinates[0],
-            latitude: searchMarkerCoordinates[1]
+            latitude: searchMarkerCoordinates[1],
+            useAI: useAI
         }
 
         let res = null
@@ -94,6 +96,7 @@ const ActivityForm = React.memo(({ tripDayId }: IActivityForm) => {
                 position: 'top-right',
             });
             addActivity(res.data.id, tripDayId, res.data)
+            setUseAI(false)
         } catch (error) {
             console.error(error)
             toast.error('There was a problem adding the activity. Please try again', {
@@ -120,7 +123,7 @@ const ActivityForm = React.memo(({ tripDayId }: IActivityForm) => {
         })
     }
 
-    const handleCreateAIActivity = () => {
+    const handleCreateAIActivity = async () => {
         if (!hasEnoughCredits) {
             toast.error('Not enough credits to generate AI activity', {
                 duration: 3000,
@@ -128,6 +131,41 @@ const ActivityForm = React.memo(({ tripDayId }: IActivityForm) => {
             });
             return;
         }
+
+        setUseAI(true)
+
+        const activityFormValues = {
+            aiDescription: aiDescription,
+            tripDayId: tripDayId,
+            useAI: useAI
+        }
+
+        let res = null
+
+        try {
+            res = await axios.post('/api/activities', activityFormValues)
+            toast.success('Activity added', {
+                duration: 3000,
+                position: 'top-right',
+            });
+            addActivity(res.data.id, tripDayId, res.data)
+            setUseAI(false)
+        } catch (error) {
+            console.error(error)
+            toast.error('There was a problem adding the activity. Please try again', {
+                duration: 3000,
+                position: 'top-right',
+            });
+        }
+
+        if (res && itinerary.collaborationId) {
+            await triggerPusherEvent(`itinerary-${itinerary.id}`, 'itinerary-event-name', {
+                ...res.data,
+                entity: 'activity',
+                action: 'create'
+            })
+        }
+
         // Implement AI activity generation logic here
         console.log("Generating AI activity with description:", aiDescription);
         // After generating, you might want to set the activity details and create the activity
@@ -172,11 +210,11 @@ const ActivityForm = React.memo(({ tripDayId }: IActivityForm) => {
                             className={`w-full `}
                             disabled={!hasEnoughCredits}
                         >
-                            <Sparkles className="mr-2 h-4 w-4" /> <span className={`${hasEnoughCredits ? 'text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-400' : ''}`}>Generate AI Activity</span>
+                            <Sparkles className="mr-2 h-4 w-4" /> <span className={`${hasEnoughCredits ? 'text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-400' : ''}`}>Generate Activity</span>
                         </Button>
                         {!hasEnoughCredits && (
                             <p className="text-xs text-slate-500 mt-1 text-center">
-                                Not enough credits to generate AI activity
+                                Not enough credits to generate activity with AI
                             </p>
                         )}
                     </div>
