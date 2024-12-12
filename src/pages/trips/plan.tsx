@@ -14,6 +14,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
 import { format } from "date-fns"
 import { Calendar as CalendarIcon, Info, Plus, X, Loader } from "lucide-react"
+import useCreditsStore from '@/hooks/useCreditsStore';
+import { DAY_TO_CREDIT_RATIO } from '../constants';
 
 interface Destination {
   location: string;
@@ -34,6 +36,7 @@ export default function Component() {
   const [interests, setInterests] = useState('')
   const [submitIsDisabled, setSubmitIsDisabled] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const { credits } = useCreditsStore()
 
   const router = useRouter();
   const { user } = useUser();
@@ -89,6 +92,15 @@ export default function Component() {
       return;
     }
 
+    const requiredCredits = totalDays * Number(DAY_TO_CREDIT_RATIO);
+    if (useAI && credits < requiredCredits && user) {
+      toast.error(`Not enough credits for AI generation. Required: ${requiredCredits}, Available: ${credits}`, {
+        duration: 5000,
+        position: 'top-right',
+      });
+      setUseAI(false);
+    }
+
     setSubmitIsDisabled(true)
     setIsSubmitting(true)
 
@@ -114,7 +126,7 @@ export default function Component() {
       useAI: useAI,
       numTravelers: numTravelers,
       travelCompanion: travelCompanion,
-      interests: interests
+      interests: interests,
     };
 
     console.log('itineraryData:', itineraryData)
