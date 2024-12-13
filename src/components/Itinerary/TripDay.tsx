@@ -13,8 +13,6 @@ const TripDay = React.memo(({ tripDayId }: {tripDayId: number}) => {
     const tripDays = useItineraryStore(state => state.tripDays)
     const tripDay = tripDays[tripDayId]
 
-    const [ readOnly, setReadOnly ] = useState(true);
-
   return (
     <div className='w-full p-3 text-black'>
         <div className='flex justify-between'>
@@ -34,7 +32,7 @@ const TripDay = React.memo(({ tripDayId }: {tripDayId: number}) => {
         }
         </div>
     
-        <ActivityForm tripDayId={tripDayId} destination={tripDay.destination} />
+        <ActivityForm tripDayId={tripDayId} destination={tripDay.destination} destinationId={tripDay.destinationId}/>
     </div>
   )
 })

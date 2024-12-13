@@ -76,7 +76,8 @@ export default async function (
           useAI, 
           aiDescription, 
           destination,
-          userCredits 
+          userCredits,
+          destinationId
         } = req.body
 
         const { userId } = getAuth(req);
@@ -92,7 +93,7 @@ export default async function (
             const activities = await prisma.activity.findMany({
               where: {
                 tripDay: {
-                  id: tripDayId
+                  destinationId: destinationId
                 }
               }
             });
@@ -126,7 +127,12 @@ export default async function (
             const completion = await callChatGPT(messages, userId, requestIp.getClientIp(req));
             console.log('AI activity completion:', completion)
 
-            aiGeneratedActivity = JSON.parse(completion.choices[0].message.content || '{}');
+            const content = completion.choices[0]?.message?.content;
+            if (!content) {
+              throw new Error('No content received from OpenAI');
+            }
+
+            aiGeneratedActivity = JSON.parse(content);
             console.log('AI generated activity:', aiGeneratedActivity)
           } catch (error) {
             console.error('Error generating AI activity:', error);
@@ -137,7 +143,7 @@ export default async function (
           try {
             // Use a transaction to ensure atomicity
             const result = await prisma.$transaction(async (prisma) => {
-              const data = await prisma.activity.create({
+              const activity = await prisma.activity.create({
                 data: {
                   name: aiGeneratedActivity.name || name,
                   startTime: aiGeneratedActivity.startTime ? new Date(`1970-01-01T${aiGeneratedActivity.startTime}:00`) : startTime,
@@ -172,7 +178,7 @@ export default async function (
                 }
               });
 
-              return data;
+              return activity;
             });
 
             res.status(201).json(result);

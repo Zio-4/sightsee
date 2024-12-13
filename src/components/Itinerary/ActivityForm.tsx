@@ -38,7 +38,7 @@ const searchBoxStyling = {
   },
 }
 
-const ActivityForm = React.memo(({ tripDayId, destination }: IActivityForm) => {
+const ActivityForm = React.memo(({ tripDayId, destination, destinationId }: IActivityForm) => {
     const [activityDetails, setActivityDetails] = useState({
         name: '',
         address: ''
@@ -139,7 +139,8 @@ const ActivityForm = React.memo(({ tripDayId, destination }: IActivityForm) => {
             tripDayId: tripDayId,
             useAI: true,
             destination: destination,
-            userCredits: credits
+            userCredits: credits,
+            destinationId: destinationId
         }
 
         let res = null
