@@ -15,7 +15,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { format } from "date-fns"
 import { Calendar as CalendarIcon, Info, Plus, X, Loader } from "lucide-react"
 import useCreditsStore from '@/hooks/useCreditsStore';
-import { DAY_TO_CREDIT_RATIO } from '../constants';
+import { DAY_TO_CREDIT_RATIO } from '../../lib/constants';
 
 interface Destination {
   location: string;
