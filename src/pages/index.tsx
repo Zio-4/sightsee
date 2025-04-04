@@ -27,10 +27,6 @@ export default function Component() {
         <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center space-y-4 text-center">
-                {/* <Globe /> */}
-                <div className="text-center bg-orange-200 border-2 border-coral px-6 py-2 rounded-full">
-                  <p>👷🏼‍♂️ Under Construction</p>
-                </div>
               <div className="space-y-2">
                 <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none text-[#00008B]">
                   Plan Your Dream Vacation with AI
@@ -40,9 +36,10 @@ export default function Component() {
                 </p>
               </div>
               <div className="w-full max-w-sm space-y-2">
-                <form className="flex space-x-2">
-                  <Input className="max-w-lg flex-1 bg-white text-[#00008B]" placeholder="Enter your destination" type="text" />
-                  <Button className="bg-[#FF7F50] text-white hover:bg-[#FF6347]">Plan Now</Button>
+                <form className="flex justify-center space-x-2">
+                  <Link href="/trips/plan">
+                    <Button className="bg-[#FF7F50] text-white hover:bg-[#FF6347]">Plan Now</Button>
+                  </Link>
                 </form>
               </div>
             </div>
@@ -192,9 +189,9 @@ export default function Component() {
               </div>
               <div className="w-full max-w-sm space-y-2">
                 <form className="flex flex-col gap-2">
-  
-                  <Input className="max-w-lg flex-1 bg-white text-[#00008B]" placeholder="Enter your interests" type="text" />
-                  <Button className="w-full bg-[#FF7F50] text-white hover:bg-[#FF6347]">Generate Itinerary</Button>
+                  <Link href="/trips/plan">
+                    <Button className="w-full bg-[#FF7F50] text-white hover:bg-[#FF6347]">Generate Itinerary</Button>
+                  </Link>
                 </form>
               </div>
             </div>

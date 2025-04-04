@@ -26,7 +26,7 @@ const trips = (serverProps: IMappedItineraries | INoData) => {
 
   return (
     <LayoutWrapper>
-      <div className='flex flex-col flex-grow min-:'>
+      <div className='flex flex-col flex-grow min-h-screen'>
           <h2 className='text-center text-4xl mt-16 mb-8 text-oceanBlue'>Your Trips</h2>
 
           <Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
