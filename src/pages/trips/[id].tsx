@@ -214,7 +214,7 @@ export default function TripPage(
         )}
 
         {/* Show the map when isMapVisible is true or on larger screens */}
-        {(isMapVisible || !isMobile) && Object.keys(activities).length > 0 && (
+        {(isMapVisible || !isMobile) && (
           <div className={`${isMapVisible ? 'col-span-3' : 'md:col-span-1'}`}>
             <TripMap isVisible={true} />
           </div>

@@ -13,11 +13,11 @@ const MapGL = React.memo(() => {
   const [mapInitialized, setMapInitialized] = useState(false);
 
   const firstKeyReturned = Object.keys(activities)[0];
-  const someActivityCoords = [activities[firstKeyReturned]?.longitude, activities[firstKeyReturned]?.latitude];
+  const someActivityCoords = [activities[firstKeyReturned || 0]?.longitude ?? 21.75, activities[firstKeyReturned || 2.00]?.latitude ?? 0];
   const [mapCoords, setMapCoords] = useState({
     longitude: someActivityCoords[0] || 0,
     latitude: someActivityCoords[1] || 0,
-    zoom: 8
+    zoom: 3
   });
 
   useEffect(() => {

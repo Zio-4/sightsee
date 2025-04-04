@@ -81,7 +81,7 @@ export default function ItineraryTabs({ allDays, activeDay, setActiveDay, destin
             )}
           </Droppable>
 
-          <ActivityForm tripDayId={day.id} />
+          <ActivityForm tripDayId={day.id} destination={destinations[day.destinationId]?.name} />
         </TabsContent>
       ))}
     </Tabs>

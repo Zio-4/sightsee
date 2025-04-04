@@ -11,6 +11,7 @@ import { Palmtree } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
 import { Coins } from "lucide-react"
+import useCreditsStore from "@/hooks/useCreditsStore"
 
 const Navbar = () => {
   const router = useRouter()
@@ -19,21 +20,24 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [path, setPath] = useState('')
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
-
+  const { credits, setCredits } = useCreditsStore()
   const { user, isSignedIn } = useUser()
 
-  const { data: credits } = useQuery({
+  useQuery({
     queryKey: ['credits'],
     queryFn: async () => {
       try {
         const { data } = await axios.get('/api/profile')
-        return data.credits
+        setCredits(data.credits)
+        return data
       } catch (error) {
         console.error('Error fetching profile data:', error)
         return 0
       }
     },
-    enabled: isSignedIn ?? false
+    enabled: isSignedIn ?? false,
+    refetchOnWindowFocus: false,
+    staleTime: 60 * 1000 * 5 // 5 minutes
   })
 
   console.log('isSignedIn', isSignedIn)

@@ -1,0 +1,1 @@
+export const DAY_TO_CREDIT_RATIO = process.env.DAY_TO_CREDIT_RATIO;

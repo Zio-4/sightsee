@@ -230,23 +230,6 @@ export default async function (
             }
           }
 
-          
-          
-          // parse the completion response
-          const parsedCompletion = completion?.choices[0]?.message?.content
-            ? JSON.parse(completion.choices[0].message.content)
-            : {};
-
-          console.log('Parsed Completion:', parsedCompletion);
-          console.log('Parsed Locations:', parsedCompletion.locations);
-          if (parsedCompletion.locations && parsedCompletion.locations.length > 0) {
-            console.log('Parsed Activities:', parsedCompletion.locations[0].activitiesByDay);
-            parsedCompletion.locations[0].activitiesByDay.forEach((day: Activity[], index: number) => {
-              console.log(`Parsed activities for day ${index + 1}:`, day);
-            });
-          }
-
-
           try {
             const baseData = {
               name: itineraryName,
@@ -256,6 +239,38 @@ export default async function (
               public: isPublic,
               collaborationId: null,
             };
+
+            let destinationsData;
+
+            if (useAI && completion) {
+              const parsedCompletion = completion?.choices[0]?.message?.content
+              ? JSON.parse(completion.choices[0].message.content)
+              : {};
+
+              destinationsData = destinations.map((d: Destination) => ({
+                name: d.location,
+                tripDays: {
+                  create: createActivities(d.location, parsedCompletion).map((activities, index) => ({
+                    date: new Date(new Date(startDate).getTime() + index * 24 * 60 * 60 * 1000),
+                    activities: {
+                      create: activities
+                    }
+                  })),
+                },
+              }));
+            } else {
+              destinationsData = destinations.map((d: Destination) => ({
+                name: d.location,
+                tripDays: {
+                  create: Array.from({ length: d.days }, (_, index) => ({
+                    date: new Date(new Date(startDate).getTime() + index * 24 * 60 * 60 * 1000),
+                    activities: {
+                      create: [] // Empty activities for non-AI itineraries
+                    }
+                  })),
+                },
+              }));
+            }
 
             let data;
 
@@ -267,17 +282,7 @@ export default async function (
                     connect: { clerkId: userId },
                   },
                   destinations: {
-                    create: destinations.map((d: Destination) => ({
-                      name: d.location,
-                      tripDays: {
-                        create: createActivities(d.location, parsedCompletion).map((activities, index) => ({
-                          date: new Date(new Date(startDate).getTime() + index * 24 * 60 * 60 * 1000),
-                          activities: {
-                            create: activities
-                          }
-                        })),
-                      },
-                    })),
+                    create: destinationsData,
                   },
                 },
               });
@@ -287,17 +292,7 @@ export default async function (
                   ...baseData,
                   ipAddress: requestIp.getClientIp(req),
                   destinations: {
-                    create: destinations.map((d: Destination) => ({
-                      name: d.location,
-                      tripDays: {
-                        create: createActivities(d.location, parsedCompletion).map((activities, index) => ({
-                          date: new Date(new Date(startDate).getTime() + index * 24 * 60 * 60 * 1000),
-                          activities: {
-                            create: activities
-                          }
-                        })),
-                      },
-                    })),
+                    create: destinationsData,
                   },
                 },
               });
